@@ -18,9 +18,10 @@ void setup() {
 
 
 void loop() {
-  for(int i = 0; i <=360; i++) {
-    servoX.write(10 * cos (3.14*i/180) + 100);
-    servoY.write(10 * sin(3.14*i/180) + 100);
+  for(num = 0; num <=360; num++) {
+    servoX.write(10 * sin(3.14*num/180) + 100);
+    servoY.write(10 * cos(3.14*num/180) + 100);
   }
-  delay(10);
+  delay(8);
+  num=0;
 }
