@@ -1,6 +1,5 @@
 import math
 import matplotlib.pyplot as plt
-import argparse
 import MotorThrustCurve 
 
 rocketAngle = []
@@ -16,32 +15,28 @@ integral = 0;
 
 def setup(pGain, iGain, dGain, momentInertia, distance, delay, initialAngle):
     global Kp, Ki, Kd
-    global mmoi, distanceToCenterOfMass, servoDelay, thrust
+    global mmoi, distanceToCenterOfMass, thrust
     Kp = pGain
     Ki = iGain
     Kd = dGain
     
     mmoi = momentInertia
     distanceToCenterOfMass = distance
-    servoDelay = delay
-    
-    for x in range(0, int(servoDelay / dt)):
-        rocketAngle.append(initialAngle)
-        tvcAngle.append(0)
-        angleVelocity.append(0)
-        angleAcceleration.append(0)
-        force.append(0)
-        time.append(x*dt)
+    rocketAngle.append(initialAngle)
+    tvcAngle.append(0)
+    angleVelocity.append(0)
+    angleAcceleration.append(0)
+    force.append(0)
+    time.append(0)
 
 def getForce(tvc_angle, iteration):
     if tvc_angle[iteration] > 10:
         tvc_angle[iteration] = 10
     elif tvc_angle[iteration] < -10:
         tvc_angle[iteration] = -10
-    print(thrust.getThrust(iteration/1000))
-    force.append(thrust.getThrust(iteration/1000) *  
-              math.sin(math.radians(tvcAngle[iteration-int(servoDelay/dt)])))
-    return thrust.getThrust(iteration/1000)*math.sin(math.radians(tvcAngle[iteration-int(servoDelay/dt)]))
+    force.append(-thrust.getThrust(iteration/1000) *  
+              math.sin(math.radians(tvcAngle[iteration])))
+    return -thrust.getThrust(iteration/1000)*math.sin(math.radians(tvcAngle[iteration]))
     
 def getAngle(force, iteration):
     angleAcceleration.append(math.degrees(
@@ -58,12 +53,13 @@ def loop(iteration):
     getAngle(tvcForce, iteration)
     proportional = Kp * rocketAngle[iteration+1]
     integral += Ki * rocketAngle[iteration+1] * dt
-    derivative = Kd * \
-        (rocketAngle[iteration+1] - rocketAngle[iteration]) / dt
+    derivative = Kd * (rocketAngle[iteration+1] - rocketAngle[iteration]) / dt
     tvcAngle.append(proportional + integral + derivative)
     time.append(time[iteration] + dt)
     
 def plot():
+    tvcAngle[len(tvcAngle)-1] = 0
+
     plt.figure('TVC Simulator')
 
     grid = plt.GridSpec(2, 2, hspace=0.3)
@@ -97,11 +93,11 @@ def plot():
 if __name__ == "__main__":
     global thrust
     #pGain, iGain, dGain, momentInertia, distanceFromEngineToCenterOfMass, seroDelay, initialAngle
-    setup(0.5, 0.2, 0.2, 0.03, 0.21, 50, 10)
-    thrust = MotorThrustCurve.ThrustCurve("AeroTech_F67W.csv", 0.08, 0.03)
+    setup(0.8, 0.1, 0.1, 0.03, 0.21, 1, 10)
+    thrust = MotorThrustCurve.ThrustCurve("AeroTech_F42T_L.csv", 0.08, 0.03)
     
     
-    for x in range(int(servoDelay / dt) - 1, int(5000/ dt)):
+    for x in range(0, int(50/ dt)):
         loop(x)
-
+        
     plot()
