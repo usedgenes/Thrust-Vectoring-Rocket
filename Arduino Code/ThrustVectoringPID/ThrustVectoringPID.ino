@@ -2,46 +2,74 @@
 #include <SD.h>
 #include "BMI088.h"
 
+//Debugging
 #define PRINT_IMU_DATA 0
 #define PRINT_CORRECTED_IMU 0
 #define PRINT_SERVO_POSITION 0
 #define PRINT_VECTOR_NORMALIZE 0
+#define PRINT_COMPLEMENTARY_FILTER 0
 
-#define BMP_SCK 13
-#define BMP_MISO 12
-#define BMP_MOSI 11
-#define BMP_CS 10
-#define Kp 0
-#define Ki 0
-#define Kd 0
-
-#define SERVO_X_PIN 0
-#define SERVO_Y_PIN 0
+//IMU
 #define SPI_SCK 0
 #define SPI_MISO 0
 #define SPI_MOSI 0
 #define IMU_CS 0
-#define COMPLEMENTARY_FILTER_CONSTANT 0
-#define MAX_SERVO_POSITION 0
-#define MIN_SERVO_POSITION 0
-
-//add filters
-
 SPIClass vspi = SPIClass(VSPI);
 Bmi088Accel accel(vspi, 33);
 Bmi088Gyro gyro(vspi, 32);
-File myFile;
-Servo servoX;
-Servo ServoY;
-
 float accelerometerCorrected[] = { 0, 0, 0 };
 float gyroscopeCorrected[] = { 0, 0, 0 };
 
+//PID
+#define Kp 0
+#define Ki 0
+#define Kd 0
+#define MAX_PID_OUTPUT 0
+#define MIN_PID_OUTPUT 0
+float integralError = 0;
+float previousError = 0;
+
+//Complementary filter
+#define PITCH_CONSTANT 0
+#define ROLL_CONSTANT 0
+float roll = 0;
+float pitch = 0;
+
+//Kalman filter
+#define Q = 0.1
+#define R = 4
+float angularVelocityX = 0;
+float angularyVelocityY = 0;
+float thetaModel = 0;
+float phiModel = 0;
+float thetaSensor = 0;
+float phiSensor = 0;
+
+float theta_n;      // a priori estimation of Theta
+float theta_p = 0;  // a posteriori estimation on Theta (set to zero for the initial time step k=0)
+float phi_n;        // a priori estimation of Phi
+float phi_p = 0;    // a posteriori estimation on Phi (set to zero for the initial time step k=0)
+
+float P_theta_n;      // a priori cobvariance of Theta
+float P_phi_n;        // a priori covariance of Phi
+float P_theta_p = 0;  // a posteriori covariance of Theta
+float P_phi_p = 0;    // a posteriori covariance of Phi
+
+float K_theta;  // Observer gain or Kalman gain for Theta
+float K_phi;    // Observer gain or Kalman gain for Phi
+
+//Servos
+#define MAX_SERVO_POSITION 0
+#define MIN_SERVO_POSITION 0
+#define SERVO_X_PIN 0
+#define SERVO_Y_PIN 0
+Servo servoX;
+Servo servoY;
 int servoStartingPosition[2] = { 10, 100 };
 int servoPosition_X = 100;
 int servoPosition_Y = 100;
-int minPosition = 0;
-int maxPosition = 60;
+
+File myFile;
 
 void setup() {
   initIMU();
@@ -51,25 +79,20 @@ void loop() {
   // put your main code here, to run repeatedly:
 }
 
-float pid(float currentAltitude, unsigned long currentTime) {
-  unsigned long dt = currentTime - previousTime;
-  if (dt == 0) {
+float pid(float error, unsigned long deltaTime) {
+  if (deltaTime == 0) {
     return 0;
   }
-  previousTime = currentTime;
-  float error = adjustedTargetAltitude - currentAltitude;
-  float derivativeError = (error - previousError) / dt;
-  integralError += error * dt;
+  float derivativeError = (error - previousError) / deltaTime;
+  integralError += error * deltaTime;
   float output = Kp * error + Ki * integralError + Kd * derivativeError;
   previousError = error;
 
-  if (output > MAX_OUTPUT) {
-    output = MAX_OUTPUT;
-  } else if (output < MIN_OUTPUT) {
-    output = MIN_OUTPUT;
+  if (output > MAX_PID_OUTPUT) {
+    output = MAX_PID_OUTPUT;
+  } else if (output < MIN_PID_OUTPUT) {
+    output = MIN_PID_OUTPUT;
   }
-
-  pidLogger(currentTime, dt, error, derivativeError, integralError, output);
 }
 
 void logger(unsigned long time, float altitude, float pressure, int servoPosition) {
@@ -186,18 +209,18 @@ void initServos() {
 }
 
 void writeServos(int servoPosition_X, int servoPosition_Y) {
-  if (servoPosition_X < MIN_POSITION) {
-    servoPosition_X = MIN_POSITION + servoStartingPosition[0];
-  } else if (servoPosition_X > MAX_POSITION) {
+  if (servoPosition_X < MIN_SERVO_POSITION) {
+    servoPosition_X = MIN_SERVO_POSITION + servoStartingPosition[0];
+  } else if (servoPosition_X > MAX_SERVO_POSITION) {
     servoPosition_X = MAX_SERVO_POSITION + servoStartingPosition[0];
   } else {
     servoPosition_X = servoPosition_X + servoStartingPosition[0];
   }
 
-  if (servoPosition_Y < MIN_POSITION) {
+  if (servoPosition_Y < MIN_SERVO_POSITION) {
     servoPosition_Y = MIN_SERVO_POSITION + servoStartingPosition[1];
-  } else if (servoPosition_Y > MAX_POSITION) {
-    servoPosition_Y = MAX__SERVO_POSITION + servoStartingPosition[1];
+  } else if (servoPosition_Y > MAX_SERVO_POSITION) {
+    servoPosition_Y = MAX_SERVO_POSITION + servoStartingPosition[1];
   } else {
     servoPosition_Y = servoPosition_Y + servoStartingPosition[1];
   }
@@ -232,21 +255,40 @@ void pidLogger(unsigned long time, unsigned long dt, float error, float derivati
   }
 }
 
-float getAccelerometerAngle(float accelerometerInput[]) {
-  float accY = accelerometerInput[1] * ()
+void applyComplementaryFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]) {
+  float accelPitch = atan2(-accelerometerInput[0], sqrt(accelerometerInput[1] * accelerometerInput[1] + accelerometerInput[2] * accelerometerInput[2]));
+  float accelRoll = atan2(accelerometerInput[1], sqrt(accelerometerInput[0] * accelerometerInput[0] + accelerometerInput[2] * accelerometerInput[2]));
+  pitch = PITCH_CONSTANT * (pitch + gyroInput[1] * loopTime / 1000) + (1 - PITCH_CONSTANT) * accelPitch;
+  roll = ROLL_CONSTANT * (roll + gyroInput[0] * loopTime / 1000) + (1 - ROLL_CONSTANT) * accelRoll;
+#ifdef PRINT_COMPLEMENTARY_FILTER
+  Serial.print("Pitch: ");
+  Serial.println(pitch);
+  Serial.print("Roll: ");
+  Serial.println(roll);
+#endif
+  output[0] = pitch;
+  output[1] = roll;
 }
 
-float applyComplementaryFilter(float accelerometerInput, float gyroInput, int looptime, float currentAngle, float y1) {
-  accAngle = accelerometerInput * 180 / PI; 
-  gyroRate = gyroInput;
+void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]) {
+  thetaModel = thetaModel - angularVelocityY * 0.1;
+  phiModel = phiModel - angularVelocityX * 0.1;
+  thetaSensor = atan2(acc.x() / 9.8, acc.z() / 9.8) / 2 / 3.141592654 * 360;
+  phiSensor = atan2(acc.y() / 9.8, acc.z() / 9.8) / 2 / 3.141592654 * 360;
+  P_theta_n = P_theta_p + Q;
+  K_theta = P_theta_n / (P_theta_n + R);
+  theta_n = theta_p - ds * w_y;
+  theta_p = theta_n + K_theta * (theta_s - theta_n);
+  P_theta_p = (1 - K_theta) * P_theta_n;
 
-  float deltaTime = float(looptime) / 1000.0;
+  P_phi_n = P_phi_p + Q;
+  K_phi = P_phi_n / (P_phi_n + R);
+  phi_n = phi_p + ds * w_x;
+  phi_p = phi_n + K_phi * (phi_s - phi_n);
+  P_phi_p = (1 - K_phi) * P_phi_n;
 
-  float x1 = (accAngle - currentAngle) * COMPLEMENTARY_FILTER_CONSTANT * COMPLEMENTARY_FILTER_CONSTANT;
-  y1 = deltaTime * x1 + y1;
-  float x2 = y1 + (accAngle - currentAngle) * 2 * COMPLEMENTARY_FILTER_CONSTANT + gyroRate;
-  currentAngle = deltaTime*x2 + currentAngle;
-  return currentAngle;
+  output[0] = theta_p;
+  output[1] = phi_p;
 }
 
 void normalizeVector(float vector[]) {
