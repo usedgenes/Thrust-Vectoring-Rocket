@@ -3,17 +3,17 @@
 #include "BMI088.h"
 
 //Debugging
-#define PRINT_IMU_DATA 0
-#define PRINT_CORRECTED_IMU 0
-#define PRINT_SERVO_POSITION 0
-#define PRINT_VECTOR_NORMALIZE 0
+// #define PRINT_IMU_DATA 0
+// #define PRINT_CORRECTED_IMU 0
+// #define PRINT_SERVO_POSITION 0
+// #define PRINT_VECTOR_NORMALIZE 0
 #define PRINT_COMPLEMENTARY_FILTER 0
 
 //IMU
-#define SPI_SCK 0
-#define SPI_MISO 0
-#define SPI_MOSI 0
-#define IMU_CS 0
+#define SPI_SCK 27
+#define SPI_MISO 25
+#define SPI_MOSI 26
+#define IMU_CS 33
 SPIClass vspi = SPIClass(VSPI);
 Bmi088Accel accel(vspi, 33);
 Bmi088Gyro gyro(vspi, 32);
@@ -36,8 +36,8 @@ float roll = 0;
 float pitch = 0;
 
 //Kalman filter
-#define Q = 0.1
-#define R = 4
+#define Q 0.1
+#define R 4
 float angularVelocityX = 0;
 float angularyVelocityY = 0;
 float thetaModel = 0;
@@ -71,12 +71,23 @@ int servoPosition_Y = 100;
 
 File myFile;
 
+float accelerometerData[3] = { 0, 0, 0 };
+float gyroscopeData[3] = { 0, 0, 0 };
+unsigned long previousTime = 0;
+
 void setup() {
+  Serial.begin(115200);
   initIMU();
+  previousTime = 0;
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  unsigned long loopTime = millis() - previousTime;
+  previousTime = millis();
+  getIMUData(accelerometerData, gyroscopeData);
+  float output[2] = { 0, 0 };
+  applyComplementaryFilter(accelerometerData, gyroscopeData, loopTime, output);
+  delay(800);
 }
 
 float pid(float error, unsigned long deltaTime) {
@@ -132,10 +143,9 @@ void getCorrectedIMU() {
   }
 
   //correcting for gravity
-  accelerometerCorrected[2] = accelerometerCorrected[2] - 9.8;
 
 #ifdef PRINT_CORRECTED_IMU
-  Serial.print("Accelerometer: ");
+  Serial.print("Accelerometer Corrected: ");
   Serial.print("\t");
   Serial.print(accelerometerCorrected[0]);
   Serial.print("\t");
@@ -143,7 +153,7 @@ void getCorrectedIMU() {
   Serial.print("\t");
   Serial.println(accelerometerCorrected[2]);
 
-  Serial.print("Gyroscope: ");
+  Serial.print("Gyroscope Corrected: ");
   Serial.print("\t");
   Serial.print(gyroscopeCorrected[0]);
   Serial.print("\t");
@@ -157,39 +167,36 @@ void getIMUData(float accelerometer[], float gyroscope[]) {
   accel.readSensor();
   gyro.readSensor();
 
-  accelerometer[0] = accel.getAccelX_mss();
-  accelerometer[1] = accel.getAccelY_mss();
-  accelerometer[2] = accel.getAccelZ_mss();
+  accelerometer[0] = accel.getAccelX_mss() - accelerometerCorrected[0];
+  accelerometer[1] = accel.getAccelY_mss() - accelerometerCorrected[1];
+  accelerometer[2] = accel.getAccelZ_mss() - accelerometerCorrected[2];
 
-  gyroscope[0] = gyro.getGyroX_rads();
-  gyroscope[1] = gyro.getGyroY_rads();
-  gyroscope[2] = gyro.getGyroZ_rads();
+  gyroscope[0] = gyro.getGyroX_rads() - gyroscopeCorrected[0];
+  gyroscope[1] = gyro.getGyroY_rads() - gyroscopeCorrected[1];
+  gyroscope[2] = gyro.getGyroZ_rads() - gyroscopeCorrected[2];
 
 #ifdef PRINT_IMU_DATA
-  Serial.print("Accelerometer: ");
-  Serial.print("\t");
+  // Serial.print("Accelerometer: ");
+  // Serial.print("\t");
   Serial.print(accelerometer[0]);
   Serial.print("\t");
   Serial.print(accelerometer[1]);
   Serial.print("\t");
   Serial.println(accelerometer[2]);
 
-  Serial.print("Gyroscope: ");
-  Serial.print("\t");
-  Serial.print(gyroscope[0]);
-  Serial.print("\t");
-  Serial.print(gyroscope[1]);
-  Serial.print("\t");
-  Serial.println(gyroscope[2]);
+  // Serial.print("Gyroscope: ");
+  // Serial.print("\t");
+  // Serial.print(gyroscope[0]);
+  // Serial.print("\t");
+  // Serial.print(gyroscope[1]);
+  // Serial.print("\t");
+  // Serial.println(gyroscope[2]);
 #endif
 }
 
 void initIMU() {
   vspi.begin(SPI_SCK, SPI_MISO, SPI_MOSI, IMU_CS);
   int status;
-  /* USB Serial to print data */
-  Serial.begin(115200);
-  while (!Serial) {}
   status = accel.begin();
   if (status < 0) {
     Serial.println("Accel Initialization Error");
@@ -261,9 +268,10 @@ void applyComplementaryFilter(float accelerometerInput[], float gyroInput[], int
   pitch = PITCH_CONSTANT * (pitch + gyroInput[1] * loopTime / 1000) + (1 - PITCH_CONSTANT) * accelPitch;
   roll = ROLL_CONSTANT * (roll + gyroInput[0] * loopTime / 1000) + (1 - ROLL_CONSTANT) * accelRoll;
 #ifdef PRINT_COMPLEMENTARY_FILTER
-  Serial.print("Pitch: ");
-  Serial.println(pitch);
-  Serial.print("Roll: ");
+  // Serial.print("Pitch: ");
+  Serial.print(pitch);
+  Serial.print("\t");
+  // Serial.print("Roll: ");
   Serial.println(roll);
 #endif
   output[0] = pitch;
@@ -271,24 +279,33 @@ void applyComplementaryFilter(float accelerometerInput[], float gyroInput[], int
 }
 
 void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]) {
-  thetaModel = thetaModel - angularVelocityY * 0.1;
-  phiModel = phiModel - angularVelocityX * 0.1;
-  thetaSensor = atan2(acc.x() / 9.8, acc.z() / 9.8) / 2 / 3.141592654 * 360;
-  phiSensor = atan2(acc.y() / 9.8, acc.z() / 9.8) / 2 / 3.141592654 * 360;
+  loopTime = loopTime * 0.001;
+  thetaModel = thetaModel - gyroInput[1] * 0.1;
+  phiModel = phiModel + gyroInput[0] * 0.1;
+  thetaSensor = atan2(accelerometerInput[0] / 9.8, accelerometerInput[2] / 9.8) / 2 / 3.141592654 * 360;
+  phiSensor = atan2(accelerometerInput[1] / 9.8, accelerometerInput[2] / 9.8) / 2 / 3.141592654 * 360;
   P_theta_n = P_theta_p + Q;
   K_theta = P_theta_n / (P_theta_n + R);
-  theta_n = theta_p - ds * w_y;
-  theta_p = theta_n + K_theta * (theta_s - theta_n);
+  theta_n = theta_p - loopTime * gyroInput[1];
+  theta_p = theta_n + K_theta * (thetaSensor - theta_n);
   P_theta_p = (1 - K_theta) * P_theta_n;
 
   P_phi_n = P_phi_p + Q;
   K_phi = P_phi_n / (P_phi_n + R);
-  phi_n = phi_p + ds * w_x;
-  phi_p = phi_n + K_phi * (phi_s - phi_n);
+  phi_n = phi_p + loopTime * gyroInput[0];
+  phi_p = phi_n + K_phi * (phiSensor - phi_n);
   P_phi_p = (1 - K_phi) * P_phi_n;
 
   output[0] = theta_p;
   output[1] = phi_p;
+
+#ifdef PRINT_COMPLEMENTARY_FILTER
+  // Serial.print("Pitch: ");
+  Serial.print(pitch);
+  Serial.print("\t");
+  // Serial.print("Roll: ");
+  Serial.println(roll);
+#endif
 }
 
 void normalizeVector(float vector[]) {
