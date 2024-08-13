@@ -36,7 +36,7 @@ state_vector = {"ay" : 0 ,"vy" : 0,"py" : 0,"ax" : 0 ,"vx" : 1,"px" : 0 ,"alpha"
 rocket_phys = phys.threeDofPhysics(state_vector,vehicle.mass,vehicle.mmoi)
 
 #Controller setup
-controller = pid.PID(0.07,0.01,0.01,0) #KP,KI,KD,setpoint
+controller = pid.PID(0.01,0.005,0.005,0) #KP,KI,KD,setpoint
 controller.setLims(-10,10)#output limits
 #our TVC is also limited by SERVO_LIMIT but we might want to change the the two independently
 
