@@ -16,13 +16,13 @@ class PID():
 
     def compute(self, pos, dt):
         error = self.sp - pos #compute the error
-        derivative_error = (error - self.error_last) / dt #find the derivative of the error (how the error changes with time)
-        self.integral_error += error * dt #error build up over time
+        derivative_error = (error - self.previousError) / dt 
+        self.integralError += error * dt #error build up over time
         output = self.kp*error + self.ki*self.integral_error + self.kd*derivative_error 
         self.error_last = error
-        if output > self.saturation_max and self.saturation_max is not None:
-            output = self.saturation_max
-        elif output < self.saturation_min and self.saturation_min is not None:
-            output = self.saturation_min
+        if output > self.maxOutput: 
+            output = self.maxOutput
+        elif output < self.minOutput:
+            output = self
         return output
 
