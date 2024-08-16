@@ -2,6 +2,7 @@ import numpy as np
 
 class Rocket():
     
+    #mass in kg
     def __init__(self, initial_state_vector, mass, mmoi, servoLimit, distance_TVC_COM):
         self.state_vector = initial_state_vector
         self.mass = mass
