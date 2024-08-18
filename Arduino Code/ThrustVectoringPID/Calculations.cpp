@@ -1,7 +1,7 @@
 #include "Calculations.h"
 #include "Arduino.h"
 
-void Calculations::applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]) {
+void Calculations::applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float& theta, float& phi) {
   loopTime = loopTime * 0.001;
   thetaModel = thetaModel - gyroInput[1] * 0.1;
   phiModel = phiModel + gyroInput[0] * 0.1;
@@ -19,8 +19,8 @@ void Calculations::applyKalmanFilter(float accelerometerInput[], float gyroInput
   phi_p = phi_n + K_phi * (phiSensor - phi_n);
   P_phi_p = (1 - K_phi) * P_phi_n;
 
-  output[0] = theta_p;
-  output[1] = phi_p;
+  theta = theta_p;
+  phi = phi_p;
 
 #ifdef PRINT_COMPLEMENTARY_FILTER
   // Serial.print("Pitch: ");

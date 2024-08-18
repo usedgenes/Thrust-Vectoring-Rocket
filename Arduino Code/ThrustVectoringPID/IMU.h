@@ -15,7 +15,6 @@ private:
   Bmi088Accel *accel;
   Bmi088Gyro *gyro;
 
-  float accelerometerCorrected[3] = { 0, 0, 0 };
   float gyroscopeCorrected[3] = { 0, 0, 0 };
 
 public:

@@ -7,7 +7,7 @@ typedef struct {
   float Ki;
 } Constants;
 
-class ControlLoop {
+class PID {
 #define MAX_PID_OUTPUT 0
 #define MIN_PID_OUTPUT 0 
 private:
@@ -19,7 +19,7 @@ private:
 
 public:
   void Init(Constants _constants);
-  float ComputeCorrection(float error, float loopTime);
+  float ComputeCorrection(float error, unsigned long loopTime);
 };
 
 #endif  

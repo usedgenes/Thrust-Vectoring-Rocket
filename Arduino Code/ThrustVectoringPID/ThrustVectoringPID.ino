@@ -16,8 +16,7 @@
 #define PID_UUID "a979c0ba-a2be-45e5-9d7b-079b06e06096"
 #define RESET_UUID "fb02a2fa-2a86-4e95-8110-9ded202af76b"
 
-#define PRINT_BLUETOOTH_SERVO
-#define PRINT_BLUETOOTH_BMI088
+#define BLUETOOTH_REFRESH_THRESHOLD 5
 
 BLECharacteristic *pServo;
 BLECharacteristic *pBMI088;
@@ -32,6 +31,9 @@ Logger logger;
 PID pitchPID, rollPID;
 Constants pitchConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
 Constants rollConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
+
+int bluetoothRefreshRate = 0;
+unsigned long previousTime = 0;
 
 void (*resetFunc)(void) = 0;
 
@@ -51,21 +53,8 @@ class ServoCallbacks : public BLECharacteristicCallbacks {
     String value = pCharacteristic->getValue();
     if (value.substring(0, 1) == "0") {
       servos.WriteServoPosition(0, value.substring(1, value.length()).toInt());
-#ifdef PRINT_BLUETOOTH_SERVO
-      Serial.print("Writing servo0: ");
-      Serial.println(value.substring(1, value.length()).toInt());
-#endif
     } else if (value.substring(0, 1) == "1") {
       servos.WriteServoPosition(1, value.substring(1, value.length()).toInt());
-#ifdef PRINT_BLUETOOTH_SERVO
-      Serial.print("Writing servo1: ");
-      Serial.println(value.substring(1, value.length()).toInt());
-#endif
-    }
-    if (value.substring(0, 1) == "2") {
-      pCharacteristic->setValue("3" + String(servo0pos));
-      pCharacteristic->notify();
-      pCharacteristic->setValue("4" + String(servo1pos));
     }
   }
 };
@@ -73,28 +62,6 @@ class ServoCallbacks : public BLECharacteristicCallbacks {
 class BMI088Callbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
-    if (value.substring(0, 1) == "0") {
-      pCharacteristic->setValue("7" + String(adjustedYaw, 2));
-      pCharacteristic->notify();
-
-      pCharacteristic->setValue("8" + String(adjustedPitch));
-      pCharacteristic->notify();
-
-      pCharacteristic->setValue("9" + String(adjustedRoll));
-      pCharacteristic->notify();
-
-#ifdef PRINT_BLUETOOTH_BMI088
-      Serial.print("Writing bluetooth:");
-      Serial.print("\t");
-      Serial.print(adjustedYaw);
-      Serial.print("\t");
-      Serial.print(adjustedPitch);
-      Serial.print("\t");
-      Serial.println(adjustedRoll);
-#endif
-    }
-    if (value.substring(0, 1) == "1") {
-    }
   }
 };
 
@@ -163,9 +130,6 @@ class PIDCallbacks : public BLECharacteristicCallbacks {
   }
 };
 
-
-unsigned long previousTime = 0;
-
 void setup() {
   Serial.begin(115200);
   String devName = DEVICE_NAME;
@@ -210,8 +174,45 @@ void setup() {
 }
 
 void loop() {
+  bluetoothRefreshRate += 1;
   unsigned long loopTime = millis() - previousTime;
   previousTime = millis();
+  float altitude = altimeter.GetReading()
+  float accelerometer[] = {0, 0, 0};
+  float gyroscope[] = {0, 0, 0};
+  imu.getIMUData(accelerometer, gyroscope);
+
+  float theta, phi;
+  calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, theta, phi);
+  float thetaCommand = pid.ComputeCorrection(theta, loopTime);
+  float phiCommand = pid.computeCorrection(phi, loopTime);
+
+  int servo0pos = servos.writePosition(0, thetaCommand);
+  int servo1pos = servos.writePosition(1, phiCommand);
+
+  if(bluetoothRefreshRate == BLUETOOTH_REFRESH_THRESHOLD) {
+    pBMI088->setValue("90" + String(accelerometer[0]));
+    pBMI088->setValue("91" + String(accelerometer[1]));
+    pBMI088->setValue("92" + String(accelerometer[1]));
+    pBMI088->setValue("93" +  String(gyroscope[0]));
+    pBMI088->setValue("94" + String(gyroscope[1]));
+    pBMI088->setValue("95" + String(gyroscope[1]));
+    pBMI088->notify();
+
+    pBMP390->setValue("90" + String(altitude));
+    pBMP390->notify();
+
+    pPID->setValue("90" + String(theta));
+    pPID->setValue("92" + String(phi));
+    pPID->setValue("92" + String(thetaCommand));
+    pPID->setValue("93" + String(phiCommand));
+
+    pServo->setValue("90" + String(servo0pos));
+    pServo->setValue("91" + String(servo1pos));
+    bluetoothRefreshRate = 0;
+  }
+
+  logger.log();
 }
 
 

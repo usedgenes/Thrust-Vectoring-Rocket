@@ -8,8 +8,9 @@ float PID::ComputeCorrection(float error, unsigned long loopTime) {
   if (loopTime == 0) {
     return 0;
   }
-  integrator += error * loopTime;
-  float derivative = (error - previousError) / loopTime;
+  float deltaTime = loopTime / 1000;
+  integrator += error * deltaTime;
+  float derivative = (error - previousError) / deltaTime;
   float output = (constants.Kp * error) + (constants.Ki * integrator) + (constants.Kd * derivative);
 
   previousError = error;

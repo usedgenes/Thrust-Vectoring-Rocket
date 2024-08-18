@@ -10,9 +10,12 @@ class Logger {
 #define SD_MOSI = -1;
 #define SD_CS = -1;
 
+#define FILE_PATH "/Logs.txt"
+
 private:
 public:
   void Init();
+  void log(String message);
 };
 
 #endif

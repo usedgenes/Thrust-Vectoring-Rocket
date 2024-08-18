@@ -39,7 +39,7 @@ private:
 
 public:
   void Init();
-  void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]);
+  void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float& theta, float& phi);
   void normalizeVector(float vector[]);
 };
 
