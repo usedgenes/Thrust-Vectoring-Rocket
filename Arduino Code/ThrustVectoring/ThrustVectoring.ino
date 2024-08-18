@@ -1,9 +1,9 @@
 #include "IMU.h"
 #include "Servos.h"
 #include "Altimeter.h"
-#include "Calculations.h"
+// #include "Calculations.h"
 // #include "Logger.h"
-#include "PID.h"
+// #include "PID.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -23,21 +23,21 @@
 // BLECharacteristic *pPID;
 // BLECharacteristic *pBMP390;
 
-IMU imu;
-Servos servos;
-Altimeter altimeter;
-Calculations calculations;
-// Logger logger;
-PID thetaPID, phiPID;
-Constants pitchConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
-Constants rollConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
-Constants yawConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
+// IMU imu;
+// Servos servos;
+// Altimeter altimeter;
+// Calculations calculations;
+// // Logger logger;
+// PID thetaPID, phiPID;
+// Constants pitchConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
+// Constants rollConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
+// Constants yawConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
 
 int bluetoothRefreshRate = 0;
 unsigned long previousTime = 0;
 boolean pidOn = false;
 
-void (*resetFunc)(void) = 0;
+// void (*resetFunc)(void) = 0;
 
 // class MyServerCallbacks : public BLEServerCallbacks {
 //   void onConnect(BLEServer *pServer) {
@@ -158,32 +158,32 @@ void setup() {
 
   previousTime = 0;
 
-  imu.Init();
-  servos.Init();
-  altimeter.Init();
-  calculations.Init();
-  // logger.Init();
-  thetaPID.Init(pitchConstants);
-  phiPID.Init(rollConstants);
+  // imu.Init();
+  // servos.Init();
+  // altimeter.Init();
+  // calculations.Init();
+  // // logger.Init();
+  // thetaPID.Init(pitchConstants);
+  // phiPID.Init(rollConstants);
 }
 
 void loop() {
-  bluetoothRefreshRate += 1;
-  unsigned long loopTime = millis() - previousTime;
-  previousTime = millis();
-  float temperature, pressure, altitude;
-  altimeter.GetReading(temperature, pressure, altitude);
-  float accelerometer[] = {0, 0, 0};
-  float gyroscope[] = {0, 0, 0};
-  imu.getIMUData(accelerometer, gyroscope);
+  // bluetoothRefreshRate += 1;
+  // unsigned long loopTime = millis() - previousTime;
+  // previousTime = millis();
+  // float temperature, pressure, altitude;
+  // altimeter.GetReading(temperature, pressure, altitude);
+  // float accelerometer[] = {0, 0, 0};
+  // float gyroscope[] = {0, 0, 0};
+  // imu.getIMUData(accelerometer, gyroscope);
 
-  float theta, phi;
-  calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, theta, phi);
-  float thetaCommand = thetaPID.ComputeCorrection(theta, loopTime);
-  float phiCommand = phiPID.ComputeCorrection(phi, loopTime);
+  // float theta, phi;
+  // calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, theta, phi);
+  // float thetaCommand = thetaPID.ComputeCorrection(theta, loopTime);
+  // float phiCommand = phiPID.ComputeCorrection(phi, loopTime);
 
-  int servo0pos = servos.WriteServoPosition(0, thetaCommand);
-  int servo1pos = servos.WriteServoPosition(1, phiCommand);
+  // int servo0pos = servos.WriteServoPosition(0, thetaCommand);
+  // int servo1pos = servos.WriteServoPosition(1, phiCommand);
 
   if(bluetoothRefreshRate == BLUETOOTH_REFRESH_THRESHOLD) {
     // pBMI088->setValue("90" + String(accelerometer[0]));

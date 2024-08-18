@@ -9,7 +9,6 @@ class IMU {
 #define SPI_MOSI 26
 #define ACCEL_CS 33
 #define GYRO_CS 32
-
 private:
   SPIClass vspi = SPIClass(VSPI);
   Bmi088Accel *accel;

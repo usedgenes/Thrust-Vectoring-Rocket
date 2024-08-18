@@ -30,24 +30,6 @@ void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
   gyroscope[0] = gyro->getGyroX_rads() - gyroscopeCorrected[0];
   gyroscope[1] = gyro->getGyroY_rads() - gyroscopeCorrected[1];
   gyroscope[2] = gyro->getGyroZ_rads() - gyroscopeCorrected[2];
-
-#ifdef PRINT_IMU_DATA
-  // Serial.print("Accelerometer: ");
-  // Serial.print("\t");
-  Serial.print(accelerometer[0]);
-  Serial.print("\t");
-  Serial.print(accelerometer[1]);
-  Serial.print("\t");
-  Serial.println(accelerometer[2]);
-
-  // Serial.print("Gyroscope: ");
-  // Serial.print("\t");
-  // Serial.print(gyroscope[0]);
-  // Serial.print("\t");
-  // Serial.print(gyroscope[1]);
-  // Serial.print("\t");
-  // Serial.println(gyroscope[2]);
-#endif
 }
 
 void IMU::getCorrectedIMU() {
@@ -64,23 +46,6 @@ void IMU::getCorrectedIMU() {
     gyroscopeCorrected[i] = gyroscopeTemp[i] / numberOfReadings;
   }
 
-#ifdef PRINT_CORRECTED_IMU
-  Serial.print("Accelerometer Corrected: ");
-  Serial.print("\t");
-  Serial.print(accelerometerCorrected[0]);
-  Serial.print("\t");
-  Serial.print(accelerometerCorrected[1]);
-  Serial.print("\t");
-  Serial.println(accelerometerCorrected[2]);
-
-  Serial.print("Gyroscope Corrected: ");
-  Serial.print("\t");
-  Serial.print(gyroscopeCorrected[0]);
-  Serial.print("\t");
-  Serial.print(gyroscopeCorrected[1]);
-  Serial.print("\t");
-  Serial.println(gyroscopeCorrected[2]);
-#endif
 }
 
 

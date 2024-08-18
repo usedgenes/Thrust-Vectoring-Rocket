@@ -14,7 +14,7 @@ private:
   Constants constants;
   
   float error = 0;
-  float errorPrev = 0;
+  float previousError = 0;
   float integrator = 0;
 
 public:

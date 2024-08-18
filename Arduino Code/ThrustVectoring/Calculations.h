@@ -2,16 +2,11 @@
 #define CALCULATIONS_H
 
 class Calculations {
-//PID
-#define Kp 0
-#define Ki 0
-#define Kd 0
 #define MAX_PID_OUTPUT 0
 #define MIN_PID_OUTPUT 0
 //Kalman Filter
 #define Q 0.1
 #define R 4
-
 private:
   
   float angularVelocityX = 0;
