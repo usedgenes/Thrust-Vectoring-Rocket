@@ -11,7 +11,9 @@ class Calculations {
 //Kalman Filter
 #define Q 0.1
 #define R 4
+
 private:
+  
   float angularVelocityX = 0;
   float angularyVelocityY = 0;
   float thetaModel = 0;
@@ -38,7 +40,6 @@ private:
 public:
   void Init();
   void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float output[]);
-  float pid(float error, unsigned long deltaTime);
   void normalizeVector(float vector[]);
 };
 

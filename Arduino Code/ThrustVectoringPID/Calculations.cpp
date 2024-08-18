@@ -31,22 +31,6 @@ void Calculations::applyKalmanFilter(float accelerometerInput[], float gyroInput
 #endif
 }
 
-float Calculations::pid(float error, unsigned long deltaTime) {
-  if (deltaTime == 0) {
-    return 0;
-  }
-  float derivativeError = (error - previousError) / deltaTime;
-  integralError += error * deltaTime;
-  float output = Kp * error + Ki * integralError + Kd * derivativeError;
-  previousError = error;
-
-  if (output > MAX_PID_OUTPUT) {
-    output = MAX_PID_OUTPUT;
-  } else if (output < MIN_PID_OUTPUT) {
-    output = MIN_PID_OUTPUT;
-  }
-}
-
 void Calculations::normalizeVector(float vector[]) {
   float sum = 0;
   for (int i = 0; i < 3; i++) {
