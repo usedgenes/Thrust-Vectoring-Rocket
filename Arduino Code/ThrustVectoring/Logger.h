@@ -1,23 +1,38 @@
-// #ifndef LOGGER_H_
-// #define LOGGER_H_
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
-// #include "SD.h"
-// #include "SPI.h"
+#include "SD.h"
+#include "SPI.h"
 
-// #define SD_SCK -1;
-// #define SD_MISO -1;
-// #define SD_MOSI -1;
-// #define SD_CS -1;
+enum LogType {
+  MotorThrust,
+  Altitude,
+  AccelX,
+  AccelY,
+  AccelZ,
+  GyroX,
+  GyroY,
+  GyroZ,
+};
 
-// class Logger {
+class Logger {
+#define SD_SCK -1
+#define SD_MISO -1
+#define SD_MOSI -1
+#define SD_CS -1
 
+#define ALTITUDE_PATH "/Altitude.txt"
+#define ACCELX_PATH "/AccelX.txt"
+#define ACCELY_PATH "/AccelY.txt"
+#define ACCELZ_PATH "/AccelZ.txt"
+#define GYROX_PATH "/GyroX.txt"
+#define GYROY_PATH "/GyroY.txt"
+#define GYROZ_PATH "/GyroZ.txt"
 
-// #define FILE_PATH "/Logs.txt"
+private:
+public:
+  void Init();
+  void log(LogType type, String message);
+};
 
-// private:
-// public:
-//   void Init();
-//   void log(String message);
-// };
-
-// #endif
+#endif
