@@ -24,6 +24,9 @@ class Rocket():
         self.state_vector["py"] += self.state_vector["vy"] * dt
         self.state_vector["px"] += self.state_vector["vx"] * dt
         self.state_vector["theta"] += self.state_vector["omega"] * dt
+        if(self.state_vector["py"] <= 0):
+            self.state_vector["py"] = 0
+            self.state_vector["vy"] = 0
         return self.state_vector
     
     #angle in rads
@@ -32,8 +35,8 @@ class Rocket():
             input_angle = self.servoLimit
         if input_angle < -self.servoLimit:
             input_angle = -self.servoLimit
-        Fx = np.sin(self.state_vector["theta"])*np.sin(input_angle) * thrust
-        Fy = np.cos(self.state_vector["theta"])*np.cos(input_angle) * thrust
+        Fx = np.sin(self.state_vector["theta"] - input_angle) * thrust
+        Fy = np.cos(self.state_vector["theta"] - input_angle) * thrust
         Tau = np.sin(input_angle) * thrust * self.distance_TVC_COM
         self.actuator_state = input_angle
         self.input_last = input_angle
