@@ -1,16 +1,18 @@
 import numpy as np
+from pylab import * 
 
 class Rocket():
     
     #mass in kg
-    def __init__(self, initial_state_vector, mass, mmoi, servoLimit, distance_TVC_COM):
+    def __init__(self, initial_state_vector, mass, mmoi, tvcLimit, distance_TVC_COM, tvcRotationLimit):
         self.state_vector = initial_state_vector
-        self.previous_state_vector = initial_state_vector
         self.mass = mass
         self.mmoi = mmoi
-        self.servoLimit = servoLimit
+        self.tvcLimit = tvcLimit
         self.G = -9.81
         self.distance_TVC_COM = distance_TVC_COM
+        self.tvcRotationLimit = tvcRotationLimit
+        self.previousTvcState = initial_state_vector["tvcAngle"]
         
     #alpha: angular acceleration
     #omega: angular velocity
@@ -28,21 +30,29 @@ class Rocket():
         if(self.state_vector["py"] <= 0):
             self.state_vector["py"] = 0
             self.state_vector["vy"] = 0
-        self.previous_state_vector = self.state_vector
         return self.state_vector
     
     #angle in rads
     #theta - rocket's angle from verticle
     #input_angle - tvc mechanism's angle from rocket's center line
-    def tvcPhysics(self, input_angle, thrust, dt): 
-        if input_angle > self.servoLimit:
-            input_angle = self.servoLimit
-        if input_angle < -self.servoLimit:
-            input_angle = -self.servoLimit
-        Fx = np.sin(self.state_vector["theta"] - input_angle) * thrust
-        Fy = np.cos(self.state_vector["theta"] - input_angle) * thrust
+    def rocketPhysics(self, thrust, dt): 
+        Fx = np.sin(self.state_vector["theta"] - self.state_vector["tvcAngle"]*pi/180) * thrust
+        Fy = np.cos(self.state_vector["theta"] - self.state_vector["tvcAngle"]*pi/180) * thrust
         #torque applied to the rocket from the tvc's angle
-        Tau = np.sin(input_angle) * thrust * self.distance_TVC_COM
-        self.actuator_state = input_angle
-        self.input_last = input_angle
+        Tau = np.sin(self.state_vector["tvcAngle"]*pi/180) * thrust * self.distance_TVC_COM
         return [Fy,Fx,Tau]
+    
+    def tvcCalculations(self, pidCommand):
+        if(pidCommand - self.state_vector["tvcAngle"] > self.tvcRotationLimit):
+            if(pidCommand < 0):
+                self.state_vector["tvcAngle"] -= self.tvcRotationLimit
+            else:
+                self.state_vector["tvcAngle"] += self.tvcRotationLimit
+        else:
+            self.state_vector["tvcAngle"] += pidCommand
+        if(self.state_vector["tvcAngle"] > self.tvcLimit):
+            self.state_vector["tvcAngle"] = self.tvcLimit
+        if(self.state_vector["tvcAngle"] < -self.tvcLimit):
+            self.state_vector["tvcAngle"] = -self.tvcLimit
+            
+        

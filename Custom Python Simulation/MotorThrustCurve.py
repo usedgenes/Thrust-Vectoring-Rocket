@@ -5,13 +5,10 @@ class ThrustCurve():
     def __init__(self, motorFile):
         with open(motorFile, mode = 'r') as file:
             csvFile = csv.reader(file)
-            lineCount = 1;
             self.thrustPoints = []
             self.thrustPoints.append([0,0])
             for row in csvFile:
-                if(lineCount >= 6):
-                    self.thrustPoints.append([float(x) for x in row])
-                lineCount += 1
+                self.thrustPoints.append([float(x) for x in row])
     
     #Thrust in Newtons
     def getThrust(self, time):

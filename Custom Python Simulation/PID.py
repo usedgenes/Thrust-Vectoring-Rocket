@@ -1,23 +1,18 @@
 class PID():
-    kp: float 
-    ki: float 
-    kd: float
-    maxOutput: float
-    minOutput: float
-    previousError = 0
-    integralError = 0
 
     def __init__(self, kp, ki, kd, setpoint):
         self.kp = kp
         self.ki = ki
         self.kd = kd
         self.setpoint = setpoint
+        self.integralError = 0
+        self.previousError = 0
 
     def compute(self, pos, dt):
         error = self.setpoint - pos #compute the error
-        derivative_error = (error - self.previousError) / dt 
+        derivativeError = (error - self.previousError) / dt 
         self.integralError += error * dt #error build up over time
-        output = self.kp*error + self.ki*self.integral_error + self.kd*derivative_error 
-        self.error_last = error
+        output = self.kp*error + self.ki*self.integralError + self.kd*derivativeError 
+        self.perviousError = error
         return output
 
