@@ -4,6 +4,8 @@
 #include "Calculations.h"
 #include "Logger.h"
 #include "PID.h"
+#include <Adafruit_Sensor.h>
+#include "Adafruit_BMP3XX.h"
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -14,7 +16,7 @@
 #define SERVO_UUID "f74fb3de-61d1-4f49-bd77-419b61d188da"
 #define BMI088_UUID "56e48048-19da-4136-a323-d2f3e9cb2a5d"
 #define PID_UUID "a979c0ba-a2be-45e5-9d7b-079b06e06096"
-#define RESET_UUID "fb02a2fa-2a86-4e95-8110-9ded202af76b"
+#define UTILITIES_UUID "fb02a2fa-2a86-4e95-8110-9ded202af76b"
 
 #define BLUETOOTH_REFRESH_THRESHOLD 5
 
@@ -22,6 +24,7 @@ BLECharacteristic *pServo;
 BLECharacteristic *pBMI088;
 BLECharacteristic *pPID;
 BLECharacteristic *pBMP390;
+BLECharacteristic *pUtilities;
 
 IMU imu;
 Servos servos;
@@ -63,6 +66,13 @@ class ServoCallbacks : public BLECharacteristicCallbacks {
   }
 };
 
+class UtilitiesCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    String value = pCharacteristic->getValue();
+
+  }
+};
+
 class BMI088Callbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
@@ -76,43 +86,16 @@ class PIDCallbacks : public BLECharacteristicCallbacks {
       rollConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
       rollConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
       rollConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-#ifdef PRINT_BLUETOOTH_PID
-      Serial.print("Roll: ");
-      Serial.print("\t");
-      Serial.print(rollConstants.Kp);
-      Serial.print("\t");
-      Serial.print(rollConstants.Ki);
-      Serial.print("\t");
-      Serial.println(rollConstants.Kd);
-#endif
     }
     if (value.substring(0, 1) == "1") {
       pitchConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
       pitchConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
       pitchConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-#ifdef PRINT_BLUETOOTH_PID
-      Serial.print("Pitch: ");
-      Serial.print("\t");
-      Serial.print(pitchConstants.Kp);
-      Serial.print("\t");
-      Serial.print(pitchConstants.Ki);
-      Serial.print("\t");
-      Serial.println(pitchConstants.Kd);
-#endif
     }
     if (value.substring(0, 1) == "2") {
       yawConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
       yawConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
       yawConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-#ifdef PRINT_BLUETOOTH_PID
-      Serial.print("Yaw: ");
-      Serial.print("\t");
-      Serial.print(yawConstants.Kp);
-      Serial.print("\t");
-      Serial.print(yawConstants.Ki);
-      Serial.print("\t");
-      Serial.println(yawConstants.Kd);
-#endif
     }
 
     if (value.substring(0, 1) == "7") {
@@ -142,6 +125,9 @@ void setup() {
 
   pBMI088 = pService->createCharacteristic(BMI088_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
   pBMI088->setCallbacks(new BMI088Callbacks());
+
+  pUtilities = pService->createCharacteristic(UTILITIES_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
+  pUtilities->setCallbacks(new UtilitiesCallbacks());
 
   pService->start();
 

@@ -12,9 +12,9 @@ class Simulator():
         #ms
         time = 0
         deltaTime = 20
-        runtime = 3500
+        runtime = 10000
         #initial angle and setpoint in degrees for easier visualization, but program converts it to radians for calculations with trigonometric functions
-        initial_rocket_angle = -10
+        initial_rocket_angle = -25
         setpoint = 0
         #tvcLimit in degrees - all tvc calculations done in degrees
         tvcLimit = 10
@@ -28,10 +28,10 @@ class Simulator():
         rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.02, tvcLimit, 0.2, tvcRotationLimit)
         
         #if csv file has point (0,0), delete that point
-        thrust = MotorThrustCurve.ThrustCurve("F15_Thrust.csv")
+        thrust = MotorThrustCurve.ThrustCurve("F67.csv")
         
         #kp, ki, kd, setpoint
-        pid = PID.PID(45, 0, 10, setpoint*pi/180)
+        pid = PID.PID(45, 0.5, 15, setpoint*pi/180)
         
         graph = Grapher.Grapher()
         

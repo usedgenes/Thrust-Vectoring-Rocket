@@ -61,3 +61,18 @@ size_t ThrustCurve::readField(char* str, size_t size, char* delim) {
   str[n] = '\0';
   return n;
 }
+
+float ThrustCurve::getThrust(int currentTime) {
+  if (time == 0) {
+    return 0
+  }
+        for
+          i in range(len(self.thrustPoints)) {
+            if (time <= self.thrustPoints[i][0]) {
+              slope = (self.thrustPoints[i][1] - self.thrustPoints[i - 1][1]) / (self.thrustPoints[i][0] - self.thrustPoints[i - 1][0]) return self.thrustPoints[i - 1][1] + (time - self.thrustPoints[i - 1][0]) * slope
+            } else {
+              i += 1;
+            }
+          }
+        return 0
+}
