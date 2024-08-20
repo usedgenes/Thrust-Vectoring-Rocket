@@ -1,7 +1,8 @@
 import csv
 
 class ThrustCurve():
-    def __init__(self, motorFile, weight, propellantWeight):
+    #could add function to change rocket weight as motor burns up
+    def __init__(self, motorFile):
         with open(motorFile, mode = 'r') as file:
             csvFile = csv.reader(file)
             lineCount = 1;
@@ -11,8 +12,6 @@ class ThrustCurve():
                 if(lineCount >= 6):
                     self.thrustPoints.append([float(x) for x in row])
                 lineCount += 1
-        self.weight = weight-propellantWeight
-        self.propellantWeight = propellantWeight
     
     #Thrust in Newtons
     def getThrust(self, time):

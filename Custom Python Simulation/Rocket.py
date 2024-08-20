@@ -5,6 +5,7 @@ class Rocket():
     #mass in kg
     def __init__(self, initial_state_vector, mass, mmoi, servoLimit, distance_TVC_COM):
         self.state_vector = initial_state_vector
+        self.previous_state_vector = initial_state_vector
         self.mass = mass
         self.mmoi = mmoi
         self.servoLimit = servoLimit
@@ -27,9 +28,12 @@ class Rocket():
         if(self.state_vector["py"] <= 0):
             self.state_vector["py"] = 0
             self.state_vector["vy"] = 0
+        self.previous_state_vector = self.state_vector
         return self.state_vector
     
     #angle in rads
+    #theta - rocket's angle from verticle
+    #input_angle - tvc mechanism's angle from rocket's center line
     def tvcPhysics(self, input_angle, thrust, dt): 
         if input_angle > self.servoLimit:
             input_angle = self.servoLimit
@@ -37,6 +41,7 @@ class Rocket():
             input_angle = -self.servoLimit
         Fx = np.sin(self.state_vector["theta"] - input_angle) * thrust
         Fy = np.cos(self.state_vector["theta"] - input_angle) * thrust
+        #torque applied to the rocket from the tvc's angle
         Tau = np.sin(input_angle) * thrust * self.distance_TVC_COM
         self.actuator_state = input_angle
         self.input_last = input_angle

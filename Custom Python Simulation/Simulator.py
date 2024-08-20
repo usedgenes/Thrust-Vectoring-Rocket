@@ -1,4 +1,5 @@
 import numpy as np
+from pylab import * 
 import PID
 import Grapher 
 import Rocket
@@ -10,14 +11,25 @@ class Simulator():
     def run():
         #ms
         time = 0
-        deltaTime = 100
+        deltaTime = 20
         runtime = 10000
-        initial_state_vector = {"ay" : 0 ,"vy" : 0,"py" : 0,"ax" : 0 ,"vx" : 0,"px" : 0 ,"alpha": 0.0,"omega" : 0,"theta" : 1}
-        tvcAngle= 0
+        #initial angle and setpoint in degrees for easier visualization, but program converts it to radians for calculations with trigonometric functions
+        initial_rocket_angle = -10 
+        setpoint = -5
+        #servoLimit in degrees - all servo calculations done in degrees
+        servoLimit = 10
+        
+        
+        initial_state_vector = {"ay" : 0 ,"vy" : 0,"py" : 0,"ax" : 0 ,"vx" : 0,"px" : 0 ,"alpha": 0.0,"omega" : 0, "theta" : initial_rocket_angle*pi/180, "torque" : 0, "tvcAngle": 0}
+                
         #initial_state_vector, mass, mmoi, servoLimit, distance_TVC_COM
-        rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.1, 0.27, 0.3)
-        Thrust = MotorThrustCurve.ThrustCurve("AeroTech_F67W.csv", 0.08, 0.03)
-        Pid = PID.PID(0.01, 0.01, 0.01, 60, 0)
+        rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.1, servoLimit, 0.3)
+        
+        Thrust = MotorThrustCurve.ThrustCurve("AeroTech_F67W.csv")
+        
+        #kp, ki, kd, setpoint \
+        Pid = PID.PID(0.01, 0.01, 0.01, setpoint*pi/180)
+        
         Graph = Grapher.Grapher()
         
         timeArray = []
