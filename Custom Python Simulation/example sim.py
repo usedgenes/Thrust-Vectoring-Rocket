@@ -7,7 +7,10 @@ Inertia = 0.0202
 numSamples = 200   #total runtime = delT*numSamples
 d = 0.215     #distance between engine and Cg
 Force = 9  #Estes E9
-theta0 = -5*pi/180.  #setpoint
+theta0 = -0*pi/180.  #setpoint
+#Kp = 45
+#Kd = 10
+#Ki = 0.2
 Kp = 45
 Kd = 10
 Ki = 0.2

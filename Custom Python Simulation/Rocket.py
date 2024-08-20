@@ -30,6 +30,7 @@ class Rocket():
         if(self.state_vector["py"] <= 0):
             self.state_vector["py"] = 0
             self.state_vector["vy"] = 0
+            self.state_vector["ay"] = 0
         return self.state_vector
     
     #angle in rads
@@ -49,7 +50,7 @@ class Rocket():
             else:
                 self.state_vector["tvcAngle"] += self.tvcRotationLimit
         else:
-            self.state_vector["tvcAngle"] += pidCommand
+            self.state_vector["tvcAngle"] = pidCommand
         if(self.state_vector["tvcAngle"] > self.tvcLimit):
             self.state_vector["tvcAngle"] = self.tvcLimit
         if(self.state_vector["tvcAngle"] < -self.tvcLimit):

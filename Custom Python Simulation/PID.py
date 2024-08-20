@@ -13,6 +13,6 @@ class PID():
         derivativeError = (error - self.previousError) / dt 
         self.integralError += error * dt #error build up over time
         output = self.kp*error + self.ki*self.integralError + self.kd*derivativeError 
-        self.perviousError = error
+        self.previousError = error
         return output
 

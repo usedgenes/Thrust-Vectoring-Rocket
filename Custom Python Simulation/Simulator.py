@@ -12,9 +12,9 @@ class Simulator():
         #ms
         time = 0
         deltaTime = 20
-        runtime = 1000
+        runtime = 3500
         #initial angle and setpoint in degrees for easier visualization, but program converts it to radians for calculations with trigonometric functions
-        initial_rocket_angle = -10 
+        initial_rocket_angle = -10
         setpoint = 0
         #tvcLimit in degrees - all tvc calculations done in degrees
         tvcLimit = 10
@@ -25,13 +25,13 @@ class Simulator():
         initial_state_vector = {"ay" : 0 , "vy" : 0, "py" : 0, "ax" : 0 , "vx" : 0, "px" : 0 , "alpha": 0.0, "omega" : 0, "theta" : initial_rocket_angle*pi/180, "tvcAngle": 0}
                 
         #initial_state_vector, mass, mmoi, tvcLimit, distance_TVC_COM, tvcRotationLimit
-        rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.1, tvcLimit, 0.3, tvcRotationLimit)
+        rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.02, tvcLimit, 0.2, tvcRotationLimit)
         
         #if csv file has point (0,0), delete that point
-        thrust = MotorThrustCurve.ThrustCurve("AeroTech_F67W.csv")
+        thrust = MotorThrustCurve.ThrustCurve("F15_Thrust.csv")
         
         #kp, ki, kd, setpoint
-        pid = PID.PID(100, 1, 70, setpoint*pi/180)
+        pid = PID.PID(45, 0, 10, setpoint*pi/180)
         
         graph = Grapher.Grapher()
         
@@ -55,7 +55,9 @@ class Simulator():
             forces = rocket.rocketPhysics(motorThrust, deltaTime/1000)
             rocket.inputForces(forces, deltaTime/1000)
             
-            pid
+            # simulated rocket disturbance
+            #if( time == 1000 ):
+                #rocket.state_vector["theta"] += 5*pi/180.
             
             timeArray.append(time/1000)
             orientationArray.append(rocket.state_vector["theta"] * 180/pi)
@@ -63,7 +65,7 @@ class Simulator():
             yPositionArray.append(rocket.state_vector["py"])
             tvcAngleArray.append(rocket.state_vector["tvcAngle"])
             
-            pidCommand = pid.compute(rocket.state_vector["theta"], deltaTime)
+            pidCommand = pid.compute(rocket.state_vector["theta"], deltaTime/1000)
             rocket.tvcCalculations(pidCommand)
             time += deltaTime
 
