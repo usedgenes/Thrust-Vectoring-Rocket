@@ -1,22 +1,20 @@
 #include "IMU.h"
 
-void IMU::Init() {
+String IMU::Init() {
   vspi.begin(SPI_SCK, SPI_MISO, SPI_MOSI, ACCEL_CS);
   accel = new Bmi088Accel(vspi, ACCEL_CS);
   gyro = new Bmi088Gyro(vspi, GYRO_CS);
   int status;
   status = accel->begin();
   if (status < 0) {
-    Serial.println("Accel Initialization Error");
-    while (1) {}
+    return "Accel Initialization Error";
   }
   status = gyro->begin();
   if (status < 0) {
-    Serial.println("Gyro Initialization Error");
-    while (1) {}
+    return "Gyro Initialization Error";
   }
   getCorrectedIMU();
-  Serial.println("IMU Initialized");
+  return "IMU Initialized";
 }
 
 void IMU::getIMUData(float accelerometer[], float gyroscope[]) {

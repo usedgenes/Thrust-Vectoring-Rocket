@@ -1,15 +1,13 @@
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
 #include "IMU.h"
 #include "Servos.h"
 #include "Altimeter.h"
 #include "Calculations.h"
 #include "Logger.h"
 #include "PID.h"
-#include <Adafruit_Sensor.h>
-#include "Adafruit_BMP3XX.h"
-#include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
-#include <BLE2902.h>
 
 #define DEVICE_NAME "ESP_32"
 #define SERVICE_UUID "9a8ca9ef-e43f-4157-9fee-c37a3d7dc12d"
@@ -18,7 +16,7 @@
 #define PID_UUID "a979c0ba-a2be-45e5-9d7b-079b06e06096"
 #define UTILITIES_UUID "fb02a2fa-2a86-4e95-8110-9ded202af76b"
 
-#define BLUETOOTH_REFRESH_THRESHOLD 5
+#define BLUETOOTH_REFRESH_THRESHOLD 50
 
 BLECharacteristic *pServo;
 BLECharacteristic *pBMI088;
@@ -32,17 +30,14 @@ Altimeter altimeter;
 Calculations calculations;
 Logger logger;
 PID thetaPID, phiPID;
-Constants pitchConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
-Constants rollConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
-Constants yawConstants = { .Kp = 10, .Kd = 0.5, .Ki = 0.0 };
 
 int bluetoothRefreshRate = 0;
 unsigned long previousTime = 0;
-bool pidOn = false;
-bool disarmed = false;
-bool recieveBluetoothData = false;
+bool manualServoControl = false;
+bool armed = false;
+bool recieveBluetoothData = true;
 
-void (*resetFunc)(void) = 0;
+// void (*resetFunc)(void) = 0;
 
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer *pServer) {
@@ -51,7 +46,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
 
   void onDisconnect(BLEServer *pServer) {
     Serial.println("Disconnected");
-    resetFunc();
+    // resetFunc();
   }
 };
 
@@ -69,7 +64,12 @@ class ServoCallbacks : public BLECharacteristicCallbacks {
 class UtilitiesCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
-
+    if(value == "Arm") {
+      armed = true;
+    }
+    if(value == "Disarmed") {
+      armed = false;
+    }
   }
 };
 
@@ -83,27 +83,14 @@ class PIDCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
     if (value.substring(0, 1) == "0") {
-      rollConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
-      rollConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
-      rollConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+      phiPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
+      phiPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      phiPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
     }
     if (value.substring(0, 1) == "1") {
-      pitchConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
-      pitchConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
-      pitchConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-    }
-    if (value.substring(0, 1) == "2") {
-      yawConstants.Kp = value.substring(1, value.indexOf(',')).toFloat();
-      yawConstants.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
-      yawConstants.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-    }
-
-    if (value.substring(0, 1) == "7") {
-      if (pidOn == true) {
-        pidOn = false;
-      } else {
-        pidOn = true;
-      }
+      thetaPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
+      thetaPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      thetaPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
     }
   }
 };
@@ -145,15 +132,26 @@ void setup() {
 
   previousTime = 0;
 
-  imu.Init();
-  servos.Init();
-  altimeter.Init();
-  calculations.Init();
-  logger.Init();
-  thetaPID.Init(pitchConstants);
-  phiPID.Init(rollConstants);
+  pUtilities->setValue(imu.Init());
+  pUtilities->notify();
 
-  while (disarmed) {
+  pUtilities->setValue(altimeter.Init());
+  pUtilities->notify();
+
+  pUtilities->setValue(servos.Init());
+  pUtilities->notify();
+
+  pUtilities->setValue(logger.Init());
+  pUtilities->notify();
+
+  //Kp, Ki, Kd
+  thetaPID.Init(1, 0.5, 0.2);
+  phiPID.Init(1, 0.5, 0.2);
+
+  pUtilities->setValue("Flight Computer Initialized");
+  pUtilities->notify();
+
+  while(!armed) {
     delay(10);
   }
 }
@@ -174,7 +172,7 @@ void loop() {
   float phiCommand = phiPID.ComputeCorrection(phi, loopTime);
   int servo0pos = -1;
   int servo1pos = -1;
-  if (!pidOn) {
+  if (!manualServoControl) {
     int servo0pos = servos.WriteServoPosition(0, thetaCommand);
     int servo1pos = servos.WriteServoPosition(1, phiCommand);
   }
@@ -199,6 +197,8 @@ void loop() {
     pServo->setValue("90" + String(servo0pos));
     pServo->setValue("91" + String(servo1pos));
     bluetoothRefreshRate = 0;
+
+    Serial.println("Theta: " + String(theta) + "\t Phi: " + String(phi));
   }
 
   logger.log(AccelX, "Accel X: " + String(accelerometer[0]));

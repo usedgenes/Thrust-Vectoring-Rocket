@@ -1,7 +1,9 @@
 #include "PID.h"
 
-void PID::Init(Constants _constants) {
-  constants = _constants;
+void PID::Init(float _Kp, float _Ki, float _Kd) {
+  Kp = _Kp;
+  Ki = _Ki;
+  Kd = _Kd;
 }
 
 float PID::ComputeCorrection(float rocketOrientation, unsigned long loopTime) {
@@ -13,7 +15,7 @@ float PID::ComputeCorrection(float rocketOrientation, unsigned long loopTime) {
   float deltaTime = loopTime / 1000;
   integrator += error * deltaTime;
   float derivative = (error - previousError) / deltaTime;
-  float output = (constants.Kp * error) + (constants.Ki * integrator) + (constants.Kd * derivative);
+  float output = (Kp * error) + (Ki * integrator) + (Kd * derivative);
 
   previousError = error;
 

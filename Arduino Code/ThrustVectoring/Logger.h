@@ -31,7 +31,7 @@ class Logger {
 
 private:
 public:
-  void Init();
+  String Init();
   void log(LogType type, String message);
 };
 

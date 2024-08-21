@@ -1,5 +1,7 @@
 #ifndef CALCULATIONS_H_
-#define CALCULATIONS_H
+#define CALCULATIONS_H_
+
+#include "Arduino.h"
 
 class Calculations {
 #define MAX_PID_OUTPUT 0
@@ -8,7 +10,6 @@ class Calculations {
 #define Q 0.1
 #define R 4
 private:
-  
   float angularVelocityX = 0;
   float angularyVelocityY = 0;
   float thetaModel = 0;
@@ -31,11 +32,11 @@ private:
   //PID
   float integralError = 0;
   float previousError = 0;
+  //Lowpass filter for altitude
+  float alpha;
 
 public:
-  void Init();
   void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float& theta, float& phi);
   void normalizeVector(float vector[]);
 };
-
 #endif

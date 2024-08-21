@@ -1,8 +1,8 @@
 #ifndef ALTIMETER_H_
 #define ALTIMETER_H_
 
-// #include <Adafruit_Sensor.h>
-// #include "Adafruit_BMP3XX.h"
+#include <Adafruit_Sensor.h>
+#include "Adafruit_BMP3XX.h"
 
 class Altimeter {
 #define BMP_SCK 13
@@ -11,10 +11,13 @@ class Altimeter {
 #define BMP_CS 10
 #define SEALEVELPRESSURE_HPA (1013.25)
 private:
-// Adafruit_BMP3XX bmp;
+  Adafruit_BMP3XX bmp;
+  float previousAltitude;
 public:
-  void Init();
+  String Init();
   float GetReading(float& temperature, float& pressure, float& altitude);
+  void setLowpassFilterValues(float _cutoffFrequency, float initialAlpha);
+  void getFilteredAltitude(float& altitude);
 };
 
 #endif

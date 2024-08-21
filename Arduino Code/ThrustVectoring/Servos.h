@@ -10,7 +10,7 @@ private:
   int servoStartingPosition[4] = { 90, 90 };
   int maxPosition = 15;
 public:
-  void Init();
+  String Init();
   float WriteServoPosition(int servoNumber, float position);
 };
 

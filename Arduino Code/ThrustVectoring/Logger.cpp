@@ -1,12 +1,17 @@
 #include "SD.h"
 #include "Logger.h"
 
-void Logger::Init() {
+String Logger::Init() {
   SPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
   SD.begin(SD_CS);
+  uint8_t cardType = SD.cardType();
+  if(cardType == CARD_NONE) {
+    return "No SD Card Attached";
+  }
+  return "SD Card Initialized";
 }
 
-void Logger::log(LogType type, String message) {
+void Logger::log(LogType type, String message, unsigned long time) {
   String filePath;
   switch (type) {
       case Altitude:

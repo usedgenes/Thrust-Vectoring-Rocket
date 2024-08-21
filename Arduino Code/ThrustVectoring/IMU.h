@@ -17,7 +17,7 @@ private:
   float gyroscopeCorrected[3] = { 0, 0, 0 };
 
 public:
-  void Init();
+  String Init();
   void getIMUData(float accelerometer[], float gyroscope[]);
   void getCorrectedIMU();
 };
