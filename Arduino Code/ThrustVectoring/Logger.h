@@ -31,8 +31,8 @@ class Logger {
 
 private:
 public:
-  String Init();
-  void log(LogType type, String message);
+  bool Init();
+  void log(LogType type, String message, unsigned long time);
 };
 
 #endif

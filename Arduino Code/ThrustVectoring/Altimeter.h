@@ -13,11 +13,12 @@ class Altimeter {
 private:
   Adafruit_BMP3XX bmp;
   float previousAltitude;
+  float alpha;
 public:
-  String Init();
+  bool Init();
   float GetReading(float& temperature, float& pressure, float& altitude);
   void setLowpassFilterValues(float _cutoffFrequency, float initialAlpha);
-  void getFilteredAltitude(float& altitude);
+  float getFilteredAltitude(float& altitude);
 };
 
 #endif

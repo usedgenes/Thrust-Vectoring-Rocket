@@ -1,8 +1,8 @@
 #include "Altimeter.h"
 
-String Altimeter::Init() {
+bool Altimeter::Init() {
   if (!bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
-    return "BMP390 Initialization Error";
+    return false;
   }
   bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
   bmp.setPressureOversampling(BMP3_OVERSAMPLING_4X);
@@ -12,7 +12,7 @@ String Altimeter::Init() {
   for(int i = 0; i < 5; i++) {
     bmp.performReading();
   }
-  return "BMP390 Initialized";
+  return true;
 }
 
 float Altimeter::GetReading(float& temperature, float& pressure, float& altitude) {
@@ -27,6 +27,6 @@ void Altimeter::setLowpassFilterValues(float _cutoffFrequency, float initialAlph
   alpha = initialAlpha / (initialAlpha + timeConstant);
 }
 
-float Altimeter::getFilteredAltitude(float currentAltitude) {
+float Altimeter::getFilteredAltitude(float& currentAltitude) {
   return (currentAltitude * alpha) + (previousAltitude * (1 - alpha));
 }
