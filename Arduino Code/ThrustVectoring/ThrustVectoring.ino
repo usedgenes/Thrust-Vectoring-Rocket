@@ -7,6 +7,7 @@
 #include "PID.h"
 
 #define BLUETOOTH_REFRESH_THRESHOLD 50
+#define LAUNCH_ALTITUDE_THRESHOLD_METERS 3
 
 Bluetooth bluetooth;
 IMU imu;
@@ -21,38 +22,41 @@ unsigned long previousTime = 0;
 bool manualServoControl = false;
 bool armed = false;
 bool recieveBluetoothData = true;
-
-// void (*resetFunc)(void) = 0;
-
+float launchAltitude;
 
 void setup() {
   Serial.begin(115200);
-  previousTime = 0;
 
-  // bluetooth.Init();
+  bluetooth.Init(imu, servos, altimeter, logger, thetaPID, phiPID, armed);
   servos.Init();
-  //Kp, Ki, Kd
   thetaPID.Init(1, 0.5, 0.2);
   phiPID.Init(1, 0.5, 0.2);
-
   if(!imu.Init()) {
+    bluetooth.writeUtilities("IMU Initialization Error");
     while(1) {}
   }
-
   if(!altimeter.Init()) {
+    bluetooth.writeUtilities("Altimeter Initialization Error");
     while(1) {}
-
   }
-
   if(!logger.Init()) {
+    bluetooth.writeUtilities("SD Initialization Error");
     while(1) {}
   }
 
-  // pUtilities->setValue("Flight Computer Initialized");
-  // pUtilities->notify();
+  previousTime = 0;
+  launchAltitude = bmp.getAltitude();
+
+  bluetooth.writeUtilities("Flight Computer Initialized");
 
   while(!armed) {
     delay(10);
+  }
+
+  bluetooth.writeUtilities("Flight Computer Armed");
+
+  while(bmp.getAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS) {
+    onPad();
   }
 }
 
@@ -60,8 +64,7 @@ void loop() {
   bluetoothRefreshRate += 1;
   unsigned long loopTime = millis() - previousTime;
   previousTime = millis();
-  float temperature, pressure, altitude;
-  altimeter.GetReading(temperature, pressure, altitude);
+
   float accelerometer[] = { 0, 0, 0 };
   float gyroscope[] = { 0, 0, 0 };
   imu.getIMUData(accelerometer, gyroscope);
@@ -107,4 +110,13 @@ void loop() {
   // logger.log(GyroX, "Gyro X: " + String(accelerometer[0]));
   // logger.log(GyroY, "Gyro Y: " + String(accelerometer[1]));
   // logger.log(GyroZ, "Gyro Z: " + String(accelerometer[2]));
+}
+
+void onPad() {
+  float temperature, pressure, altitude;
+  altimeter.GetReading(temperature, pressure, altitude);
+}
+
+void ThrustVectorActive() {
+
 }

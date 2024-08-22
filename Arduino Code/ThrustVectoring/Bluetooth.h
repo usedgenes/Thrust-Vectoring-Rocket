@@ -1,5 +1,5 @@
 #ifndef BLUETOOTH_H_
-#define BLUETOOTH_H
+#define BLUETOOTH_H_
 
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -25,39 +25,97 @@ private:
   BLECharacteristic *pBMP390;
   BLECharacteristic *pUtilities;
 
-  IMU* imu;
-  Servos* servos;
-  Altimeter* altimeter;
-  Logger* logger;
-  PID* thetaPID, phiPID;
+  IMU imu;
+  Servos servos;
+  Altimeter altimeter;
+  Logger logger;
+  PID thetaPID;
+  PID phiPID;
+  bool armed;
 
-  bool *armed;
 public:
-  void Init(IMU& imu, Servos& servos, Altimeter& altimeter, Logger& logger, PID& thetaPID, PID& phiPID);
+  void Init(IMU& _imu, Servos& _servos, Altimeter& _altimeter, Logger& _logger, PID& _thetaPID, PID& _phiPID, bool& _armed);
+  void writeServo();
+  void writePID();
+  void writeIMU();
+  void writeUtilities(String message);
 };
 
 
 class MyServerCallbacks : public BLEServerCallbacks {
-  void onConnect(BLEServer *pServer);
-  void onDisconnect(BLEServer *pServer);
+  void (*resetFunc)(void) = 0;
+  void onConnect(BLEServer *pServer) {
+    Serial.println("Connected");
+  };
+  void onDisconnect(BLEServer *pServer) {
+    Serial.println("Disconnected");
+    resetFunc();
+  };
 };
 
 
 class ServoCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic);
+  Servos servos;
+  ServoCallbacks(Servos& _servos) {
+    servos = _servos;
+  };
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    String value = pCharacteristic->getValue();
+    if (value.substring(0, 1) == "0") {
+      servos.WriteServoPosition(0, value.substring(1, value.length()).toInt());
+    } else if (value.substring(0, 1) == "1") {
+      servos.WriteServoPosition(1, value.substring(1, value.length()).toInt());
+    }
+  };
 };
 
 class UtilitiesCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic);
+  bool armed;
+  void (*resetFunc)(void) = 0;
+  UtilitiesCallbacks(bool& _armed) {
+    armed = _armed
+  };
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    void UtilitiesCallbacks::onWrite(BLECharacteristic * pCharacteristic) {
+      String value = pCharacteristic->getValue();
+      if (value == "Arm") {
+        armed = true;
+      }
+      else if (value == "Disarmed") {
+        armed = false;
+      }
+      else if (value == "Reset") {
+        resetFunc();
+      }
+    }
+  };
 };
 
 class BMI088Callbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic);
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    String value = pCharacteristic->getValue();
+  };
 };
 
 class PIDCallbacks : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic);
+  PID phiPID, thetaPID;
+  PIDCallbacks(PID& _phiPID, PID& _thetaPID) {
+    phiPID = _phiPID;
+    thetaPID = _thetaPID;
+  };
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    String value = pCharacteristic->getValue();
+    if (value.substring(0, 1) == "0") {
+      phiPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
+      phiPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      phiPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+    }
+    if (value.substring(0, 1) == "1") {
+      thetaPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
+      thetaPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      thetaPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+    }
+  };
 };
-
 
 #endif
