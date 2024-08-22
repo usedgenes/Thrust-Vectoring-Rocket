@@ -1,3 +1,4 @@
+//change BMI088 G range
 #include "Bluetooth.h"
 #include "IMU.h"
 #include "Servos.h"
@@ -5,6 +6,7 @@
 #include "Calculations.h"
 #include "Logger.h"
 #include "PID.h"
+#include "Buzzer.h"
 
 #define BLUETOOTH_REFRESH_THRESHOLD 50
 #define LAUNCH_ALTITUDE_THRESHOLD_METERS 4
@@ -97,7 +99,7 @@ void setup() {
   }
 
   while (true) {
-    onGround();
+    touchdown();
   }
 }
 
@@ -105,22 +107,22 @@ void loop() {
 }
 
 void onPad() {
-  dataLoop(ON_PAD_DATA_FREQUENCY);
-  float temperature, pressure, altitude;
-  altimeter.getReading(temperature, pressure, altitude);
+  dataLoop();
+  logData(ON_PAD_DATA_FREQUENCY);
 }
 
 void thrustVectorActive() {
-  dataLoop(TVC_ACTIVE_DATA_FREQUENCY);
+  dataLoop();
   pitchCommand = pitchPID.ComputeCorrection(pitch, loopTime);
   rollCommand = rollPID.ComputeCorrection(roll, loopTime);
   servos.writeGimbalServoPosition(0, pitchCommand);
   servos.writeGimbalServoPosition(1, rollCommand);
+  logData(TVC_ACTIVE_DATA_FREQUENCY);
 }
 
 void coasting() {
-  dataLoop(COASTING_DATA_FREQUENCY);
-
+  dataLoop();
+  logData(COASTING_DATA_FREQUENCY);
 }
 
 void deployParachute() {
@@ -128,11 +130,13 @@ void deployParachute() {
 }
 
 void parachuteOut() {
-  dataLoop(PARACHUTE_OUT_DATA_FREQUENCY);
+  dataLoop();
+  logData(PARACHUTE_OUT_DATA_FREQUENCY);
 }
 
-void onGround(ON_GROUND_DATA_FREQUENCY) {
+void touchdown() {
   dataLoop();
+  logData(ON_GROUND_DATA_FREQUENCY)
 }
 
 void dataLoop() {
@@ -165,11 +169,12 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       bluetooth.writePID("92" + String(pitchCommand));
       bluetooth.writePID("93" + String(rollCommand));
     }
-    logger.log(AccelX, "Accel X: " + String(accelerometer[0]), currentTime);
-    logger.log(AccelY, "Accel Y: " + String(accelerometer[1]), currentTime);
-    logger.log(AccelZ, "Accel Z: " + String(accelerometer[2]), currentTime);
-    logger.log(GyroX, "Gyro X: " + String(accelerometer[0]), currentTime);
-    logger.log(GyroY, "Gyro Y: " + String(accelerometer[1]), currentTime);
-    logger.log(GyroZ, "Gyro Z: " + String(accelerometer[2]), currentTime);
+    logger.log(AccelX, String(accelerometer[0]), currentTime);
+    logger.log(AccelY, String(accelerometer[1]), currentTime);
+    logger.log(AccelZ, String(accelerometer[2]), currentTime);
+    logger.log(GyroX, String(accelerometer[0]), currentTime);
+    logger.log(GyroY, String(accelerometer[1]), currentTime);
+    logger.log(GyroZ, String(accelerometer[2]), currentTime);
+    logger.log(Altitude, String(currentAltitude), currentTime)
   }
 }
