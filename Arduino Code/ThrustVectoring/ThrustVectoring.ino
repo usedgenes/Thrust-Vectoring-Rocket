@@ -12,43 +12,57 @@
 #define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
 #define RECOVERY_ALTITUDE_THRESHOLD_METERS 3
 
+#define ON_PAD_DATA_FREQUENCY 0
+#define TVC_ACTIVE_DATA_FREQUENCY 0
+#define COASTING_DATA_FREQUENCY 0
+#define PARACHUTE_OUT_DATA_FREQUENCY 0
+#define ON_GROUND_DATA_FREQUENCY 0
+
 Bluetooth bluetooth;
 IMU imu;
 Servos servos;
 Altimeter altimeter;
 Calculations calculations;
 Logger logger;
-PID thetaPID, phiPID;
+PID pitchPID, rollPID;
 
-int bluetoothRefreshRate = 0;
+unsigned long currentTime = 0;
 unsigned long previousTime = 0;
-bool manualServoControl = false;
+unsigned long loopTime = 0;
+
+unsigned long lastDataLog = 0;
+
 bool bluetoothConnected = false;
 bool armed = false;
-bool recieveBluetoothData = true;
+
+float currentAltitude;
 float launchAltitude;
 unsigned long motorIgnitionTime;
-float loopTime;
 float previousAltitude;
+
+float accelerometer[] = { 0, 0, 0 };
+float gyroscope[] = { 0, 0, 0 };
+float pitch, roll;
+float pitchCommand, rollCommand;
 
 void setup() {
   Serial.begin(115200);
 
-  bluetooth.Init(servos, thetaPID, phiPID, armed, bluetoothConnected);
+  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, armed, bluetoothConnected);
   servos.Init();
-  thetaPID.Init(1, 0.5, 0.2);
-  phiPID.Init(1, 0.5, 0.2);
-  if(!imu.Init()) {
+  pitchPID.Init(1, 0.5, 0.2);
+  rollPID.Init(1, 0.5, 0.2);
+  if (!imu.Init()) {
     bluetooth.writeUtilities("IMU Initialization Error");
-    while(1) {}
+    while (1) {}
   }
-  if(!altimeter.Init()) {
+  if (!altimeter.Init()) {
     bluetooth.writeUtilities("Altimeter Initialization Error");
-    while(1) {}
+    while (1) {}
   }
-  if(!logger.Init()) {
+  if (!logger.Init()) {
     bluetooth.writeUtilities("SD Initialization Error");
-    while(1) {}
+    while (1) {}
   }
 
   previousTime = 0;
@@ -56,95 +70,56 @@ void setup() {
 
   bluetooth.writeUtilities("Flight Computer Initialized");
 
-  while(!armed) {
+  while (!armed) {
     delay(100);
   }
 
   bluetooth.writeUtilities("Flight Computer Armed");
 
-  while(altimeter.getAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS) {
+  while (altimeter.getAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS) {
     onPad();
   }
 
   motorIgnitionTime = millis();
 
-  while(millis() - motorIgnitionTime < MOTOR_BURN_TIME_MILLISECONDS) {
+  while (millis() - motorIgnitionTime < MOTOR_BURN_TIME_MILLISECONDS) {
     thrustVectorActive();
   }
 
-  while((altimeter.getAltitude() - previousAltitude) / loopTime < PARACHUTE_EJECTION_VELOCITY_THRESHOLD) {
+  while ((altimeter.getAltitude() - previousAltitude) / loopTime < PARACHUTE_EJECTION_VELOCITY_THRESHOLD) {
     coasting();
   }
 
   deployParachute();
 
-  while(altimeter.getAltitude() - launchAltitude > RECOVERY_ALTITUDE_THRESHOLD_METERS) {
+  while (altimeter.getAltitude() - launchAltitude > RECOVERY_ALTITUDE_THRESHOLD_METERS) {
     parachuteOut();
   }
 
-  while(true) {
+  while (true) {
     onGround();
   }
 }
 
 void loop() {
-  bluetoothRefreshRate += 1;
-  loopTime = millis() - previousTime;
-  previousTime = millis();
-
-  float accelerometer[] = { 0, 0, 0 };
-  float gyroscope[] = { 0, 0, 0 };
-  imu.getIMUData(accelerometer, gyroscope);
-
-  float theta, phi;
-  calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, theta, phi);
-  float thetaCommand = thetaPID.ComputeCorrection(theta, loopTime);
-  float phiCommand = phiPID.ComputeCorrection(phi, loopTime);
-  int servo0pos = -1;
-  int servo1pos = -1;
-
-  if (bluetoothRefreshRate == BLUETOOTH_REFRESH_THRESHOLD && recieveBluetoothData) {
-    // pBMI088->setValue("90" + String(accelerometer[0]));
-    // pBMI088->setValue("91" + String(accelerometer[1]));
-    // pBMI088->setValue("92" + String(accelerometer[2]));
-    // pBMI088->setValue("93" + String(gyroscope[0]));
-    // pBMI088->setValue("94" + String(gyroscope[1]));
-    // pBMI088->setValue("95" + String(gyroscope[2]));
-    // pBMI088->notify();
-
-    // pBMP390->setValue("90" + String(altitude));
-    // pBMP390->notify();
-
-    // pPID->setValue("90" + String(theta));
-    // pPID->setValue("92" + String(phi));
-    // pPID->setValue("92" + String(thetaCommand));
-    // pPID->setValue("93" + String(phiCommand));
-
-    // pServo->setValue("90" + String(servo0pos));
-    // pServo->setValue("91" + String(servo1pos));
-    bluetoothRefreshRate = 0;
-
-    Serial.println("Theta: " + String(theta) + "\t Phi: " + String(phi));
-  }
-
-  // logger.log(AccelX, "Accel X: " + String(accelerometer[0]));
-  // logger.log(AccelY, "Accel Y: " + String(accelerometer[1]));
-  // logger.log(AccelZ, "Accel Z: " + String(accelerometer[2]));
-  // logger.log(GyroX, "Gyro X: " + String(accelerometer[0]));
-  // logger.log(GyroY, "Gyro Y: " + String(accelerometer[1]));
-  // logger.log(GyroZ, "Gyro Z: " + String(accelerometer[2]));
 }
 
 void onPad() {
+  dataLoop(ON_PAD_DATA_FREQUENCY);
   float temperature, pressure, altitude;
   altimeter.getReading(temperature, pressure, altitude);
 }
 
 void thrustVectorActive() {
-
+  dataLoop(TVC_ACTIVE_DATA_FREQUENCY);
+  pitchCommand = pitchPID.ComputeCorrection(pitch, loopTime);
+  rollCommand = rollPID.ComputeCorrection(roll, loopTime);
+  servos.writeGimbalServoPosition(0, pitchCommand);
+  servos.writeGimbalServoPosition(1, rollCommand);
 }
 
 void coasting() {
+  dataLoop(COASTING_DATA_FREQUENCY);
 
 }
 
@@ -153,15 +128,48 @@ void deployParachute() {
 }
 
 void parachuteOut() {
-
+  dataLoop(PARACHUTE_OUT_DATA_FREQUENCY);
 }
 
-void onGround() {
-
+void onGround(ON_GROUND_DATA_FREQUENCY) {
+  dataLoop();
 }
 
-void logData() {
-  if(bluetoothConnected) {
+void dataLoop() {
+  currentTime = millis();
+  loopTime = millis() - previousTime;
+  previousTime = currentTime;
 
+  imu.getIMUData(accelerometer, gyroscope);
+  calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, pitch, roll);
+  currentAltitude = altimeter.getFilteredAltitude();
+}
+
+void logData(int dataLoggingFrequencyInMilliseconds) {
+  if (millis() - lastDataLog >= dataLoggingFrequencyInMilliseconds) {
+    lastDataLog = millis();
+    if (bluetoothConnected) {
+      bluetooth.writeIMU("90" + String(accelerometer[0]));
+      bluetooth.writeIMU("91" + String(accelerometer[1]));
+      bluetooth.writeIMU("92" + String(accelerometer[2]));
+      bluetooth.writeIMU("93" + String(gyroscope[0]));
+      bluetooth.writeIMU("94" + String(gyroscope[1]));
+      bluetooth.writeIMU("95" + String(gyroscope[2]));
+      bluetooth.writeIMU("96" + String(pitch));
+      bluetooth.writeIMU("96" + String(roll));
+
+      bluetooth.writeAltimeter("90" + String(currentAltitude));
+
+      bluetooth.writePID("90" + String(pitch));
+      bluetooth.writePID("92" + String(roll));
+      bluetooth.writePID("92" + String(pitchCommand));
+      bluetooth.writePID("93" + String(rollCommand));
+    }
+    logger.log(AccelX, "Accel X: " + String(accelerometer[0]), currentTime);
+    logger.log(AccelY, "Accel Y: " + String(accelerometer[1]), currentTime);
+    logger.log(AccelZ, "Accel Z: " + String(accelerometer[2]), currentTime);
+    logger.log(GyroX, "Gyro X: " + String(accelerometer[0]), currentTime);
+    logger.log(GyroY, "Gyro Y: " + String(accelerometer[1]), currentTime);
+    logger.log(GyroZ, "Gyro Z: " + String(accelerometer[2]), currentTime);
   }
 }

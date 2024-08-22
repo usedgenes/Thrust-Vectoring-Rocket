@@ -18,7 +18,7 @@ public:
   bool Init();
   void getReading(float& temperature, float& pressure, float& altitude);
   void setLowpassFilterValues(float _cutoffFrequency, float initialAlpha);
-  float getFilteredAltitude(float& altitude);
+  float getFilteredAltitude();
   float getAltitude();
 };
 

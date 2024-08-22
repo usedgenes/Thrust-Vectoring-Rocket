@@ -1,9 +1,11 @@
 #include "Bluetooth.h"
 
-void Bluetooth::Init(Servos& _servos, PID& _thetaPID, PID& _phiPID, bool& _armed, bool& _bluetoothConnected) {
+void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pitchPID, PID& _rollPID, bool& _armed, bool& _bluetoothConnected) {
   servos = _servos;
-  thetaPID = _thetaPID;
-  phiPID = _phiPID;
+  imu = _imu;
+  altimeter = _altimeter;
+  pitchPID = _pitchPID;
+  rollPID = _rollPID;
   armed = _armed;
   bluetoothConnected = _bluetoothConnected;
 
@@ -13,19 +15,28 @@ void Bluetooth::Init(Servos& _servos, PID& _thetaPID, PID& _phiPID, bool& _armed
   devName += chipId;
 
   BLEDevice::init(devName.c_str());
-  BLEServer *pServer = BLEDevice::createServer();
+  BLEServer* pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks(bluetoothConnected));
-  BLEService *pService = pServer->createService(SERVICE_UUID);
+  BLEService* pService = pServer->createService(SERVICE_UUID);
 
   pServo = pService->createCharacteristic(SERVO_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
   pServo->setCallbacks(new ServoCallbacks(servos));
+
+  pBMI088 = pService->createCharacteristic(BMI088_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
+  pBMI088->setCallbacks(new BMI088Callbacks(imu));
+
+  pBMP390 = pService->createCharacteristic(BMP390_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
+  pBMP390->setCallbacks(new BMP390Callbacks(altimeter));
+
+  pPID = pService->createCharacteristic(PID_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
+  pPID->setCallbacks(new PIDCallbacks(pitchPID, rollPID));
 
   pUtilities = pService->createCharacteristic(UTILITIES_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
   pUtilities->setCallbacks(new UtilitiesCallbacks(armed));
 
   pService->start();
 
-  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  BLEAdvertising* pAdvertising = pServer->getAdvertising();
 
   BLEAdvertisementData adv;
   adv.setName(devName.c_str());
@@ -41,4 +52,19 @@ void Bluetooth::Init(Servos& _servos, PID& _thetaPID, PID& _phiPID, bool& _armed
 void Bluetooth::writeUtilities(String message) {
   pUtilities->setValue(message);
   pUtilities->notify();
+}
+
+void Bluetooth::writeIMU(String message) {
+  pBMI088->setValue(message);
+  pBMI088->notify();
+}
+
+void Bluetooth::writeAltimeter(String message) {
+  pBMP390->setValue(message);
+  pBMP390->notify();
+}
+
+void Bluetooth::writePID(String message) {
+  pPID->setValue(message);
+  pPID->notify();
 }

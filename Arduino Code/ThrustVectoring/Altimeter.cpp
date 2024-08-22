@@ -11,7 +11,9 @@ bool Altimeter::Init() {
   //first reading is usually garbage
   for(int i = 0; i < 5; i++) {
     bmp.performReading();
+    delay(10);
   }
+  previousAltitude = getAltitude();
   return true;
 }
 
@@ -32,6 +34,6 @@ void Altimeter::setLowpassFilterValues(float _cutoffFrequency, float initialAlph
   alpha = initialAlpha / (initialAlpha + timeConstant);
 }
 
-float Altimeter::getFilteredAltitude(float& currentAltitude) {
-  return (currentAltitude * alpha) + (previousAltitude * (1 - alpha));
+float Altimeter::getFilteredAltitude() {
+  return (getAltitude() * alpha) + (previousAltitude * (1 - alpha));
 }
