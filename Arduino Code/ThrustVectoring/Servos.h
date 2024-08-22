@@ -5,13 +5,19 @@
 
 class Servos {
 private:
-  Servo servos[2];
-  int servoPins[2] = { 0, 0 };
-  int servoStartingPosition[4] = { 90, 90 };
+  Servo gimbalServos[2];
+  Servo parachuteServo;
+  int gimbalServoPins[2] = { 0, 0 };
+  int gimbalServoStartingPosition[4] = { 90, 90 };
   int maxPosition = 15;
+  #define PARACHUTE_SERVO_OPEN_POSITION 140
+  #define PARACHUTE_SERVO_CLOSED_POSITION 50
+  #define PARACHUTE_SERVO_PIN 12
 public:
   void Init();
-  float WriteServoPosition(int servoNumber, float position);
+  float writeGimbalServoPosition(int servoNumber, float position);
+  void openParachuteServo();
+  void closeParachuteServo();
 };
 
 

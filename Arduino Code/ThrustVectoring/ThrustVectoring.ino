@@ -7,7 +7,10 @@
 #include "PID.h"
 
 #define BLUETOOTH_REFRESH_THRESHOLD 50
-#define LAUNCH_ALTITUDE_THRESHOLD_METERS 3
+#define LAUNCH_ALTITUDE_THRESHOLD_METERS 4
+#define MOTOR_BURN_TIME_MILLISECONDS 3000
+#define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
+#define RECOVERY_ALTITUDE_THRESHOLD_METERS 3
 
 Bluetooth bluetooth;
 IMU imu;
@@ -20,14 +23,18 @@ PID thetaPID, phiPID;
 int bluetoothRefreshRate = 0;
 unsigned long previousTime = 0;
 bool manualServoControl = false;
+bool bluetoothConnected = false;
 bool armed = false;
 bool recieveBluetoothData = true;
 float launchAltitude;
+unsigned long motorIgnitionTime;
+float loopTime;
+float previousAltitude;
 
 void setup() {
   Serial.begin(115200);
 
-  bluetooth.Init(imu, servos, altimeter, logger, thetaPID, phiPID, armed);
+  bluetooth.Init(servos, thetaPID, phiPID, armed, bluetoothConnected);
   servos.Init();
   thetaPID.Init(1, 0.5, 0.2);
   phiPID.Init(1, 0.5, 0.2);
@@ -45,24 +52,44 @@ void setup() {
   }
 
   previousTime = 0;
-  launchAltitude = bmp.getAltitude();
+  launchAltitude = altimeter.getAltitude();
 
   bluetooth.writeUtilities("Flight Computer Initialized");
 
   while(!armed) {
-    delay(10);
+    delay(100);
   }
 
   bluetooth.writeUtilities("Flight Computer Armed");
 
-  while(bmp.getAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS) {
+  while(altimeter.getAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS) {
     onPad();
+  }
+
+  motorIgnitionTime = millis();
+
+  while(millis() - motorIgnitionTime < MOTOR_BURN_TIME_MILLISECONDS) {
+    thrustVectorActive();
+  }
+
+  while((altimeter.getAltitude() - previousAltitude) / loopTime < PARACHUTE_EJECTION_VELOCITY_THRESHOLD) {
+    coasting();
+  }
+
+  deployParachute();
+
+  while(altimeter.getAltitude() - launchAltitude > RECOVERY_ALTITUDE_THRESHOLD_METERS) {
+    parachuteOut();
+  }
+
+  while(true) {
+    onGround();
   }
 }
 
 void loop() {
   bluetoothRefreshRate += 1;
-  unsigned long loopTime = millis() - previousTime;
+  loopTime = millis() - previousTime;
   previousTime = millis();
 
   float accelerometer[] = { 0, 0, 0 };
@@ -75,10 +102,6 @@ void loop() {
   float phiCommand = phiPID.ComputeCorrection(phi, loopTime);
   int servo0pos = -1;
   int servo1pos = -1;
-  if (!manualServoControl) {
-    int servo0pos = servos.WriteServoPosition(0, thetaCommand);
-    int servo1pos = servos.WriteServoPosition(1, phiCommand);
-  }
 
   if (bluetoothRefreshRate == BLUETOOTH_REFRESH_THRESHOLD && recieveBluetoothData) {
     // pBMI088->setValue("90" + String(accelerometer[0]));
@@ -114,9 +137,31 @@ void loop() {
 
 void onPad() {
   float temperature, pressure, altitude;
-  altimeter.GetReading(temperature, pressure, altitude);
+  altimeter.getReading(temperature, pressure, altitude);
 }
 
-void ThrustVectorActive() {
+void thrustVectorActive() {
 
+}
+
+void coasting() {
+
+}
+
+void deployParachute() {
+  servos.openParachuteServo();
+}
+
+void parachuteOut() {
+
+}
+
+void onGround() {
+
+}
+
+void logData() {
+  if(bluetoothConnected) {
+
+  }
 }

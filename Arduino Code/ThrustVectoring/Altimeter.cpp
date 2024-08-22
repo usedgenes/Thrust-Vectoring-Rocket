@@ -15,16 +15,16 @@ bool Altimeter::Init() {
   return true;
 }
 
-void Altimeter::GetReading(float& temperature, float& pressure, float& altitude) {
+void Altimeter::getReading(float& temperature, float& pressure, float& altitude) {
   bmp.performReading();
   temperature = bmp.temperature;
   pressure = bmp.pressure;
   altitude = bmp.readAltitude(SEALEVELPRESSURE_HPA);
 }
 
-float Altimeter::GetAltitude() {
+float Altimeter::getAltitude() {
   bmp.performReading();
-  return bmp.readALtitude(SEALEVELPRESSURE_HPA);
+  return bmp.readAltitude(SEALEVELPRESSURE_HPA);
 }
 
 void Altimeter::setLowpassFilterValues(float _cutoffFrequency, float initialAlpha) {
