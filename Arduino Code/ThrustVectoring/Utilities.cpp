@@ -1,16 +1,30 @@
 #include "Utilities.h"
 
-void Utilities::getBatteryVoltage() {
+void Utilities::readBatteryVoltage() {
   float voltage = readVoltage();
-
   for(int i = 0; i < 3; i++) {
     for(int j = 0; j < static_cast<int>(voltage); j++) {
       tone(BUZZER_PIN, 440, 1000);
       delay(500);
       voltage = voltage * 10;
-      voltage = voltage % 10;
+      voltage = static_cast<int>(voltage) % 10;
     }
     delay(1000);
+  }
+}
+
+void Utilities::readApogee(int apogee) {
+  while(apogee > 0) {
+    LinkedList<Integer> stack = new LinkedList<Integer>();
+    stack.push(apogee & 10);
+    apogee = apogee / 10;
+  }
+  while(!stack.isEmpty()) {
+    int digit = stack.pop();
+    for(int i = 0; i < digit; i++) {
+      tone(BUZZER_PIN, 800, 1000);
+      delay(500);
+    }
   }
 }
 
@@ -34,7 +48,7 @@ float Utilities::readVoltage() {
   float output = 0.0;   // output value
 
   for (int i = 0; i < 500; i++) {
-    sum += adc1_get_voltage(ADC1_CHANNEL_0);
+    sum += adc1_get_raw(ADC1_CHANNEL_0);
     delayMicroseconds(1000);
   }
   // calculate the voltage

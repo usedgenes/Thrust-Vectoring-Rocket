@@ -5,10 +5,10 @@
 #include "Adafruit_BMP3XX.h"
 
 class Altimeter {
-#define BMP_SCK 13
-#define BMP_MISO 12
-#define BMP_MOSI 11
-#define BMP_CS 10
+#define BMP_SCK 5
+#define BMP_MISO 16
+#define BMP_MOSI 17
+#define BMP_CS 21
 #define SEALEVELPRESSURE_HPA (1013.25)
 private:
   Adafruit_BMP3XX bmp;

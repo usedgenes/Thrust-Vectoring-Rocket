@@ -13,13 +13,15 @@ enum LogType {
   GyroX,
   GyroY,
   GyroZ,
+  PitchCommand,
+  RollCommand,
 };
 
 class Logger {
-#define SD_SCK -1
-#define SD_MISO -1
-#define SD_MOSI -1
-#define SD_CS -1
+#define SD_SCK 5
+#define SD_MISO 16
+#define SD_MOSI 17
+#define SD_CS 18
 
 #define ALTITUDE_PATH "/Altitude.txt"
 #define ACCELX_PATH "/AccelX.txt"
