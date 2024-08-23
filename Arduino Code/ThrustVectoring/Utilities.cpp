@@ -1,5 +1,9 @@
 #include "Utilities.h"
 
+void Utilities::Init() {
+  digitalWrite(BUZZER_PIN, LOW);
+}
+
 void Utilities::readBatteryVoltage() {
   float voltage = readVoltage();
   for(int i = 0; i < 3; i++) {
@@ -14,14 +18,15 @@ void Utilities::readBatteryVoltage() {
 }
 
 void Utilities::readApogee(int apogee) {
+  int array[4] = {0, 0, 0, 0};
+  int counter = 0;
   while(apogee > 0) {
-    LinkedList<Integer> stack = new LinkedList<Integer>();
-    stack.push(apogee & 10);
+    array[counter] = apogee % 10;
     apogee = apogee / 10;
   }
-  while(!stack.isEmpty()) {
-    int digit = stack.pop();
-    for(int i = 0; i < digit; i++) {
+  for(int i = counter; i >= 0; i--) {
+    int digit = array[i];
+    for(int j = 0; j < digit; j++) {
       tone(BUZZER_PIN, 800, 1000);
       delay(500);
     }
@@ -42,7 +47,6 @@ void Utilities::armed() {
 
 float Utilities::readVoltage() {
   //https://stackoverflow.com/questions/56833346/how-to-measure-battery-voltage-with-internal-adc-esp32
-  //read battery voltage per %
   long sum = 0;         // sum of samples taken
   float voltage = 0.0;  // calculated voltage
   float output = 0.0;   // output value

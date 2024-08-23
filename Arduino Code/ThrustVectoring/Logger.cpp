@@ -9,9 +9,11 @@ bool Logger::Init() {
     return false;
   }
   return true;
+  digitalWrite(SD_CS, HIGH);
 }
 
 void Logger::log(LogType type, String message, unsigned long time) {
+  digitalWrite(SD_CS, LOW);
   String filePath;
   switch (type) {
       case Altitude:
@@ -37,4 +39,5 @@ void Logger::log(LogType type, String message, unsigned long time) {
   const char* temp = message.c_str();
   file.print(temp);
   file.close();
+  digitalWrite(SD_CS, HIGH);
 }

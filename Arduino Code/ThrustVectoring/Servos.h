@@ -12,7 +12,7 @@ private:
   int maxPosition = 15;
   #define PARACHUTE_SERVO_OPEN_POSITION 140
   #define PARACHUTE_SERVO_CLOSED_POSITION 50
-  #define PARACHUTE_SERVO_PIN 12
+  #define PARACHUTE_SERVO_PIN -1
 public:
   void Init();
   float writeGimbalServoPosition(int servoNumber, float position);
