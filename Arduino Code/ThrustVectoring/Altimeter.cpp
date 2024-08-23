@@ -1,7 +1,7 @@
 #include "Altimeter.h"
 
-bool Altimeter::Init() {
-  if (!bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
+bool Altimeter::Init(SPIClass * vspi) {
+  if (!bmp.begin_SPI(BMP_CS, vspi)) {  // software SPI mode
     return false;
   }
   bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
@@ -20,7 +20,6 @@ bool Altimeter::Init() {
 }
 
 void Altimeter::selectAltimeter() {
-  bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI);
 }
 
 void Altimeter::getReading(float& temperature, float& pressure, float& altitude) {
@@ -35,7 +34,7 @@ void Altimeter::getReading(float& temperature, float& pressure, float& altitude)
 float Altimeter::getAltitude() {
   selectAltimeter();
   bmp.performReading();
-  while (!isnan(bmp.readAltitude(SEALEVELPRESSURE_HPA))) {
+  while (isnan(bmp.readAltitude(SEALEVELPRESSURE_HPA))) {
     selectAltimeter();
     bmp.performReading();
   }

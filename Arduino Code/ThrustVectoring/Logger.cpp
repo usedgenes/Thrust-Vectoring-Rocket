@@ -1,36 +1,38 @@
 #include "SD.h"
 #include "Logger.h"
 
-bool Logger::Init() {
-  SPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
-  if(!SD.begin(SD_CS)) {
+bool Logger::Init(SPIClass & _vspi) {
+  vspi = _vspi;
+  Serial.println("SD Starting");
+  if(!SD.begin(SD_CS, vspi)) {
     return false;
   }
+  Serial.println("SD Initializing");
   uint8_t cardType = SD.cardType();
   if (cardType == CARD_NONE) {
     return false;
   }
-  Serial.println("SD Card Initialized");
-  testLog();
   digitalWrite(SD_CS, HIGH);
-  Serial.println("Yay");
+  Serial.println("SD Initialized");
   return true;
 }
 
 
 void Logger::log(LogType type, String message, unsigned long time) {
-  SPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
-  SD.begin(SD_CS);
+  SD.begin(SD_CS, vspi);
+  digitalWrite(SD_CS, LOW);
   String filePath;
   switch (type) {
     case Altitude:
-      filePath = "/Altitude.txt"
+      filePath = "/Altitude.txt";
     case Accelerometer:
-      filePath = "/Accelerometer.txt"
+      filePath = "/Accelerometer.txt";
     case Gyroscope:
       filePath = "Gyroscope.txt";
-    case Event:
-      filePath = "/Event.txt";
+    case Events:
+      filePath = "/Events.txt";
+    case Pid:
+      filePath = "/Pid.txt";
   }
   File file = SD.open(filePath, FILE_WRITE);
   String log = String(time) + "\t" + message;

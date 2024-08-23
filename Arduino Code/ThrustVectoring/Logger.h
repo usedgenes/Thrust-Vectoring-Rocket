@@ -9,8 +9,8 @@ enum LogType {
   Altitude,
   Accelerometer,
   Gyroscope,
-  PID,
-  Event,
+  Pid,
+  Events,
 };
 
 class Logger {
@@ -20,8 +20,9 @@ class Logger {
 #define SD_CS 18
 
 private:
+SPIClass vspi;
 public:
-  bool Init();
+  bool Init(SPIClass & vspi);
   void log(LogType type, String message, unsigned long time);
   void testLog();
 };
