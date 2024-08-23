@@ -3,88 +3,66 @@ import SwiftUICharts
 
 struct ThrustVectoringRocketView: View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    
-    @State var servo0Position : Double = 0
-    @State var servo1Position : Double = 0
-    
-    @State var rollKp : String = "50.0"
-    @State var rollKi : String = "0.5"
-    @State var rollKd : String = "0.0"
-    @State var pitchKp : String = "50.0"
-    @State var pitchKi : String = "0.0"
-    @State var pitchKd : String = "0.0"
-    @State var yawKp : String = "50.0"
-    @State var yawKi : String = "0.0"
-    @State var yawKd : String = "0.0"
-    
     @EnvironmentObject var rocket : Rocket
-    
     var body: some View {
         ScrollView {
-            Text("Thrust Vectoring Rocket")
+            Text("Control Panel")
+                .font(.largeTitle)
+                .padding(.bottom)
             HStack {
                 Button(action: {
-                    bluetoothDevice.setUtilities(input: )
+                    bluetoothDevice.setUtilities(input: "Arm")
                 }) {
                     Text("Arm Rocket")
+                        .font(.title2)
                 }
+                .padding()
+                Button(action: {
+                    bluetoothDevice.setUtilities(input: "Reset")
+                }) {
+                    Text("Reset Rocket")
+                        .font(.title2)
+                }
+                .padding()
             }
+            Text(rocket.state)
+                .frame(width: 500, height: 500)
+            NavigationLink("View Orientation:", destination: rocketGraphView())
+                .padding()
+                .font(.title3)
+                .background(Color(.systemGroupedBackground))
+                .cornerRadius(10)
             
-            Section {
-                HStack {
-                    Text("Servo 0: " + String(Int(servo0Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo0Position
-                    }, set: { (newVal) in
-                        servo0Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
-                        }
-                    }
-                }.padding()
-                HStack {
-                    Text("Servo 1: " + String(Int(servo1Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo1Position
-                    }, set: { (newVal) in
-                        servo1Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
-                        }
-                    }
-                }.padding()
-            }
-            GroupBox {
-                NavigationLink("View Orientation:", destination: rocketGraphView())
-                    .padding()
-            }
-            GroupBox {
-                NavigationLink("View Servo Values:", destination: rocketServoPosView())
-                    .padding()
-            }
-            GroupBox {
-                NavigationLink("View PID Values:", destination: rocketPidView())
-                    .padding()
-            }
-        }.hideKeyboardWhenTappedAround()
-            .navigationViewStyle(StackNavigationViewStyle())
+            NavigationLink("View Servo Values:", destination: rocketServoPosView())
+                .padding()
+                .font(.title3)
+                .background(Color(.systemGroupedBackground))
+                .cornerRadius(10)
+            
+            NavigationLink("View PID Values:", destination: pidValuesView())
+                .padding()
+                .font(.title3)
+                .background(Color(.systemGroupedBackground))
+                .cornerRadius(10)
+            
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
 struct pidValuesView : View {
+    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
+    @EnvironmentObject var rocket : Rocket
+    @State var getData = false
+    
     var body : some View {
         Section {
             Text("PID Values")
                 .frame(maxWidth: .infinity, alignment: .center)
             HStack {
                 Button(action: {
-                    bluetoothDevice.setPID(input: "0" + rollKp + "," + rollKi + "!" + rollKd)
-                    bluetoothDevice.setPID(input: "1" + pitchKp + "," + pitchKi + "!" + pitchKd)
-                    bluetoothDevice.setPID(input: "2" + yawKp + "," + yawKi + "!" + yawKd)
+                    bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
+                    bluetoothDevice.setPID(input: "1" + rocket.pitchKp + "," + rocket.pitchKi + "!" + rocket.pitchKd)
+                    bluetoothDevice.setPID(input: "2" + rocket.yawKp + "," + rocket.yawKi + "!" + rocket.yawKd)
                 }) {
                     Text("Apply")
                 }.buttonStyle(BorderlessButtonStyle())
@@ -99,24 +77,24 @@ struct pidValuesView : View {
             HStack {
                 Text("Roll:")
                 Text("Kp:")
-                TextField(rollKp, text: Binding<String>(
-                    get: { rollKp },
+                TextField(rocket.rollKp, text: Binding<String>(
+                    get: { rocket.rollKp },
                     set: {
-                        rollKp = $0
+                        rocket.rollKp = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Ki:")
-                TextField(rollKi, text: Binding<String>(
-                    get: { rollKi },
+                TextField(rocket.rollKi, text: Binding<String>(
+                    get: { rocket.rollKi },
                     set: {
-                        rollKi = $0
+                        rocket.rollKi = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Kd:")
-                TextField(rollKd, text: Binding<String>(
-                    get: { rollKd },
+                TextField(rocket.rollKd, text: Binding<String>(
+                    get: { rocket.rollKd },
                     set: {
-                        rollKd = $0
+                        rocket.rollKd = $0
                         
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
@@ -124,51 +102,94 @@ struct pidValuesView : View {
             HStack {
                 Text("Pitch:")
                 Text("Kp:")
-                TextField(pitchKp, text: Binding<String>(
-                    get: { pitchKp },
+                TextField(rocket.pitchKp, text: Binding<String>(
+                    get: { rocket.pitchKp },
                     set: {
-                        pitchKp = $0
+                        rocket.pitchKp = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Ki:")
-                TextField(pitchKi, text: Binding<String>(
-                    get: { pitchKi },
+                TextField(rocket.pitchKi, text: Binding<String>(
+                    get: { rocket.pitchKi },
                     set: {
                         
-                        pitchKi = $0
+                        rocket.pitchKi = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Kd:")
-                TextField(pitchKd, text: Binding<String>(
-                    get: { pitchKd },
+                TextField(rocket.pitchKd, text: Binding<String>(
+                    get: { rocket.pitchKd },
                     set: {
-                        pitchKd = $0
+                        rocket.pitchKd = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
             }
             HStack {
                 Text("Yaw:")
                 Text("Kp:")
-                TextField(yawKp, text: Binding<String>(
-                    get: { yawKp },
+                TextField(rocket.yawKp, text: Binding<String>(
+                    get: { rocket.yawKp },
                     set: {
-                        yawKp = $0
+                        rocket.yawKp = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Ki:")
-                TextField(yawKi, text: Binding<String>(
-                    get: { yawKi },
+                TextField(rocket.yawKi, text: Binding<String>(
+                    get: { rocket.yawKi },
                     set: {
-                        yawKi = $0
+                        rocket.yawKi = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
                 Text("Kd:")
-                TextField(yawKd, text: Binding<String>(
-                    get: { yawKd },
+                TextField(rocket.yawKd, text: Binding<String>(
+                    get: { rocket.yawKd },
                     set: {
-                        yawKd = $0
+                        rocket.yawKd = $0
                     }))
                 .keyboardType(UIKeyboardType.decimalPad)
+            }
+            
+            Section {
+                Text("PID Command Graphs")
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                HStack {
+                    Button(action: {
+                        bluetoothDevice.setPID(input: "11")
+                        getData.toggle()
+                    }) {
+                        Text("Get Data")
+                    }.disabled(getData)
+                        .buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Button(action: {
+                        bluetoothDevice.setPID(input: "10")
+                        getData.toggle()
+                    }) {
+                        Text("Stop")
+                    }.disabled(!getData)
+                        .buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    Button(action: {
+                        rocket.resetPIDCommands()
+                    }) {
+                        Text("Reset All")
+                    }.buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }.padding(.bottom)
+            }.onDisappear(perform: {
+                bluetoothDevice.setPID(input: "10")
+            })
+            Section {
+                Text("Yaw Command")
+                ChartStyle().getGraph(datasets: rocket.getYawCommand(), colour: .red)
+                
+                Text("Pitch Command")
+                ChartStyle().getGraph(datasets: rocket.getPitchCommand(), colour: .green)
+                
+                Text("Roll Command")
+                ChartStyle().getGraph(datasets: rocket.getRollCommand(), colour: .blue)
             }
         }.padding(.leading)
     }
@@ -178,7 +199,7 @@ struct rocketGraphView : View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
-
+    
     
     var body : some View {
         Section {
@@ -187,7 +208,7 @@ struct rocketGraphView : View {
                 .padding()
             HStack {
                 Button(action: {
-                    bluetoothDevice.setBMI088(input: )
+                    bluetoothDevice.setBMI088(input: "11")
                     getData.toggle()
                 }) {
                     Text("Get Data")
@@ -196,7 +217,7 @@ struct rocketGraphView : View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 
                 Button(action: {
-                    bluetoothDevice.setBMI088(input: )
+                    bluetoothDevice.setBMI088(input: "10")
                     getData.toggle()
                 }) {
                     Text("Stop")
@@ -217,7 +238,7 @@ struct rocketGraphView : View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }.padding(.bottom)
         }.onDisappear(perform: {
-            bluetoothDevice.setBMI088(input: )
+            bluetoothDevice.setBMI088(input: "10")
         })
         
         Text("Yaw")
@@ -235,15 +256,55 @@ struct rocketServoPosView : View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
+    @State var servo0Position : Double = 0
+    @State var servo1Position : Double = 0
     
     var body: some View {
         Section {
+            Section {
+                HStack {
+                    Text("Servo 0: " + String(Int(servo0Position)))
+                        .padding(.trailing)
+                    Slider(value: Binding(get: {
+                        servo0Position
+                    }, set: { (newVal) in
+                        servo0Position = newVal
+                    }), in: -30...30, step: 1) { editing in
+                        if(!editing) {
+                            bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
+                        }
+                    }
+                    Button(action: {
+                        bluetoothDevice.setServos(input: "20")
+                    }) {
+                        Text("Set as origin")
+                    }
+                }.padding()
+                HStack {
+                    Text("Servo 1: " + String(Int(servo1Position)))
+                        .padding(.trailing)
+                    Slider(value: Binding(get: {
+                        servo1Position
+                    }, set: { (newVal) in
+                        servo1Position = newVal
+                    }), in: -30...30, step: 1) { editing in
+                        if(!editing) {
+                            bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
+                        }
+                    }
+                    Button(action: {
+                        bluetoothDevice.setServos(input: "20")
+                    }) {
+                        Text("Set as origin")
+                    }
+                }.padding()
+            }
             Text("Servo Position Graphs")
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
             HStack {
                 Button(action: {
-                    bluetoothDevice.setServos(input: )
+                    bluetoothDevice.setServos(input: "11")
                     getData.toggle()
                 }) {
                     Text("Get Data")
@@ -252,7 +313,7 @@ struct rocketServoPosView : View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 
                 Button(action: {
-                    bluetoothDevice.setServos(input: )
+                    bluetoothDevice.setServos(input: "10")
                     getData.toggle()
                 }) {
                     Text("Stop")
@@ -266,66 +327,17 @@ struct rocketServoPosView : View {
                 }.buttonStyle(BorderlessButtonStyle())
                     .frame(maxWidth: .infinity, alignment: .center)
             }.padding(.bottom)
-        }.onDisappear(perform: {
-            bluetoothDevice.setServos(input: )
+        }
+        .onDisappear(perform: {
+            bluetoothDevice.setServos(input: "10")
         })
+        .hideKeyboardWhenTappedAround()
         
         Text("Servo 0 Position")
         ChartStyle().getGraph(datasets: rocket.getServo0Pos(), colour: .red)
         
-        let servo1data = LineChartData(dataSets: rocket.getServo1Pos(), chartStyle: ChartStyle().getChartStyle())
         Text("Servo 1 Position")
         ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
-    }
-}
-
-struct rocketPidView : View {
-    @EnvironmentObject var rocket : Rocket
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @State var getData = false
-    
-    var body: some View {
-        Section {
-            Text("PID Command Graphs")
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-            HStack {
-                Button(action: {
-                    bluetoothDevice.setPID(input: )
-                    getData.toggle()
-                }) {
-                    Text("Get Data")
-                }.disabled(getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Button(action: {
-                    bluetoothDevice.setPID(input: )
-                    getData.toggle()
-                }) {
-                    Text("Stop")
-                }.disabled(!getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    rocket.resetPIDCommands()
-                }) {
-                    Text("Reset All")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }.padding(.bottom)
-        }.onDisappear(perform: {
-            bluetoothDevice.setPID(input: )
-        })
-        
-        Text("Yaw Command")
-        ChartStyle().getGraph(datasets: rocket.getYawCommand(), colour: .red)
-        
-        Text("Pitch Command")
-        ChartStyle().getGraph(datasets: rocket.getPitchCommand(), colour: .green)
-        
-        Text("Roll Command")
-        ChartStyle().getGraph(datasets: rocket.getRollCommand(), colour: .blue)
     }
 }
 

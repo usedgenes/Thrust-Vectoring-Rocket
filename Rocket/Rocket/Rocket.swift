@@ -9,6 +9,18 @@ import Foundation
 import SwiftUICharts
 
 class Rocket : ObservableObject {
+    @Published var rollKp : String = "50.0"
+    @Published var rollKi : String = "0.0"
+    @Published var rollKd : String = "0.0"
+    @Published var pitchKp : String = "50.0"
+    @Published var pitchKi : String = "0.0"
+    @Published var pitchKd : String = "0.0"
+    @Published var yawKp : String = "50.0"
+    @Published var yawKi : String = "0.0"
+    @Published var yawKd : String = "0.0"
+    
+    @Published var state = "Log"
+    
     @Published var yawData : [LineChartDataPoint] = []
     @Published var pitchData : [LineChartDataPoint] = []
     @Published var rollData : [LineChartDataPoint] = []

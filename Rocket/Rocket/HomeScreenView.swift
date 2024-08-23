@@ -23,7 +23,7 @@ struct HomeScreenView: View {
                     NavigationLink("Rocket", destination: ThrustVectoringRocketView())
 
                 }
-            }
+            } 
             .navigationBarTitle("Thrust Vectoring Rocket")
         }
         .navigationViewStyle(StackNavigationViewStyle())

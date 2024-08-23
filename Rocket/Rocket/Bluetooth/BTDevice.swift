@@ -223,7 +223,7 @@ extension BTDevice: CBPeripheralDelegate {
             }
             delegate?.deviceBlinkChanged(value: _blink)
         }
-        if characteristic.uuid == servoChar?.uuid, let b = characteristic.value {
+        else if characteristic.uuid == servoChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value[...value.startIndex] == "5") {
                 value.remove(at: value.startIndex)
@@ -235,7 +235,7 @@ extension BTDevice: CBPeripheralDelegate {
                     
                     return;
                 }
-                if(value[...value.startIndex] == "1") {
+                else if(value[...value.startIndex] == "1") {
                     value.remove(at: value.startIndex)
                     
                     let servo0pos = Float(value)!
@@ -245,7 +245,7 @@ extension BTDevice: CBPeripheralDelegate {
                 }
             }
         }
-        if characteristic.uuid == pidChar?.uuid, let b = characteristic.value {
+        else if characteristic.uuid == pidChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value[...value.startIndex] == "5") {
                 value.remove(at: value.startIndex)
@@ -257,7 +257,7 @@ extension BTDevice: CBPeripheralDelegate {
                     
                     return;
                 }
-                if(value[...value.startIndex] == "1") {
+                else if(value[...value.startIndex] == "1") {
                     value.remove(at: value.startIndex)
                     
                     let pitchCmd = Float(value)!
@@ -265,7 +265,7 @@ extension BTDevice: CBPeripheralDelegate {
                     
                     return;
                 }
-                if(value[...value.startIndex] == "2") {
+                else if(value[...value.startIndex] == "2") {
                     value.remove(at: value.startIndex)
                     
                     let rollCmd = Float(value)!
@@ -275,14 +275,44 @@ extension BTDevice: CBPeripheralDelegate {
                 }
             }
         }
-        if characteristic.uuid == bmp390Char?.uuid, let b = characteristic.value {
+        else if characteristic.uuid == bmp390Char?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value[...value.startIndex] == "5") {
                 value.remove(at: value.startIndex)
                 
             }
         }
-        if characteristic.uuid == bmi088Char?.uuid, let b = characteristic.value {
+        else if characteristic.uuid == bmi088Char?.uuid, let b = characteristic.value {
+            var value = String(decoding: b, as: UTF8.self)
+            if(value[...value.startIndex] == "5") {
+                value.remove(at: value.startIndex)
+                if(value[...value.startIndex] == "0") {
+                    value.remove(at: value.startIndex)
+                    
+                    let yaw = Float(value)!
+                    rocket!.addYaw(yaw: yaw)
+                    
+                    return;
+                }
+                else if(value[...value.startIndex] == "1") {
+                    value.remove(at: value.startIndex)
+                    
+                    let pitch = Float(value)!
+                    rocket!.addPitch(pitch: pitch)
+                    
+                    return;
+                }
+                else if(value[...value.startIndex] == "2") {
+                    value.remove(at: value.startIndex)
+                    
+                    let roll = Float(value)!
+                    rocket!.addRoll(roll: roll)
+                    
+                    return;
+                }
+            }
+        }
+        else if characteristic.uuid == utilitiesChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value[...value.startIndex] == "5") {
                 value.remove(at: value.startIndex)
