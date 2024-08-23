@@ -5,7 +5,6 @@
 #include "SPI.h"
 
 enum LogType {
-  MotorThrust,
   Altitude,
   Accelerometer,
   Gyroscope,
@@ -23,7 +22,7 @@ private:
 SPIClass vspi;
 public:
   bool Init(SPIClass & vspi);
-  void log(LogType type, String message, unsigned long time);
+  void log(LogType type, String _message, unsigned long time);
   void testLog();
 };
 

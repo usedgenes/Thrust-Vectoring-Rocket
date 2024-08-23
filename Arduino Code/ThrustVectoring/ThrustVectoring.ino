@@ -12,10 +12,10 @@
 #define SPI1_MISO 16
 #define SPI1_MOSI 17
 #define SPI1_CS 21
-// #define SPI2_SC 5
-// #define SPI2_MISO 16
-// #define SPI2_MOSI 17
-// #define SPI2_CS 21
+#define SPI2_SCK 27
+#define SPI2_MISO 25
+#define SPI2_MOSI 26
+#define SPI2_CS 33
 
 #define BLUETOOTH_REFRESH_THRESHOLD 50
 #define LAUNCH_ALTITUDE_THRESHOLD_METERS 4
@@ -66,13 +66,13 @@ void setup() {
   vspi = new SPIClass(VSPI);
   hspi = new SPIClass(HSPI);
   vspi->begin(SPI1_SCK, SPI1_MISO, SPI1_MOSI, SPI1_CS);
-  // hspi->begin(SPI2_SCK, SPI2_MISO, SPI2_MOSI, SPI2_CS);
+  hspi->begin(SPI2_SCK, SPI2_MISO, SPI2_MOSI, SPI2_CS);
   utilities.Init();
   bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, armed, bluetoothConnected);
   servos.Init();
   pitchPID.Init(1, 0.5, 0.2);
   rollPID.Init(1, 0.5, 0.2);
-  if (!imu.Init()) {
+  if (!imu.Init(*hspi)) {
     bluetooth.writeUtilities("IMU Initialization Error");
     Serial.println("IMU error");
     while (1) {}
@@ -93,11 +93,11 @@ void setup() {
   bluetooth.writeUtilities("Launch Altitude: " + String(launchAltitude));
   logger.log(Events, "Launch Altitude: " + String(launchAltitude), millis());
   Serial.println("Launch Altitude: " + String(launchAltitude));
-
+  utilities.initialized();
   // while (!armed) {
   //   delay(100);
   // }
-
+  utilities.armed();
   bluetooth.writeUtilities("Flight Computer Armed");
   logger.log(Events, "Armed", millis());
   Serial.println("Armed");

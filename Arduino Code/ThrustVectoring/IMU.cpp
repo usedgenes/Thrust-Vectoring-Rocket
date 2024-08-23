@@ -1,7 +1,7 @@
 #include "IMU.h"
 
-bool IMU::Init() {
-  hspi.begin(SPI_SCK, SPI_MISO, SPI_MOSI, ACCEL_CS);
+bool IMU::Init(SPIClass & _hspi) {
+  hspi = _hspi;
   accel = new Bmi088Accel(hspi, ACCEL_CS);
   gyro = new Bmi088Gyro(hspi, GYRO_CS);
   int status;

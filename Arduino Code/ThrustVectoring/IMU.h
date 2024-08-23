@@ -10,14 +10,14 @@ class IMU {
 #define ACCEL_CS 33
 #define GYRO_CS 32
 private:
-  SPIClass hspi = SPIClass(HSPI);
+  SPIClass hspi;
   Bmi088Accel *accel;
   Bmi088Gyro *gyro;
 
   float gyroscopeCorrected[3] = { 0, 0, 0 };
 
 public:
-  bool Init();
+  bool Init(SPIClass & _hspi);
   void getIMUData(float accelerometer[], float gyroscope[]);
   void getCorrectedIMU();
 };

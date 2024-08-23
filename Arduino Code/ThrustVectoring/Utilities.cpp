@@ -6,8 +6,8 @@ void Utilities::Init() {
 
 void Utilities::readBatteryVoltage() {
   float voltage = readVoltage();
-  for(int i = 0; i < 3; i++) {
-    for(int j = 0; j < static_cast<int>(voltage); j++) {
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < static_cast<int>(voltage); j++) {
       tone(BUZZER_PIN, 440, 1000);
       delay(500);
       voltage = voltage * 10;
@@ -18,31 +18,46 @@ void Utilities::readBatteryVoltage() {
 }
 
 void Utilities::readApogee(int apogee) {
-  int array[4] = {0, 0, 0, 0};
+  int amountOfDigits;
+  if (apogee < 10) {
+    amountOfDigits = 1;
+  } else if (apogee < 100) {
+    amountOfDigits = 2;
+  } else if (apogee < 1000) {
+    amountOfDigits = 3;
+  } else {
+    amountOfDigits = 4;
+  }
+  int array[4] = { 0, 0, 0, 0 };
   int counter = 0;
-  while(apogee > 0) {
+  while (apogee > 0) {
     array[counter] = apogee % 10;
     apogee = apogee / 10;
+    counter++;
   }
-  for(int i = counter; i >= 0; i--) {
+  for (int i = amountOfDigits - 1; i >= 0; i--) {
     int digit = array[i];
-    for(int j = 0; j < digit; j++) {
-      tone(BUZZER_PIN, 800, 1000);
-      delay(500);
+    if (digit == 0) {
+      digit = 10;
     }
+    for (int j = 0; j < digit; j++) {
+      tone(BUZZER_PIN, 880, 150);
+      delay(300);
+    }
+    delay(1000);
   }
 }
 
 void Utilities::initialized() {
-  tone(BUZZER_PIN, 440, 1000);
+  tone(BUZZER_PIN, 587, 1500);
 }
 
 void Utilities::armed() {
-  tone(BUZZER_PIN, 600, 1000);
-  delay(500);
-  tone(BUZZER_PIN, 600, 1000);
-  delay(500);
-  tone(BUZZER_PIN, 600, 1000);
+  tone(BUZZER_PIN, 587, 500);
+  delay(1000);
+  tone(BUZZER_PIN, 587, 500);
+  delay(1000);
+  tone(BUZZER_PIN, 587, 500);
 }
 
 float Utilities::readVoltage() {
