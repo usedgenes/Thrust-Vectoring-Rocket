@@ -24,7 +24,7 @@ struct HomeScreenView: View {
 
                 }
             }
-            .navigationBarTitle("ESP32 Assistant")
+            .navigationBarTitle("Thrust Vectoring Rocket")
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
