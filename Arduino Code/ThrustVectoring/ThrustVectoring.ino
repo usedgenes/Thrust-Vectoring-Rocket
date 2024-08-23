@@ -14,14 +14,11 @@
 #define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
 #define RECOVERY_ALTITUDE_THRESHOLD_METERS 1000
 
-#define ON_PAD_DATA_FREQUENCY 1000
-#define TVC_ACTIVE_DATA_FREQUENCY 1000
-#define COASTING_DATA_FREQUENCY 1000
-#define PARACHUTE_OUT_DATA_FREQUENCY 1000
-#define ON_GROUND_DATA_FREQUENCY 1000
-
-SPIClass vspi = SPIClass(VSPI);
-SPIClass hspi = SPIClass(HSPI);
+#define ON_PAD_DATA_FREQUENCY 500
+#define TVC_ACTIVE_DATA_FREQUENCY 500
+#define COASTING_DATA_FREQUENCY 500
+#define PARACHUTE_OUT_DATA_FREQUENCY 500
+#define ON_GROUND_DATA_FREQUENCY 500
 
 Bluetooth bluetooth;
 IMU imu;
@@ -65,7 +62,7 @@ void setup() {
     Serial.println("IMU error");
     while (1) {}
   }
-  if (!altimeter.Init(vspi)) {
+  if (!altimeter.Init()) {
     bluetooth.writeUtilities("Altimeter Initialization Error");
     Serial.println("BMP390 error");
     while (1) {}
@@ -79,9 +76,8 @@ void setup() {
   launchAltitude = altimeter.getAltitude();
 
   bluetooth.writeUtilities("Launch Altitude: " + String(launchAltitude));
+  logger.log(Event, "Launch Altitude: " + String(launchAltitude), millis());
   Serial.println("Launch Altitude: " + String(launchAltitude));
-
-  bluetooth.writeUtilities("Flight Computer Initialized");
 
   // while (!armed) {
   //   delay(100);
@@ -190,12 +186,8 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       bluetooth.writePID("92" + String(pitchCommand));
       bluetooth.writePID("93" + String(rollCommand));
     }
-    logger.log(AccelX, String(accelerometer[0]), currentTime);
-    logger.log(AccelY, String(accelerometer[1]), currentTime);
-    logger.log(AccelZ, String(accelerometer[2]), currentTime);
-    logger.log(GyroX, String(accelerometer[0]), currentTime);
-    logger.log(GyroY, String(accelerometer[1]), currentTime);
-    logger.log(GyroZ, String(accelerometer[2]), currentTime);
+    logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
+    logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
     logger.log(Altitude, String(currentAltitude), currentTime);
     printToSerial();
   }

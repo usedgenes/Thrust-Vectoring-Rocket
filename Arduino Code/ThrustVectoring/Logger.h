@@ -7,14 +7,10 @@
 enum LogType {
   MotorThrust,
   Altitude,
-  AccelX,
-  AccelY,
-  AccelZ,
-  GyroX,
-  GyroY,
-  GyroZ,
-  PitchCommand,
-  RollCommand,
+  Accelerometer,
+  Gyroscope,
+  PID,
+  Event,
 };
 
 class Logger {
@@ -23,18 +19,11 @@ class Logger {
 #define SD_MOSI 17
 #define SD_CS 18
 
-#define ALTITUDE_PATH "/Altitude.txt"
-#define ACCELX_PATH "/AccelX.txt"
-#define ACCELY_PATH "/AccelY.txt"
-#define ACCELZ_PATH "/AccelZ.txt"
-#define GYROX_PATH "/GyroX.txt"
-#define GYROY_PATH "/GyroY.txt"
-#define GYROZ_PATH "/GyroZ.txt"
-
 private:
 public:
   bool Init();
   void log(LogType type, String message, unsigned long time);
+  void testLog();
 };
 
 #endif

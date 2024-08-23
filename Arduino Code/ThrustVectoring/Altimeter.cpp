@@ -1,7 +1,7 @@
 #include "Altimeter.h"
 
-bool Altimeter::Init(SPIClass& vspi) {
-  if (!bmp.begin_SPI(BMP_CS, vspi)) {  // software SPI mode
+bool Altimeter::Init() {
+  if (!bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
     return false;
   }
   bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
@@ -19,8 +19,12 @@ bool Altimeter::Init(SPIClass& vspi) {
   return true;
 }
 
+void Altimeter::selectAltimeter() {
+  bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI);
+}
+
 void Altimeter::getReading(float& temperature, float& pressure, float& altitude) {
-  digitalWrite(BMP_CS, LOW);
+  selectAltimeter();
   while (!bmp.performReading()) {}
   temperature = bmp.temperature;
   pressure = bmp.pressure;
@@ -29,11 +33,14 @@ void Altimeter::getReading(float& temperature, float& pressure, float& altitude)
 }
 
 float Altimeter::getAltitude() {
-  digitalWrite(BMP_CS, LOW);
-  while (!bmp.performReading()) {}
-  Serial.println("Altitude: " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
-  return bmp.readAltitude(SEALEVELPRESSURE_HPA);
+  selectAltimeter();
+  bmp.performReading();
+  while (!isnan(bmp.readAltitude(SEALEVELPRESSURE_HPA))) {
+    selectAltimeter();
+    bmp.performReading();
+  }
   digitalWrite(BMP_CS, HIGH);
+  return bmp.readAltitude(SEALEVELPRESSURE_HPA);
 }
 
 void Altimeter::setLowpassFilterValues(float _cutoffFrequency, float initialAlpha) {

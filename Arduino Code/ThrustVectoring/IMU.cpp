@@ -1,9 +1,9 @@
 #include "IMU.h"
 
 bool IMU::Init() {
-  vspi.begin(SPI_SCK, SPI_MISO, SPI_MOSI, ACCEL_CS);
-  accel = new Bmi088Accel(vspi, ACCEL_CS);
-  gyro = new Bmi088Gyro(vspi, GYRO_CS);
+  hspi.begin(SPI_SCK, SPI_MISO, SPI_MOSI, ACCEL_CS);
+  accel = new Bmi088Accel(hspi, ACCEL_CS);
+  gyro = new Bmi088Gyro(hspi, GYRO_CS);
   int status;
   status = accel->begin();
   if (status < 0) {
@@ -18,6 +18,9 @@ bool IMU::Init() {
 }
 
 void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
+  accel->begin();
+  gyro->begin();
+
   accel->readSensor();
   gyro->readSensor();
 
@@ -28,6 +31,8 @@ void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
   gyroscope[0] = gyro->getGyroX_rads() - gyroscopeCorrected[0];
   gyroscope[1] = gyro->getGyroY_rads() - gyroscopeCorrected[1];
   gyroscope[2] = gyro->getGyroZ_rads() - gyroscopeCorrected[2];
+  digitalWrite(ACCEL_CS, HIGH);
+  digitalWrite(ACCEL_CS, HIGH);
 }
 
 void IMU::getCorrectedIMU() {

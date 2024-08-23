@@ -10,7 +10,7 @@ class IMU {
 #define ACCEL_CS 33
 #define GYRO_CS 32
 private:
-  SPIClass vspi = SPIClass(VSPI);
+  SPIClass hspi = SPIClass(HSPI);
   Bmi088Accel *accel;
   Bmi088Gyro *gyro;
 

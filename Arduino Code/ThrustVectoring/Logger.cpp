@@ -3,41 +3,38 @@
 
 bool Logger::Init() {
   SPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
-  SD.begin(SD_CS);
-  uint8_t cardType = SD.cardType();
-  if(cardType == CARD_NONE) {
+  if(!SD.begin(SD_CS)) {
     return false;
   }
-  return true;
+  uint8_t cardType = SD.cardType();
+  if (cardType == CARD_NONE) {
+    return false;
+  }
+  Serial.println("SD Card Initialized");
+  testLog();
   digitalWrite(SD_CS, HIGH);
+  Serial.println("Yay");
+  return true;
 }
 
+
 void Logger::log(LogType type, String message, unsigned long time) {
-  digitalWrite(SD_CS, LOW);
+  SPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
+  SD.begin(SD_CS);
   String filePath;
   switch (type) {
-      case Altitude:
-        filePath = ALTITUDE_PATH;
-      case AccelX:
-        filePath = ACCELX_PATH;
-      case AccelY:
-        filePath = ACCELY_PATH;
-      case AccelZ:
-        filePath = ACCELZ_PATH;
-      case GyroX:
-        filePath = GYROX_PATH;
-      case GyroY:
-        filePath = GYROY_PATH;
-      case GyroZ:
-        filePath = GYROZ_PATH;
-    }
-
-  File file = SD.open(filePath, FILE_APPEND);
-  if (!file) {
-    return;
+    case Altitude:
+      filePath = "/Altitude.txt"
+    case Accelerometer:
+      filePath = "/Accelerometer.txt"
+    case Gyroscope:
+      filePath = "Gyroscope.txt";
+    case Event:
+      filePath = "/Event.txt";
   }
-  const char* temp = message.c_str();
-  file.print(temp);
+  File file = SD.open(filePath, FILE_WRITE);
+  String log = String(time) + "\t" + message;
+  file.println(log);
   file.close();
   digitalWrite(SD_CS, HIGH);
 }
