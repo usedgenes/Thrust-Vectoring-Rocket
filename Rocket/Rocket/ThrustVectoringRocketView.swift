@@ -20,6 +20,7 @@ struct ThrustVectoringRocketView: View {
                 .padding(.horizontal, 25)
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Reset")
+                    rocket.reset()
                 }) {
                     Text("Reset Rocket")
                         .font(.title2)
@@ -28,9 +29,8 @@ struct ThrustVectoringRocketView: View {
             }
             Divider()
             Section {
-                Divider()
                 HStack {
-                    NavigationLink("View Orientation:", destination: rocketGraphView())
+                    NavigationLink("View Orientation:", destination: OrientationView())
                         .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -38,7 +38,7 @@ struct ThrustVectoringRocketView: View {
                 }
                 Divider()
                 HStack {
-                    NavigationLink("View Servo Values:", destination: rocketServoPosView())
+                    NavigationLink("View Servos:", destination: ServoView())
                         .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -46,7 +46,15 @@ struct ThrustVectoringRocketView: View {
                 }
                 Divider()
                 HStack {
-                    NavigationLink("View PID Values:", destination: pidValuesView())
+                    NavigationLink("View PID:", destination: PIDView())
+                        .padding()
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .padding()
+                }
+                Divider()
+                HStack {
+                    NavigationLink("View Altimeter:", destination: AltimeterView())
                         .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -56,342 +64,88 @@ struct ThrustVectoringRocketView: View {
             }
             Section {
                 HStack {
-                    Text("Armed")
+                    Button(action: {
+                        bluetoothDevice.setUtilities(input: "Bypass Pad")
+                    }) {
+                        Text("On Pad")
+                    }
                         .padding()
-                    Image(systemName: rocket.armed ? "checkmark" : "xmark")
-                        .foregroundColor(rocket.armed ? .green : .red)
+                        .buttonStyle(.borderless)
+                    Image(systemName: rocket.onPad ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.onPad ? .green : .red)
                         .padding()
                 }
                 HStack {
-                    Text("TVC Active")
+                    Button(action: {
+                        bluetoothDevice.setUtilities(input: "Bypass TVC")
+                    }) {
+                        Text("TVC Active")
+                    }
                         .padding()
+                        .buttonStyle(.borderless)
                     Image(systemName: rocket.tvcActive ? "checkmark" : "xmark")
                         .foregroundColor(rocket.tvcActive ? .green : .red)
                         .padding()
                 }
                 HStack {
-                    Text("Coasting")
+                    Button(action: {
+                        bluetoothDevice.setUtilities(input: "Bypass Coasting")
+                    }) {
+                        Text("Coasting")
+                    }
                         .padding()
+                        .buttonStyle(.borderless)
                     Image(systemName: rocket.coasting ? "checkmark" : "xmark")
                         .foregroundColor(rocket.coasting ? .green : .red)
                         .padding()
                 }
                 HStack {
-                    Text("Parachute Out")
+                    Button(action: {
+                        bluetoothDevice.setUtilities(input: "Bypass Parachute")
+                    }) {
+                        Text("Parachute Out")
+                    }
                         .padding()
+                        .buttonStyle(.borderless)
                     Image(systemName: rocket.parachuteOut ? "checkmark" : "xmark")
                         .foregroundColor(rocket.parachuteOut ? .green : .red)
                         .padding()
                 }
                 HStack {
-                    Text("Touchdown")
+                    Button(action: {
+                    }) {
+                        Text("Touchdown")
+                    }
                         .padding()
+                        .buttonStyle(.borderless)
                     Image(systemName: rocket.touchdown ? "checkmark" : "xmark")
                         .foregroundColor(rocket.touchdown ? .green : .red)
                         .padding()
                 }
             }
             Divider()
-            Text(rocket.logs)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .font(.title3)
+            Section {
+                HStack {
+                    Text(rocket.logs)
+                        .padding()
+                        .font(.title3)
+                    Spacer()
+                    Button(action: {
+                        rocket.clearLogs()
+                    }) {
+                        Text("Clear Logs")
+                            .font(.title3)
+                            .buttonStyle(.borderless)
+                            .padding()
+                    }
+                }
+            }
             
         }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-struct pidValuesView : View {
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @EnvironmentObject var rocket : Rocket
-    @State var getData = false
-    
-    var body : some View {
-        Section {
-            Text("PID Values")
-                .frame(maxWidth: .infinity, alignment: .center)
-            HStack {
-                Button(action: {
-                    bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
-                    bluetoothDevice.setPID(input: "1" + rocket.pitchKp + "," + rocket.pitchKi + "!" + rocket.pitchKd)
-                    bluetoothDevice.setPID(input: "2" + rocket.yawKp + "," + rocket.yawKi + "!" + rocket.yawKd)
-                }) {
-                    Text("Apply")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    bluetoothDevice.setUtilities(input: "0")
-                }) {
-                    Text("RESET ESP32")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }.padding(.bottom)
-            HStack {
-                Text("Roll:")
-                Text("Kp:")
-                TextField(rocket.rollKp, text: Binding<String>(
-                    get: { rocket.rollKp },
-                    set: {
-                        rocket.rollKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.rollKi, text: Binding<String>(
-                    get: { rocket.rollKi },
-                    set: {
-                        rocket.rollKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.rollKd, text: Binding<String>(
-                    get: { rocket.rollKd },
-                    set: {
-                        rocket.rollKd = $0
-                        
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            HStack {
-                Text("Pitch:")
-                Text("Kp:")
-                TextField(rocket.pitchKp, text: Binding<String>(
-                    get: { rocket.pitchKp },
-                    set: {
-                        rocket.pitchKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.pitchKi, text: Binding<String>(
-                    get: { rocket.pitchKi },
-                    set: {
-                        
-                        rocket.pitchKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.pitchKd, text: Binding<String>(
-                    get: { rocket.pitchKd },
-                    set: {
-                        rocket.pitchKd = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            HStack {
-                Text("Yaw:")
-                Text("Kp:")
-                TextField(rocket.yawKp, text: Binding<String>(
-                    get: { rocket.yawKp },
-                    set: {
-                        rocket.yawKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.yawKi, text: Binding<String>(
-                    get: { rocket.yawKi },
-                    set: {
-                        rocket.yawKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.yawKd, text: Binding<String>(
-                    get: { rocket.yawKd },
-                    set: {
-                        rocket.yawKd = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            
-            Section {
-                Text("PID Command Graphs")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                HStack {
-                    Button(action: {
-                        bluetoothDevice.setPID(input: "11")
-                        getData.toggle()
-                    }) {
-                        Text("Get Data")
-                    }.disabled(getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Button(action: {
-                        bluetoothDevice.setPID(input: "10")
-                        getData.toggle()
-                    }) {
-                        Text("Stop")
-                    }.disabled(!getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Button(action: {
-                        rocket.resetPIDCommands()
-                    }) {
-                        Text("Reset All")
-                    }.buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }.padding(.bottom)
-            }.onDisappear(perform: {
-                bluetoothDevice.setPID(input: "10")
-            })
-            Section {
-                Text("Yaw Command")
-                ChartStyle().getGraph(datasets: rocket.getYawCommand(), colour: .red)
-                
-                Text("Pitch Command")
-                ChartStyle().getGraph(datasets: rocket.getPitchCommand(), colour: .green)
-                
-                Text("Roll Command")
-                ChartStyle().getGraph(datasets: rocket.getRollCommand(), colour: .blue)
-            }
-        }.padding(.leading)
-    }
-}
 
-struct rocketGraphView : View {
-    @EnvironmentObject var rocket : Rocket
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @State var getData = false
-    
-    
-    var body : some View {
-        Section {
-            Text("BMI088 Data Graphs")
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-            HStack {
-                Button(action: {
-                    bluetoothDevice.setBMI088(input: "11")
-                    getData.toggle()
-                }) {
-                    Text("Get Data")
-                }.disabled(getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Button(action: {
-                    bluetoothDevice.setBMI088(input: "10")
-                    getData.toggle()
-                }) {
-                    Text("Stop")
-                }.disabled(!getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    rocket.resetRotation()
-                }) {
-                    Text("Reset All")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    bluetoothDevice.setBMI088(input: "1")
-                }) {
-                    Text("Calibrate")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }.padding(.bottom)
-        }.onDisappear(perform: {
-            bluetoothDevice.setBMI088(input: "10")
-        })
-        
-        Text("Yaw")
-        ChartStyle().getGraph(datasets: rocket.getYaw(), colour: .red)
-        
-        Text("Pitch")
-        ChartStyle().getGraph(datasets: rocket.getPitch(), colour: .green)
-        
-        Text("Roll")
-        ChartStyle().getGraph(datasets: rocket.getRoll(), colour: .blue)
-    }
-}
-
-struct rocketServoPosView : View {
-    @EnvironmentObject var rocket : Rocket
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @State var getData = false
-    @State var servo0Position : Double = 0
-    @State var servo1Position : Double = 0
-    
-    var body: some View {
-        Section {
-            Section {
-                HStack {
-                    Text("Servo 0: " + String(Int(servo0Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo0Position
-                    }, set: { (newVal) in
-                        servo0Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
-                        }
-                    }
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "20")
-                    }) {
-                        Text("Set as origin")
-                    }
-                }.padding()
-                HStack {
-                    Text("Servo 1: " + String(Int(servo1Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo1Position
-                    }, set: { (newVal) in
-                        servo1Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
-                        }
-                    }
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "20")
-                    }) {
-                        Text("Set as origin")
-                    }
-                }.padding()
-            }
-            Text("Servo Position Graphs")
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-            HStack {
-                Button(action: {
-                    bluetoothDevice.setServos(input: "11")
-                    getData.toggle()
-                }) {
-                    Text("Get Data")
-                }.disabled(getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Button(action: {
-                    bluetoothDevice.setServos(input: "10")
-                    getData.toggle()
-                }) {
-                    Text("Stop")
-                }.disabled(!getData)
-                    .buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    rocket.resetServoPos()
-                }) {
-                    Text("Reset All")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }.padding(.bottom)
-        }
-        .onDisappear(perform: {
-            bluetoothDevice.setServos(input: "10")
-        })
-        .hideKeyboardWhenTappedAround()
-        
-        Text("Servo 0 Position")
-        ChartStyle().getGraph(datasets: rocket.getServo0Pos(), colour: .red)
-        
-        Text("Servo 1 Position")
-        ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
-    }
-}
 
 struct ThrustVectoringRocketView_Previews: PreviewProvider {
     static var previews: some View {

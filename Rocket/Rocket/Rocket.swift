@@ -9,19 +9,19 @@ import Foundation
 import SwiftUICharts
 
 class Rocket : ObservableObject {
-    @Published var rollKp : String = "50.0"
+    @Published var rollKp : String = "10.0"
     @Published var rollKi : String = "0.0"
     @Published var rollKd : String = "0.0"
-    @Published var pitchKp : String = "50.0"
+    @Published var pitchKp : String = "10.0"
     @Published var pitchKi : String = "0.0"
     @Published var pitchKd : String = "0.0"
-    @Published var yawKp : String = "50.0"
+    @Published var yawKp : String = "10.0"
     @Published var yawKi : String = "0.0"
     @Published var yawKd : String = "0.0"
     
     @Published var logs = "Logs: "
     
-    @Published var armed = false
+    @Published var onPad = false
     @Published var tvcActive = false
     @Published var coasting = false
     @Published var parachuteOut = false
@@ -160,5 +160,22 @@ class Rocket : ObservableObject {
     
     func resetAltitude() {
         altitude.removeAll()
+    }
+    
+    func clearLogs() {
+        logs = "Logs: "
+    }
+    
+    func reset() {
+        resetRotation()
+        resetServoPos()
+        resetPIDCommands()
+        resetAltitude()
+        clearLogs()
+        onPad = false
+        tvcActive = false
+        coasting = false
+        parachuteOut = false
+        touchdown = false
     }
 }

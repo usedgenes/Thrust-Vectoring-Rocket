@@ -328,8 +328,8 @@ extension BTDevice: CBPeripheralDelegate {
                 }
                 else if(value[...value.startIndex] == "2") {
                     value.remove(at: value.startIndex)
-                    if(value == "Armed") {
-                        rocket!.armed = true;
+                    if(value == "On Pad") {
+                        rocket!.onPad = true;
                     }
                     else if(value == "TVC Active") {
                         rocket!.tvcActive = true;
