@@ -9,6 +9,7 @@ struct ThrustVectoringRocketView: View {
             Text("Control Panel")
                 .font(.largeTitle)
                 .padding(.bottom)
+            Divider()
             HStack {
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Arm")
@@ -25,25 +26,92 @@ struct ThrustVectoringRocketView: View {
                 }
                 .padding()
             }
-            Text(rocket.state)
-                .frame(width: 500, height: 500)
-            NavigationLink("View Orientation:", destination: rocketGraphView())
-                .padding()
-                .font(.title3)
-                .background(Color(.systemGroupedBackground))
-                .cornerRadius(10)
-            
-            NavigationLink("View Servo Values:", destination: rocketServoPosView())
-                .padding()
-                .font(.title3)
-                .background(Color(.systemGroupedBackground))
-                .cornerRadius(10)
-            
-            NavigationLink("View PID Values:", destination: pidValuesView())
-                .padding()
-                .font(.title3)
-                .background(Color(.systemGroupedBackground))
-                .cornerRadius(10)
+            Divider()
+            Section {
+                HStack {
+                    Text("Armed")
+                        .padding()
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .padding()
+                        .disabled(rocket.armed)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .padding()
+                        .disabled(!rocket.armed)
+                }
+                HStack {
+                    Text("TVC Active")
+                        .padding()
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .padding()
+                        .disabled(rocket.tvcActive)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .padding()
+                        .disabled(!rocket.tvcActive)
+                }
+                HStack {
+                    Text("Coasting")
+                        .padding()
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .padding()
+                        .disabled(rocket.coasting)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .padding()
+                        .disabled(!rocket.coasting)
+                }
+                HStack {
+                    Text("Parachute Out")
+                        .padding()
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .padding()
+                        .disabled(rocket.parachuteOut)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .padding()
+                        .disabled(!rocket.parachuteOut)
+                }
+                HStack {
+                    Text("Touchdown")
+                        .padding()
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .padding()
+                        .disabled(rocket.touchdown)
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .padding()
+                        .disabled(!rocket.touchdown)
+                }
+            }
+            Section {
+                HStack {
+                    NavigationLink("View Orientation:", destination: rocketGraphView())
+                        .padding(.horizontal)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .padding(.horizontal)
+                }
+                Divider()
+                HStack {
+                    NavigationLink("View Servo Values:", destination: rocketServoPosView())
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .padding(.horizontal)
+                }
+                Divider()
+                HStack {
+                    NavigationLink("View PID Values:", destination: pidValuesView())
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .padding(.horizontal)
+                }
+            }
             
         }.navigationViewStyle(StackNavigationViewStyle())
     }

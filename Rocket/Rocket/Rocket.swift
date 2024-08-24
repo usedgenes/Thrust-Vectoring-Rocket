@@ -19,7 +19,12 @@ class Rocket : ObservableObject {
     @Published var yawKi : String = "0.0"
     @Published var yawKd : String = "0.0"
     
-    @Published var state = "Log"
+    @Published var armed = false
+    @Published var tvcActive = false
+    @Published var coasting = false
+    @Published var parachuteOut = false
+    @Published var touchdown = false
+
     
     @Published var yawData : [LineChartDataPoint] = []
     @Published var pitchData : [LineChartDataPoint] = []
