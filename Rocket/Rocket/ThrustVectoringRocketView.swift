@@ -28,6 +28,7 @@ struct ThrustVectoringRocketView: View {
             }
             Divider()
             Section {
+                Divider()
                 HStack {
                     NavigationLink("View Orientation:", destination: rocketGraphView())
                         .padding()
