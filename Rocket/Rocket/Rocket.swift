@@ -19,6 +19,8 @@ class Rocket : ObservableObject {
     @Published var yawKi : String = "0.0"
     @Published var yawKd : String = "0.0"
     
+    @Published var logs = "Logs: "
+    
     @Published var armed = false
     @Published var tvcActive = false
     @Published var coasting = false

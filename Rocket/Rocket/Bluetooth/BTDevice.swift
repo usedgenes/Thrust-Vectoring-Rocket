@@ -316,6 +316,7 @@ extension BTDevice: CBPeripheralDelegate {
             var value = String(decoding: b, as: UTF8.self)
             if(value[...value.startIndex] == "1") {
                 value.remove(at: value.startIndex)
+                rocket!.logs.append("\n" + value)
             }
         }
     }

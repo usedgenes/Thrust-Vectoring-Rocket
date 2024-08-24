@@ -17,7 +17,7 @@ struct ThrustVectoringRocketView: View {
                     Text("Arm Rocket")
                         .font(.title2)
                 }
-                .padding()
+                .padding(.horizontal, 25)
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Reset")
                 }) {
@@ -29,89 +29,72 @@ struct ThrustVectoringRocketView: View {
             Divider()
             Section {
                 HStack {
-                    Text("Armed")
-                        .padding()
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .padding()
-                        .disabled(rocket.armed)
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .padding()
-                        .disabled(!rocket.armed)
-                }
-                HStack {
-                    Text("TVC Active")
-                        .padding()
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .padding()
-                        .disabled(rocket.tvcActive)
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .padding()
-                        .disabled(!rocket.tvcActive)
-                }
-                HStack {
-                    Text("Coasting")
-                        .padding()
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .padding()
-                        .disabled(rocket.coasting)
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .padding()
-                        .disabled(!rocket.coasting)
-                }
-                HStack {
-                    Text("Parachute Out")
-                        .padding()
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .padding()
-                        .disabled(rocket.parachuteOut)
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .padding()
-                        .disabled(!rocket.parachuteOut)
-                }
-                HStack {
-                    Text("Touchdown")
-                        .padding()
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .padding()
-                        .disabled(rocket.touchdown)
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .padding()
-                        .disabled(!rocket.touchdown)
-                }
-            }
-            Section {
-                HStack {
                     NavigationLink("View Orientation:", destination: rocketGraphView())
-                        .padding(.horizontal)
+                        .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
-                        .padding(.horizontal)
+                        .padding()
                 }
                 Divider()
                 HStack {
                     NavigationLink("View Servo Values:", destination: rocketServoPosView())
+                        .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
-                        .padding(.horizontal)
+                        .padding()
                 }
                 Divider()
                 HStack {
                     NavigationLink("View PID Values:", destination: pidValuesView())
+                        .padding()
                     Spacer()
                     Image(systemName: "chevron.forward")
-                        .padding(.horizontal)
+                        .padding()
+                }
+                Divider()
+            }
+            Section {
+                HStack {
+                    Text("Armed")
+                        .padding()
+                    Image(systemName: rocket.armed ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.armed ? .green : .red)
+                        .padding()
+                }
+                HStack {
+                    Text("TVC Active")
+                        .padding()
+                    Image(systemName: rocket.tvcActive ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.tvcActive ? .green : .red)
+                        .padding()
+                }
+                HStack {
+                    Text("Coasting")
+                        .padding()
+                    Image(systemName: rocket.coasting ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.coasting ? .green : .red)
+                        .padding()
+                }
+                HStack {
+                    Text("Parachute Out")
+                        .padding()
+                    Image(systemName: rocket.parachuteOut ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.parachuteOut ? .green : .red)
+                        .padding()
+                }
+                HStack {
+                    Text("Touchdown")
+                        .padding()
+                    Image(systemName: rocket.touchdown ? "checkmark" : "xmark")
+                        .foregroundColor(rocket.touchdown ? .green : .red)
+                        .padding()
                 }
             }
+            Divider()
+            Text(rocket.logs)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .font(.title3)
             
         }.navigationViewStyle(StackNavigationViewStyle())
     }
