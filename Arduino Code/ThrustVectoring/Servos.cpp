@@ -6,9 +6,21 @@ void Servos::Init() {
     gimbalServos[i].attach(gimbalServoPins[i]);
     gimbalServos[i].write(gimbalServoStartingPosition[i]);
   }
-  parachuteServo.write(PARACHUTE_SERVO_OPEN_POSITION);
+  parachuteServo.write(parachuteServoOpenPosition);
   parachuteServo.attach(PARACHUTE_SERVO_PIN);
-  parachuteServo.write(PARACHUTE_SERVO_OPEN_POSITION);
+  parachuteServo.write(parachuteServoOpenPosition);
+}
+
+void Servos::getGimbalServosStartingPositions(int output[]) {
+  output[1] = gimbalServoStartingPosition[0];}
+
+void Servos::setGimbalServosStartingPosition(int positions[]) {
+  gimbalServoStartingPosition[0] = positions[0];
+  gimbalServoStartingPosition[1] = positions[1]; 
+}
+
+void Servos::bluetoothWriteGimbalServoPosition(int servoNumber, int position) {
+  gimbalServos[servoNumber].write(position);
 }
 
 float Servos::writeGimbalServoPosition(int servoNumber, float position) {
@@ -23,9 +35,9 @@ float Servos::writeGimbalServoPosition(int servoNumber, float position) {
 }
 
 void Servos::openParachuteServo() {
-  parachuteServo.write(PARACHUTE_SERVO_OPEN_POSITION);
+  parachuteServo.write(parachuteServoOpenPosition);
 }
 
 void Servos::closeParachuteServo() {
-  parachuteServo.write(PARACHUTE_SERVO_CLOSED_POSITION);
+  parachuteServo.write(parachuteServoClosedPosition);
 }

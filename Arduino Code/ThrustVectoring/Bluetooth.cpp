@@ -1,6 +1,6 @@
 #include "Bluetooth.h"
 
-void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pitchPID, PID& _rollPID, bool& _armed, bool * _bluetoothConnected, bool& _sendBluetoothData) {
+void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothData, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
   servos = _servos;
   imu = _imu;
   altimeter = _altimeter;
@@ -9,7 +9,11 @@ void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pi
   armed = _armed;
   bluetoothConnected = _bluetoothConnected;
   sendBluetoothData = _sendBluetoothData;
-  Serial.println((unsigned int) bluetoothConnected);
+  bluetoothBypassOnPad = _bluetoothBypassOnPad;
+  bluetoothBypassTVCActive = _bluetoothBypassTVCActive;
+  bluetoothBypassCoasting = _bluetoothBypassCoasting;
+  bluetoothBypassParachuteOut = _bluetoothBypassParachuteOut;
+
   String devName = DEVICE_NAME;
   String chipId = String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
   devName += '_';
@@ -33,7 +37,7 @@ void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pi
   pPID->setCallbacks(new PIDCallbacks(pitchPID, rollPID));
 
   pUtilities = pService->createCharacteristic(UTILITIES_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
-  pUtilities->setCallbacks(new UtilitiesCallbacks(armed));
+  pUtilities->setCallbacks(new UtilitiesCallbacks(armed, sendBluetoothData, bluetoothBypassOnPad, bluetoothBypassTVCActive, bluetoothBypassCoasting, bluetoothBypassParachuteOut));
 
   pService->start();
 

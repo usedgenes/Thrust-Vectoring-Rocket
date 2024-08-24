@@ -47,10 +47,6 @@ unsigned long loopTime = 0;
 
 unsigned long lastDataLog = 0;
 
-bool sendBluetoothData = false;
-bool bluetoothConnected = false;
-bool armed = false;
-
 float currentAltitude = 0;
 float launchAltitude = 0;
 unsigned long motorIgnitionTime = 0;
@@ -62,6 +58,9 @@ float pitch = 0, roll = 0;
 float pitchCommand = 0, rollCommand = 0;
 int apogee = 0;
 
+bool sendBluetoothData = false;
+bool bluetoothConnected = false;
+bool armed = false;
 bool bluetoothBypassOnPad = false;
 bool bluetoothBypassTVCActive = false;
 bool bluetoothBypassCoasting = false;
@@ -69,8 +68,7 @@ bool bluetoothBypassParachuteOut = false;
 
 void setup() {
   Serial.begin(115200);
-  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, armed, &bluetoothConnected, sendBluetoothData);
-  Serial.println((unsigned int)&bluetoothConnected);
+  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, &armed, &bluetoothConnected, &sendBluetoothData, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
   while (!bluetoothConnected) {
     delay(1000);
   }

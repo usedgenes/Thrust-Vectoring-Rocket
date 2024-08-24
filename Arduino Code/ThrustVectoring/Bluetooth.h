@@ -31,12 +31,16 @@ private:
   Altimeter altimeter;
   PID pitchPID;
   PID rollPID;
-  bool armed;
-  bool * bluetoothConnected;
-  bool sendBluetoothData;
+  bool *armed;
+  bool *bluetoothConnected;
+  bool *sendBluetoothData;
+  bool *bluetoothBypassOnPad;
+  bool *bluetoothBypassTVCActive;
+  bool *bluetoothBypassCoasting;
+  bool *bluetoothBypassParachuteOut;
 
 public:
-  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool &_armed, bool * _bluetoothConnected, bool &_sendBluetoothData);
+  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothData, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
@@ -48,15 +52,15 @@ public:
 
 class MyServerCallbacks : public BLEServerCallbacks {
 private:
-  bool * bluetoothConnected;
+  bool *bluetoothConnected;
 public:
-  MyServerCallbacks(bool * _bluetoothConnected) {
+  MyServerCallbacks(bool *_bluetoothConnected) {
     bluetoothConnected = _bluetoothConnected;
   }
   void onConnect(BLEServer *pServer) {
     Serial.println("Connected");
     *bluetoothConnected = true;
-    Serial.println((unsigned int) bluetoothConnected);
+    Serial.println((unsigned int)bluetoothConnected);
   };
   void onDisconnect(BLEServer *pServer) {
     Serial.println("Disconnected");
@@ -66,20 +70,40 @@ public:
 
 class UtilitiesCallbacks : public BLECharacteristicCallbacks {
 private:
-  bool armed;
+  bool *armed;
+  bool *sendBluetoothData;
+  bool *bluetoothBypassOnPad;
+  bool *bluetoothBypassTVCActive;
+  bool *bluetoothBypassCoasting;
+  bool *bluetoothBypassParachuteOut;
 public:
   void (*resetFunc)(void) = 0;
-  UtilitiesCallbacks(bool &_armed) {
+  UtilitiesCallbacks(bool *_armed, bool *_sendBluetoothData, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
     armed = _armed;
+    sendBluetoothData = _sendBluetoothData;
+    bluetoothBypassOnPad = _bluetoothBypassOnPad;
+    bluetoothBypassTVCActive = _bluetoothBypassTVCActive;
+    bluetoothBypassCoasting = _bluetoothBypassCoasting;
+    bluetoothBypassParachuteOut = _bluetoothBypassParachuteOut;
   };
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
     if (value == "Arm") {
-      armed = true;
-      pCharacteristic->setValue("30");
+      *armed = true;
+      pCharacteristic->setValue("Armed");
       pCharacteristic->notify();
     } else if (value == "Reset") {
       resetFunc();
+    } else if (value == "Send Data") {
+      *sendBluetoothData = true;
+    } else if (value == "Bypass Pad") {
+      *bluetoothBypassOnPad = true;
+    } else if (value == "Bypass TVC") {
+      *bluetoothBypassTVCActive = true;
+    } else if (value == "Bypass Coasting") {
+      *bluetoothBypassCoasting = true;
+    } else if (value == "Bypass Parachute") {
+      *bluetoothBypassParachuteOut = true;
     }
   };
 };
@@ -101,6 +125,20 @@ public:
       servos.openParachuteServo();
     } else if (value.substring(0, 1) == "3") {
       servos.closeParachuteServo();
+    } else if (value.substring(0, 1) == "4") {
+      servos.bluetoothWriteGimbalServoPosition(value.substring(0, value.length()).toInt()));
+    } else if (value.substring(0, 1) == "5") {
+      servos.bluetoothWriteGimbalServoPosition(value.substring(1, value.length()).toInt()));
+    } else if (value.substring(0, 1) == "6") {
+      int output[] = { 0, 0 };
+      servos.getGimbalServosStartingPositions(output);
+      pCharacteristic->setValue("0" + output[0] + "," + output[1]);
+      pCharacteristic->notify();
+    } else if (value.substring(0, 1) == "7") {
+      int output[] = {0, 0};
+      output[0] = value.substring(1, 4).toInt();
+      output[1] = value.substring(4, 7).toInt();
+      servos.setGimbalServosStartPositions(output);
     }
   };
 };

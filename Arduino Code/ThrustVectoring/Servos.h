@@ -5,16 +5,19 @@
 
 class Servos {
 private:
+  #define PARACHUTE_SERVO_PIN -1
   Servo gimbalServos[2];
   Servo parachuteServo;
   int gimbalServoPins[2] = { 0, 0 };
   int gimbalServoStartingPosition[4] = { 90, 90 };
   int maxPosition = 15;
-  #define PARACHUTE_SERVO_OPEN_POSITION 140
-  #define PARACHUTE_SERVO_CLOSED_POSITION 50
-  #define PARACHUTE_SERVO_PIN -1
+  int parachuteServoOpenPosition 140
+  int parachuteServoClosedPosition 50
 public:
   void Init();
+  void getGimbalServosStartingPositions(int output[]);
+  void setGimbalServosStartingPosition(int positions[]);
+  void bluetoothWriteGimbalServoPosition(int servoNumber, int position);
   float writeGimbalServoPosition(int servoNumber, float position);
   void openParachuteServo();
   void closeParachuteServo();
