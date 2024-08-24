@@ -1,6 +1,6 @@
 #include "Bluetooth.h"
 
-void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pitchPID, PID& _rollPID, bool& _armed, bool& _bluetoothConnected) {
+void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pitchPID, PID& _rollPID, bool& _armed, bool * _bluetoothConnected, bool& _sendBluetoothData) {
   servos = _servos;
   imu = _imu;
   altimeter = _altimeter;
@@ -8,7 +8,8 @@ void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pi
   rollPID = _rollPID;
   armed = _armed;
   bluetoothConnected = _bluetoothConnected;
-
+  sendBluetoothData = _sendBluetoothData;
+  Serial.println((unsigned int) bluetoothConnected);
   String devName = DEVICE_NAME;
   String chipId = String((uint32_t)(ESP.getEfuseMac() >> 24), HEX);
   devName += '_';
@@ -49,8 +50,13 @@ void Bluetooth::Init(Servos& _servos, IMU &_imu, Altimeter& _altimeter, PID& _pi
   pAdvertising->start();
 }
 
-void Bluetooth::writeUtilities(String message) {
-  pUtilities->setValue(message);
+void Bluetooth::writeUtilitiesNotifications(String message) {
+  pUtilities->setValue("1" + message);
+  pUtilities->notify();
+}
+
+void Bluetooth::writeUtilitiesEvents(String message) {
+  pUtilities->setValue("2" + message);
   pUtilities->notify();
 }
 

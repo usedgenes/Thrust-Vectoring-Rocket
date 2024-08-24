@@ -14,7 +14,6 @@ bool Logger::Init(SPIClass & _vspi) {
   return true;
 }
 
-
 void Logger::log(LogType type, String _message, unsigned long time) {
   SD.begin(SD_CS, vspi);
   String filePath;

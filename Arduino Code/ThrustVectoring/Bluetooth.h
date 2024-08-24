@@ -32,32 +32,35 @@ private:
   PID pitchPID;
   PID rollPID;
   bool armed;
-  bool bluetoothConnected;
+  bool * bluetoothConnected;
+  bool sendBluetoothData;
 
 public:
-  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool &_armed, bool &_bluetoothConnected);
+  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool &_armed, bool * _bluetoothConnected, bool &_sendBluetoothData);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
   void writeAltimeter(String message);
-  void writeUtilities(String message);
+  void writeUtilitiesNotifications(String message);
+  void writeUtilitiesEvents(String message);
 };
 
 
 class MyServerCallbacks : public BLEServerCallbacks {
 private:
-  bool bluetoothConnected = false;
+  bool * bluetoothConnected;
 public:
-  MyServerCallbacks(bool& _bluetoothConnected) {
+  MyServerCallbacks(bool * _bluetoothConnected) {
     bluetoothConnected = _bluetoothConnected;
   }
   void onConnect(BLEServer *pServer) {
     Serial.println("Connected");
-    bluetoothConnected = true;
+    *bluetoothConnected = true;
+    Serial.println((unsigned int) bluetoothConnected);
   };
   void onDisconnect(BLEServer *pServer) {
     Serial.println("Disconnected");
-    bluetoothConnected = false;
+    *bluetoothConnected = false;
   };
 };
 
@@ -73,8 +76,8 @@ public:
     String value = pCharacteristic->getValue();
     if (value == "Arm") {
       armed = true;
-    } else if (value == "Disarmed") {
-      armed = false;
+      pCharacteristic->setValue("30");
+      pCharacteristic->notify();
     } else if (value == "Reset") {
       resetFunc();
     }
@@ -109,8 +112,7 @@ public:
   BMI088Callbacks(IMU &_imu) {
     imu = _imu;
   };
-  void onWrite(BLECharacteristic *pCharacteristic) {
-  };
+  void onWrite(BLECharacteristic *pCharacteristic){};
 };
 
 class BMP390Callbacks : public BLECharacteristicCallbacks {
@@ -120,8 +122,7 @@ public:
   BMP390Callbacks(Altimeter &_altimeter) {
     altimeter = _altimeter;
   };
-  void onWrite(BLECharacteristic *pCharacteristic) {
-  };
+  void onWrite(BLECharacteristic *pCharacteristic){};
 };
 
 class PIDCallbacks : public BLECharacteristicCallbacks {
