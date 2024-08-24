@@ -38,9 +38,12 @@ private:
   bool *bluetoothBypassTVCActive;
   bool *bluetoothBypassCoasting;
   bool *bluetoothBypassParachuteOut;
+  bool *sendBluetoothBMI088;
+  bool *sendBluetoothAltimeter;
+  bool *sendBluetoothPID;
 
 public:
-  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothData, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
+  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothBMI088, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
@@ -76,11 +79,17 @@ private:
   bool *bluetoothBypassTVCActive;
   bool *bluetoothBypassCoasting;
   bool *bluetoothBypassParachuteOut;
+  bool *sendBluetoothBMI088;
+  bool *sendBluetoothAltimeter;
+  bool *sendBluetoothPID;
+
 public:
   void (*resetFunc)(void) = 0;
-  UtilitiesCallbacks(bool *_armed, bool *_sendBluetoothData, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
+  UtilitiesCallbacks(bool *_armed, bool *_sendBluetoothBMI088, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
     armed = _armed;
-    sendBluetoothData = _sendBluetoothData;
+    sendBluetoothBMI088 = _sendBluetoothData;
+    sendBluetoothAltimeter = _sendBluetoothAltimeter;
+    sendBluetoothPID = _sendBluetoothPID;
     bluetoothBypassOnPad = _bluetoothBypassOnPad;
     bluetoothBypassTVCActive = _bluetoothBypassTVCActive;
     bluetoothBypassCoasting = _bluetoothBypassCoasting;
@@ -104,6 +113,18 @@ public:
       *bluetoothBypassCoasting = true;
     } else if (value == "Bypass Parachute") {
       *bluetoothBypassParachuteOut = true;
+    } else if (value == "BMI088 Get") {
+      *sendBluetoothBMI088 = true;
+    } else if (value == "BMI088 Stop") {
+      *sendBluetoothBMI088 = false;
+    } else if (value == "PID Get") {
+      *sendBluetoothPID = true;
+    } else if (value == "PID Stop") {
+      *sendBluetoothPID = false;
+    } else if (value == "Altimeter Get") {
+      *sendBluetoothAltimeter = true;
+    } else if (value == "Altimeter Stop") {
+      *sendBluetoothAltimeter = false;
     }
   };
 };
@@ -121,24 +142,21 @@ public:
       servos.writeGimbalServoPosition(0, value.substring(1, value.length()).toInt());
     } else if (value.substring(0, 1) == "1") {
       servos.writeGimbalServoPosition(1, value.substring(1, value.length()).toInt());
-    } else if (value.substring(0, 1) == "2") {
+    } else if (value.substring(0, 1) == "Open Parachute") {
       servos.openParachuteServo();
-    } else if (value.substring(0, 1) == "3") {
+    } else if (value.substring(0, 1) == "Close Parachute") {
       servos.closeParachuteServo();
     } else if (value.substring(0, 1) == "4") {
-      servos.bluetoothWriteGimbalServoPosition(value.substring(0, value.length()).toInt()));
+      servos.bluetoothWriteGimbalServoPosition(0, value.substring(1, value.length()).toInt());
     } else if (value.substring(0, 1) == "5") {
-      servos.bluetoothWriteGimbalServoPosition(value.substring(1, value.length()).toInt()));
+      servos.bluetoothWriteGimbalServoPosition(1, value.substring(1, value.length()).toInt());
     } else if (value.substring(0, 1) == "6") {
       int output[] = { 0, 0 };
       servos.getGimbalServosStartingPositions(output);
-      pCharacteristic->setValue("0" + output[0] + "," + output[1]);
+      pCharacteristic->setValue("0" + String(output[0]) + "," + String(output[1]));
       pCharacteristic->notify();
     } else if (value.substring(0, 1) == "7") {
-      int output[] = {0, 0};
-      output[0] = value.substring(1, 4).toInt();
-      output[1] = value.substring(4, 7).toInt();
-      servos.setGimbalServosStartPositions(output);
+      servos.setGimbalServosStartingPosition(value.substring(1, 2).toInt(), value.substring(2, value.length()).toInt());
     }
   };
 };

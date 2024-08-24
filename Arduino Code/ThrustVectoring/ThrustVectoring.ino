@@ -23,11 +23,11 @@
 #define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
 #define RECOVERY_ALTITUDE_THRESHOLD_METERS 1000
 
-#define ON_PAD_DATA_FREQUENCY 400
-#define TVC_ACTIVE_DATA_FREQUENCY 400
-#define COASTING_DATA_FREQUENCY 400
-#define PARACHUTE_OUT_DATA_FREQUENCY 400
-#define ON_GROUND_DATA_FREQUENCY 400
+#define ON_PAD_DATA_FREQUENCY 1000
+#define TVC_ACTIVE_DATA_FREQUENCY 1000
+#define COASTING_DATA_FREQUENCY 1000
+#define PARACHUTE_OUT_DATA_FREQUENCY 1000
+#define ON_GROUND_DATA_FREQUENCY 1000
 
 SPIClass * vspi = NULL;
 SPIClass * hspi = NULL;
@@ -65,10 +65,13 @@ bool bluetoothBypassOnPad = false;
 bool bluetoothBypassTVCActive = false;
 bool bluetoothBypassCoasting = false;
 bool bluetoothBypassParachuteOut = false;
+bool sendBluetoothBMI088 = false;
+bool sendBluetoothAltimeter = false;
+bool sendBluetoothPID = false;
 
 void setup() {
   Serial.begin(115200);
-  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, &armed, &bluetoothConnected, &sendBluetoothData, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
+  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, &armed, &bluetoothConnected, &sendBluetoothBMI088, &sendBluetoothAltimeter, &sendBluetoothPID, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
   while (!bluetoothConnected) {
     delay(1000);
   }
@@ -94,48 +97,53 @@ void setup() {
     bluetooth.writeUtilitiesNotifications("SD Initialization Error");
     Serial.println("SD Initialization Error");
   }
-  previousTime = 0;
-  launchAltitude = altimeter.getAltitude();
 
-  bluetooth.writeUtilitiesNotifications("Launch Altitude: " + String(launchAltitude));
-  logger.log(Events, "Launch Altitude: " + String(launchAltitude), millis());
-  Serial.println("Launch Altitude: " + String(launchAltitude));
   utilities.initialized();
 
   while (!armed) {
     delay(100);
   }
+  previousTime = 0;
+  launchAltitude = altimeter.getAltitude();
+  bluetooth.writeUtilitiesNotifications("Launch Altitude: " + String(launchAltitude));
+  logger.log(Events, "Launch Altitude: " + String(launchAltitude), millis());
+  Serial.println("Launch Altitude: " + String(launchAltitude));
 
   utilities.armed();
-  bluetooth.writeUtilitiesEvents("Armed");
-  logger.log(Events, "Armed", millis());
-  Serial.println("Armed");
+  bluetooth.writeUtilitiesEvents("On Pad");
+  logger.log(Events, "On Pad", millis());
+  Serial.println("On Pad");
   while (altimeter.getFilteredAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS && !bluetoothBypassOnPad) {
     onPad();
   }
 
   motorIgnitionTime = millis();
   bluetooth.writeUtilitiesEvents("TVC Active");
+  logger.log(Events, "TVC Active", millis());
   Serial.println("Thrust Vector Active");
   while (millis() - motorIgnitionTime < MOTOR_BURN_TIME_MILLISECONDS && !bluetoothBypassTVCActive) {
     thrustVectorActive();
   }
 
   bluetooth.writeUtilitiesEvents("Coasting");
+  logger.log(Events, "Coasting", millis());
   Serial.println("Coasting");
   while ((altimeter.getFilteredAltitude() - previousAltitude) / loopTime < PARACHUTE_EJECTION_VELOCITY_THRESHOLD && !bluetoothBypassCoasting) {
     coasting();
   }
 
+  logger.log(Events, "Deploying Parachute", millis());
   deployParachute();
 
   bluetooth.writeUtilitiesEvents("Parachute Out");
+  logger.log(Events, "Parachute Out", millis());
   Serial.println("Parachute Out");
   while (altimeter.getFilteredAltitude() - launchAltitude > RECOVERY_ALTITUDE_THRESHOLD_METERS && !bluetoothBypassParachuteOut) {
     parachuteOut();
   }
 
   bluetooth.writeUtilitiesEvents("Touchdown");
+  logger.log(Events, "Touchdown", millis());
   Serial.println("Touchdown");
   while (true) {
     touchdown();
@@ -195,7 +203,7 @@ void dataLoop() {
 void logData(int dataLoggingFrequencyInMilliseconds) {
   if (millis() - lastDataLog >= dataLoggingFrequencyInMilliseconds) {
     lastDataLog = millis();
-    if (sendBluetoothData) {
+    if (sendBluetoothBMI088) {
       bluetooth.writeIMU("90" + String(accelerometer[0]));
       bluetooth.writeIMU("91" + String(accelerometer[1]));
       bluetooth.writeIMU("92" + String(accelerometer[2]));
@@ -204,9 +212,11 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       bluetooth.writeIMU("95" + String(gyroscope[2]));
       bluetooth.writeIMU("96" + String(pitch));
       bluetooth.writeIMU("96" + String(roll));
-
+    }
+    if(sendBluetoothAltimeter) {
       bluetooth.writeAltimeter("90" + String(currentAltitude));
-
+    }
+    if(sendBluetoothPID) {
       bluetooth.writePID("90" + String(pitch));
       bluetooth.writePID("92" + String(roll));
       bluetooth.writePID("92" + String(pitchCommand));

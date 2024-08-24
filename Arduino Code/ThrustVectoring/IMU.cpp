@@ -18,8 +18,14 @@ bool IMU::Init(SPIClass & _hspi) {
 }
 
 void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
-  accel->begin();
-  gyro->begin();
+  digitalWrite(ACCEL_CS, LOW);
+  digitalWrite(ACCEL_CS, LOW);
+  while(accel->begin() < 0) {
+    delay(10);
+  }
+  while(gyro->begin() < 0) {
+    delay(10);
+  }
 
   accel->readSensor();
   gyro->readSensor();

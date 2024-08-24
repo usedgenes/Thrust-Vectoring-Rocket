@@ -34,7 +34,6 @@ void Logger::log(LogType type, String _message, unsigned long time) {
       filePath = "/Pid.txt";
       break;
   }
-  Serial.println(filePath);
   File file = SD.open(filePath, FILE_APPEND);
   String message = String(time) + "\t" + _message;
   file.println(message);

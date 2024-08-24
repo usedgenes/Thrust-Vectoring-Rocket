@@ -11,8 +11,8 @@ private:
   int gimbalServoPins[2] = { 0, 0 };
   int gimbalServoStartingPosition[4] = { 90, 90 };
   int maxPosition = 15;
-  int parachuteServoOpenPosition 140
-  int parachuteServoClosedPosition 50
+  int parachuteServoOpenPosition = 140;
+  int parachuteServoClosedPosition = 50;
 public:
   void Init();
   void getGimbalServosStartingPositions(int output[]);
