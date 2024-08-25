@@ -107,7 +107,7 @@ struct PIDView : View {
                     .padding()
                 HStack {
                     Button(action: {
-                        bluetoothDevice.setPID(input: "11")
+                        bluetoothDevice.setPID(input: "PID Get")
                         getData.toggle()
                     }) {
                         Text("Get Data")
@@ -116,7 +116,7 @@ struct PIDView : View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     Button(action: {
-                        bluetoothDevice.setPID(input: "10")
+                        bluetoothDevice.setPID(input: "PID Stop")
                         getData.toggle()
                     }) {
                         Text("Stop")
@@ -131,7 +131,7 @@ struct PIDView : View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }.padding(.bottom)
             }.onDisappear(perform: {
-                bluetoothDevice.setPID(input: "10")
+                bluetoothDevice.setPID(input: "PID Stop")
             })
             Section {
                 Text("Yaw Command")

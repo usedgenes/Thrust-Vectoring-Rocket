@@ -23,6 +23,7 @@
 		44400A1A2C7A8BB800D29279 /* ServoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A192C7A8BB800D29279 /* ServoView.swift */; };
 		44400A1C2C7A8C1000D29279 /* PIDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A1B2C7A8C1000D29279 /* PIDView.swift */; };
 		44400A1E2C7A952900D29279 /* AltimeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A1D2C7A952900D29279 /* AltimeterView.swift */; };
+		44400A202C7BCBE000D29279 /* BMI088View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A1F2C7BCBE000D29279 /* BMI088View.swift */; };
 		4479EE2D2C742BC00006BA07 /* RocketApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4479EE2C2C742BC00006BA07 /* RocketApp.swift */; };
 		4479EE312C742BC20006BA07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4479EE302C742BC20006BA07 /* Assets.xcassets */; };
 		4479EE352C742BC20006BA07 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4479EE342C742BC20006BA07 /* Preview Assets.xcassets */; };
@@ -64,6 +65,7 @@
 		44400A192C7A8BB800D29279 /* ServoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServoView.swift; sourceTree = "<group>"; };
 		44400A1B2C7A8C1000D29279 /* PIDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIDView.swift; sourceTree = "<group>"; };
 		44400A1D2C7A952900D29279 /* AltimeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltimeterView.swift; sourceTree = "<group>"; };
+		44400A1F2C7BCBE000D29279 /* BMI088View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMI088View.swift; sourceTree = "<group>"; };
 		4479EE292C742BC00006BA07 /* Rocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4479EE2C2C742BC00006BA07 /* RocketApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RocketApp.swift; sourceTree = "<group>"; };
 		4479EE302C742BC20006BA07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -139,16 +141,17 @@
 			isa = PBXGroup;
 			children = (
 				4423246C2C742C6B0029ED02 /* Bluetooth */,
-				4479EE2C2C742BC00006BA07 /* RocketApp.swift */,
 				4423247B2C742CA70029ED02 /* HomeScreenView.swift */,
 				4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */,
 				4423247F2C742CD40029ED02 /* ThrustVectoringRocketView.swift */,
 				44400A1B2C7A8C1000D29279 /* PIDView.swift */,
 				44400A192C7A8BB800D29279 /* ServoView.swift */,
 				44400A1D2C7A952900D29279 /* AltimeterView.swift */,
+				44400A1F2C7BCBE000D29279 /* BMI088View.swift */,
 				44400A172C7A8B7400D29279 /* OrientationView.swift */,
 				442324792C742C840029ED02 /* Rocket.swift */,
 				4423246A2C742C540029ED02 /* ChartStyle.swift */,
+				4479EE2C2C742BC00006BA07 /* RocketApp.swift */,
 				4479EE302C742BC20006BA07 /* Assets.xcassets */,
 				4479EE322C742BC20006BA07 /* Rocket.entitlements */,
 				4479EE332C742BC20006BA07 /* Preview Content */,
@@ -330,6 +333,7 @@
 				442324762C742C6B0029ED02 /* BluetoothDeviceHelper.swift in Sources */,
 				4423247C2C742CA70029ED02 /* HomeScreenView.swift in Sources */,
 				44400A1C2C7A8C1000D29279 /* PIDView.swift in Sources */,
+				44400A202C7BCBE000D29279 /* BMI088View.swift in Sources */,
 				4423246B2C742C540029ED02 /* ChartStyle.swift in Sources */,
 				442324772C742C6B0029ED02 /* BTDevice.swift in Sources */,
 				442324782C742C6B0029ED02 /* BTManager.swift in Sources */,

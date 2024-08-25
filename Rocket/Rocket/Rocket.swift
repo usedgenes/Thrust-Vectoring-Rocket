@@ -9,6 +9,9 @@ import Foundation
 import SwiftUICharts
 
 class Rocket : ObservableObject {
+    @Published var logs = "Logs: "
+    @Published var deltaTime = ""
+    
     @Published var rollKp : String = "10.0"
     @Published var rollKi : String = "0.0"
     @Published var rollKd : String = "0.0"
@@ -18,15 +21,12 @@ class Rocket : ObservableObject {
     @Published var yawKp : String = "10.0"
     @Published var yawKi : String = "0.0"
     @Published var yawKd : String = "0.0"
-    
-    @Published var logs = "Logs: "
-    
+        
     @Published var onPad = false
     @Published var tvcActive = false
     @Published var coasting = false
     @Published var parachuteOut = false
     @Published var touchdown = false
-
     
     @Published var yawData : [LineChartDataPoint] = []
     @Published var pitchData : [LineChartDataPoint] = []
@@ -38,8 +38,40 @@ class Rocket : ObservableObject {
     @Published var yawPIDCommand : [LineChartDataPoint] = []
     @Published var pitchPIDCommand : [LineChartDataPoint] = []
     @Published var rollPIDCommand : [LineChartDataPoint] = []
+    
+    @Published var accelX : [LineChartDataPoint] = []
+    @Published var accelY : [LineChartDataPoint] = []
+    @Published var accelZ : [LineChartDataPoint] = []
+    
+    @Published var gyroX : [LineChartDataPoint] = []
+    @Published var gyroY : [LineChartDataPoint] = []
+    @Published var gyroZ : [LineChartDataPoint] = []
 
     @Published var altitude : [LineChartDataPoint] = []
+    
+    func addAccelX(accelX: Float) {
+        self.accelX.append(LineChartDataPoint(value: Double(accelX), xAxisLabel: " ", description: "Acceleration X"))
+    }
+    
+    func addAccelY(accelY: Float) {
+        self.accelY.append(LineChartDataPoint(value: Double(accelY), xAxisLabel: " ", description: "Acceleration Y"))
+    }
+    
+    func addAccelZ(accelZ: Float) {
+        self.accelZ.append(LineChartDataPoint(value: Double(accelZ), xAxisLabel: " ", description: "Acceleration Z"))
+    }
+    
+    func addGyroX(gyroX: Float) {
+        self.gyroX.append(LineChartDataPoint(value: Double(gyroX), xAxisLabel: " ", description: "Gyroscope X"))
+    }
+    
+    func addGyroY(gyroY: Float) {
+        self.gyroY.append(LineChartDataPoint(value: Double(gyroY), xAxisLabel: " ", description: "Gyroscope Z"))
+    }
+    
+    func addGyroZ(gyroZ: Float) {
+        self.gyroZ.append(LineChartDataPoint(value: Double(gyroZ), xAxisLabel: " ", description: "Gyroscope Z"))
+    }
     
     func addAltitude(altitude: Float) {
         self.altitude.append(LineChartDataPoint(value: Double(altitude), xAxisLabel: " ", description: "Altitude"))
@@ -76,6 +108,48 @@ class Rocket : ObservableObject {
     
     func addRollCommand(cmd: Float) {
         rollPIDCommand.append(LineChartDataPoint(value: Double(cmd), xAxisLabel: " ", description: "Roll Command"))
+    }
+    
+    func getAccelX() -> LineDataSet {
+        return LineDataSet(dataPoints: accelX,
+                           legendTitle: "m/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .red), lineType: .line))
+    }
+    
+    func getAccelY() -> LineDataSet {
+        return LineDataSet(dataPoints: accelY,
+                           legendTitle: "m/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .green), lineType: .line))
+    }
+    
+    func getAccelZ() -> LineDataSet {
+        return LineDataSet(dataPoints: accelZ,
+                           legendTitle: "m/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .blue), lineType: .line))
+    }
+    
+    func getGyroX() -> LineDataSet {
+        return LineDataSet(dataPoints: gyroX,
+                           legendTitle: "deg/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .red), lineType: .line))
+    }
+    
+    func getGyroY() -> LineDataSet {
+        return LineDataSet(dataPoints: gyroY,
+                           legendTitle: "deg/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .green), lineType: .line))
+    }
+    
+    func getGyroZ() -> LineDataSet {
+        return LineDataSet(dataPoints: gyroZ,
+                           legendTitle: "deg/s",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .blue), lineType: .line))
     }
     
     func getYaw() -> LineDataSet {

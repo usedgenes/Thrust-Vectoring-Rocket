@@ -7,12 +7,12 @@ struct OrientationView : View {
     
     var body : some View {
         Section {
-            Text("BMI088 Data Graphs")
+            Text("Orientation Graphs")
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
             HStack {
                 Button(action: {
-                    bluetoothDevice.setBMI088(input: "11")
+                    bluetoothDevice.setBMI088(input: "Orientation Get")
                     getData.toggle()
                 }) {
                     Text("Get Data")
@@ -21,7 +21,7 @@ struct OrientationView : View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 
                 Button(action: {
-                    bluetoothDevice.setBMI088(input: "10")
+                    bluetoothDevice.setBMI088(input: "Orientation Stop")
                     getData.toggle()
                 }) {
                     Text("Stop")
@@ -34,25 +34,19 @@ struct OrientationView : View {
                     Text("Reset All")
                 }.buttonStyle(BorderlessButtonStyle())
                     .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    bluetoothDevice.setBMI088(input: "1")
-                }) {
-                    Text("Calibrate")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
             }.padding(.bottom)
         }.onDisappear(perform: {
-            bluetoothDevice.setBMI088(input: "10")
+            bluetoothDevice.setBMI088(input: "Orientation Stop")
         })
-        
-        Text("Yaw")
-        ChartStyle().getGraph(datasets: rocket.getYaw(), colour: .red)
         
         Text("Pitch")
         ChartStyle().getGraph(datasets: rocket.getPitch(), colour: .green)
         
         Text("Roll")
         ChartStyle().getGraph(datasets: rocket.getRoll(), colour: .blue)
+        
+        Text("Yaw")
+        ChartStyle().getGraph(datasets: rocket.getYaw(), colour: .red)
     }
 }
 

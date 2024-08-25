@@ -250,30 +250,21 @@ extension BTDevice: CBPeripheralDelegate {
         else if characteristic.uuid == pidChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value != "") {
-                if(value[...value.startIndex] == "5") {
+                if(value[...value.startIndex] == "9") {
                     value.remove(at: value.startIndex)
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
-                        
-                        let yawCmd = Float(value)!
-                        rocket!.addYawCommand(cmd: yawCmd)
-                        
+                        rocket!.addPitchCommand(cmd: Float(value)!)
                         return;
                     }
                     else if(value[...value.startIndex] == "1") {
                         value.remove(at: value.startIndex)
-                        
-                        let pitchCmd = Float(value)!
-                        rocket!.addPitchCommand(cmd: pitchCmd)
-                        
+                        rocket!.addRollCommand(cmd: Float(value)!)
                         return;
                     }
                     else if(value[...value.startIndex] == "2") {
                         value.remove(at: value.startIndex)
-                        
-                        let rollCmd = Float(value)!
-                        rocket!.addRollCommand(cmd: rollCmd)
-                        
+                        rocket!.addYawCommand(cmd: Float(value)!)
                         return;
                     }
                 }
@@ -282,40 +273,62 @@ extension BTDevice: CBPeripheralDelegate {
         else if characteristic.uuid == bmp390Char?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value != "") {
-                if(value[...value.startIndex] == "5") {
+                if(value[...value.startIndex] == "9") {
                     value.remove(at: value.startIndex)
+                    if(value[...value.startIndex] == "0") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addAltitude(altitude: Float(value)!)
+                        return;
+                    }
                 }
             }
         }
         else if characteristic.uuid == bmi088Char?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value != "") {
-                if(value[...value.startIndex] == "5") {
+                if(value[...value.startIndex] == "9") {
                     value.remove(at: value.startIndex)
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
-                        
-                        let yaw = Float(value)!
-                        rocket!.addYaw(yaw: yaw)
-                        
+                        rocket!.addAccelX(accelX: Float(value)!)
                         return;
                     }
                     else if(value[...value.startIndex] == "1") {
                         value.remove(at: value.startIndex)
-                        
-                        let pitch = Float(value)!
-                        rocket!.addPitch(pitch: pitch)
-                        
+                        rocket!.addAccelY(accelY: Float(value)!)
                         return;
                     }
                     else if(value[...value.startIndex] == "2") {
                         value.remove(at: value.startIndex)
-                        
-                        let roll = Float(value)!
-                        rocket!.addRoll(roll: roll)
-                        
+                        rocket!.addAccelZ(accelZ: Float(value)!)
                         return;
                     }
+                    else if(value[...value.startIndex] == "3") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addGyroX(gyroX: Float(value)!)
+                        return;
+                    }
+                    else if(value[...value.startIndex] == "4") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addGyroY(gyroY: Float(value)!)
+                        return;
+                    }
+                    else if(value[...value.startIndex] == "5") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addGyroZ(gyroZ: Float(value)!)
+                        return;
+                    }
+                    else if(value[...value.startIndex] == "6") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addPitch(pitch: Float(value)!)
+                        return;
+                    }
+                    else if(value[...value.startIndex] == "7") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addRoll(roll: Float(value)!)
+                        return;
+                    }
+
                 }
             }
         }
@@ -342,6 +355,12 @@ extension BTDevice: CBPeripheralDelegate {
                     }
                     else if(value == "Touchdown") {
                         rocket!.touchdown = true;
+                    }
+                }
+                if(value[...value.startIndex] == "9") {
+                    if(value[...value.startIndex] == "0") {
+                        value.remove(at: value.startIndex)
+                        rocket!.deltaTime = value + " ms"
                     }
                 }
             }
