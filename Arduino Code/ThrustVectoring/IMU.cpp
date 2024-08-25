@@ -14,6 +14,8 @@ bool IMU::Init(SPIClass & _hspi) {
     return false;
   }
   getCorrectedIMU();
+  digitalWrite(ACCEL_CS, HIGH);
+  digitalWrite(ACCEL_CS, HIGH);
   return true;
 }
 

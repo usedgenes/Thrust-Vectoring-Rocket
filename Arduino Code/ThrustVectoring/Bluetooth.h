@@ -38,18 +38,21 @@ private:
   bool *bluetoothBypassTVCActive;
   bool *bluetoothBypassCoasting;
   bool *bluetoothBypassParachuteOut;
+  bool *sendLoopTime;
   bool *sendBluetoothBMI088;
+  bool *sendBluetoothOrientation;
   bool *sendBluetoothAltimeter;
   bool *sendBluetoothPID;
 
 public:
-  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothBMI088, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
+  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
   void writeAltimeter(String message);
   void writeUtilitiesNotifications(String message);
   void writeUtilitiesEvents(String message);
+  void writeUtilities(String message);
 };
 
 
@@ -63,7 +66,6 @@ public:
   void onConnect(BLEServer *pServer) {
     Serial.println("Connected");
     *bluetoothConnected = true;
-    Serial.println((unsigned int)bluetoothConnected);
   };
   void onDisconnect(BLEServer *pServer) {
     Serial.println("Disconnected");
@@ -79,15 +81,19 @@ private:
   bool *bluetoothBypassTVCActive;
   bool *bluetoothBypassCoasting;
   bool *bluetoothBypassParachuteOut;
+  bool *sendLoopTime;
   bool *sendBluetoothBMI088;
+  bool *sendBluetoothOrientation;
   bool *sendBluetoothAltimeter;
   bool *sendBluetoothPID;
 
 public:
   void (*resetFunc)(void) = 0;
-  UtilitiesCallbacks(bool *_armed, bool *_sendBluetoothBMI088, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
+  UtilitiesCallbacks(bool *_armed, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
     armed = _armed;
-    sendBluetoothBMI088 = _sendBluetoothData;
+    sendLoopTime = _sendLoopTime;
+    sendBluetoothBMI088 = _sendBluetoothAltimeter;
+    sendBluetoothOrientation = _sendBluetoothOrientation;
     sendBluetoothAltimeter = _sendBluetoothAltimeter;
     sendBluetoothPID = _sendBluetoothPID;
     bluetoothBypassOnPad = _bluetoothBypassOnPad;
@@ -117,6 +123,10 @@ public:
       *sendBluetoothBMI088 = true;
     } else if (value == "BMI088 Stop") {
       *sendBluetoothBMI088 = false;
+    }  else if (value == "Orientation Get") {
+      *sendBluetoothOrientation = true;
+    } else if (value == "Orientation Stop") {
+      *sendBluetoothOrientation = false;
     } else if (value == "PID Get") {
       *sendBluetoothPID = true;
     } else if (value == "PID Stop") {
@@ -125,6 +135,10 @@ public:
       *sendBluetoothAltimeter = true;
     } else if (value == "Altimeter Stop") {
       *sendBluetoothAltimeter = false;
+    } else if (value == "Time Get") {
+      *sendLoopTime = true;
+    } else if (value == "Time Stop") {
+      *sendLoopTime = false;
     }
   };
 };
