@@ -360,7 +360,7 @@ extension BTDevice: CBPeripheralDelegate {
                 if(value[...value.startIndex] == "9") {
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
-                        rocket!.deltaTime = value + " ms"
+                        rocket!.deltaTime = value
                     }
                 }
             }

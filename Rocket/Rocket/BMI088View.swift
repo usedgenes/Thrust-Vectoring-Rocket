@@ -1,60 +1,65 @@
-//
-//  BMI088View.swift
-//  Rocket
-//
-//  Created by Eugene on 8/25/24.
-//
-
 import SwiftUI
 
 struct BMI088View: View {
-    var body: some View {
-        Text("BMI088 Data Graphs")
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding()
-        HStack {
-            Button(action: {
-                bluetoothDevice.setBMI088(input: "BMI088 Get")
-                getData.toggle()
-            }) {
-                Text("Get Data")
-            }.disabled(getData)
-                .buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-            
-            Button(action: {
+    @EnvironmentObject var rocket : Rocket
+    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
+    @State var getData = false
+    
+    var body : some View {
+        ScrollView {
+            Section {
+                Text("BMI088 Data Graphs")
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                HStack {
+                    Button(action: {
+                        bluetoothDevice.setBMI088(input: "BMI088 Get")
+                        getData.toggle()
+                    }) {
+                        Text("Get Data")
+                    }.disabled(getData)
+                        .buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Button(action: {
+                        bluetoothDevice.setBMI088(input: "BMI088 Stop")
+                        getData.toggle()
+                    }) {
+                        Text("Stop")
+                    }.disabled(!getData)
+                        .buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    Button(action: {
+                        rocket.resetRotation()
+                    }) {
+                        Text("Reset All")
+                    }.buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }.padding(.bottom)
+            }.onDisappear(perform: {
                 bluetoothDevice.setBMI088(input: "BMI088 Stop")
-                getData.toggle()
-            }) {
-                Text("Stop")
-            }.disabled(!getData)
-                .buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-            Button(action: {
-                rocket.resetRotation()
-            }) {
-                Text("Reset All")
-            }.buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-            Button(action: {
-                bluetoothDevice.setBMI088(input: "1")
-            }) {
-                Text("Calibrate")
-            }.buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-        }.padding(.bottom)
-    }.onDisappear(perform: {
-        bluetoothDevice.setBMI088(input: "BMI088 Stop")
-    })
-    
-    Text("Yaw")
-    ChartStyle().getGraph(datasets: rocket.getYaw(), colour: .red)
-    
-    Text("Pitch")
-    ChartStyle().getGraph(datasets: rocket.getPitch(), colour: .green)
-    
-    Text("Roll")
-    ChartStyle().getGraph(datasets: rocket.getRoll(), colour: .blue)
+            })
+            Section {
+                Text("Acceleration X")
+                ChartStyle().getGraph(datasets: rocket.getAccelX(), colour: .red)
+                
+                Text("Acceleration Y")
+                ChartStyle().getGraph(datasets: rocket.getAccelY(), colour: .green)
+                
+                Text("Acceleration Z")
+                ChartStyle().getGraph(datasets: rocket.getAccelZ(), colour: .blue)
+            }
+            Section {
+                Text("Gyroscope X")
+                ChartStyle().getGraph(datasets: rocket.getGyroX(), colour: .purple)
+                
+                Text("Gyroscope Y")
+                ChartStyle().getGraph(datasets: rocket.getGyroY(), colour: .yellow)
+                
+                Text("Gyroscope Z")
+                ChartStyle().getGraph(datasets: rocket.getGyroZ(), colour: .orange)
+            }
+        }
     }
 }
 

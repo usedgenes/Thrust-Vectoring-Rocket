@@ -10,7 +10,7 @@ import SwiftUICharts
 
 class Rocket : ObservableObject {
     @Published var logs = "Logs: "
-    @Published var deltaTime = ""
+    @Published var deltaTime = "-1"
     
     @Published var rollKp : String = "10.0"
     @Published var rollKi : String = "0.0"
@@ -215,6 +215,15 @@ class Rocket : ObservableObject {
                            style: LineStyle(lineColour: ColourStyle(colour: .red), lineType: .line))
     }
     
+    func resetBMI088() {
+        accelX.removeAll()
+        accelY.removeAll()
+        accelY.removeAll()
+        gyroX.removeAll()
+        gyroY.removeAll()
+        gyroZ.removeAll()
+    }
+    
     func resetRotation() {
         yawData.removeAll()
         pitchData.removeAll()
@@ -245,7 +254,9 @@ class Rocket : ObservableObject {
         resetServoPos()
         resetPIDCommands()
         resetAltitude()
+        resetBMI088()
         clearLogs()
+        deltaTime = "-1"
         onPad = false
         tvcActive = false
         coasting = false

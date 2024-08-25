@@ -60,27 +60,39 @@ class BluetoothDeviceHelper: ObservableObject {
     }
     
     func setServos(input : String) {
-        device!.servoString = input
+        if (device != nil) {
+            device!.servoString = input
+        }
     }
     
     func setBMP390(input: String) {
-        device!.bmp390String = input
+        if (device != nil) {
+            device!.bmp390String = input
+        }
     }
     
     func setBuzzer(input: String) {
-        device!.buzzerString = input
+        if (device != nil) {
+            device!.buzzerString = input
+        }
     }
     
     func setBMI088(input: String) {
-        device!.bmi088String = input
+        if (device != nil) {
+            device!.bmi088String = input
+        }
     }
     
     func setPID(input: String) {
-        device!.pidString = input
+        if (device != nil) {
+            device!.pidString = input
+        }
     }
     
     func setUtilities(input: String) {
-        device!.utilitiesString = input
+        if (device != nil) {
+            device!.utilitiesString = input
+        }
     }
 }
 

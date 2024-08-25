@@ -17,7 +17,6 @@
 		4423247A2C742C840029ED02 /* Rocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442324792C742C840029ED02 /* Rocket.swift */; };
 		4423247C2C742CA70029ED02 /* HomeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4423247B2C742CA70029ED02 /* HomeScreenView.swift */; };
 		4423247E2C742CBF0029ED02 /* BluetoothConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */; };
-		442324802C742CD40029ED02 /* ThrustVectoringRocketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4423247F2C742CD40029ED02 /* ThrustVectoringRocketView.swift */; };
 		442324832C742D200029ED02 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 442324822C742D200029ED02 /* SwiftUICharts */; };
 		44400A182C7A8B7400D29279 /* OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A172C7A8B7400D29279 /* OrientationView.swift */; };
 		44400A1A2C7A8BB800D29279 /* ServoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44400A192C7A8BB800D29279 /* ServoView.swift */; };
@@ -60,7 +59,6 @@
 		442324792C742C840029ED02 /* Rocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rocket.swift; sourceTree = "<group>"; };
 		4423247B2C742CA70029ED02 /* HomeScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenView.swift; sourceTree = "<group>"; };
 		4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothConnectView.swift; sourceTree = "<group>"; };
-		4423247F2C742CD40029ED02 /* ThrustVectoringRocketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrustVectoringRocketView.swift; sourceTree = "<group>"; };
 		44400A172C7A8B7400D29279 /* OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationView.swift; sourceTree = "<group>"; };
 		44400A192C7A8BB800D29279 /* ServoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServoView.swift; sourceTree = "<group>"; };
 		44400A1B2C7A8C1000D29279 /* PIDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIDView.swift; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 				4423246C2C742C6B0029ED02 /* Bluetooth */,
 				4423247B2C742CA70029ED02 /* HomeScreenView.swift */,
 				4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */,
-				4423247F2C742CD40029ED02 /* ThrustVectoringRocketView.swift */,
 				44400A1B2C7A8C1000D29279 /* PIDView.swift */,
 				44400A192C7A8BB800D29279 /* ServoView.swift */,
 				44400A1D2C7A952900D29279 /* AltimeterView.swift */,
@@ -326,7 +323,6 @@
 				442324742C742C6B0029ED02 /* BTUtils.swift in Sources */,
 				44400A182C7A8B7400D29279 /* OrientationView.swift in Sources */,
 				4423247A2C742C840029ED02 /* Rocket.swift in Sources */,
-				442324802C742CD40029ED02 /* ThrustVectoringRocketView.swift in Sources */,
 				4423247E2C742CBF0029ED02 /* BluetoothConnectView.swift in Sources */,
 				4479EE2D2C742BC00006BA07 /* RocketApp.swift in Sources */,
 				442324752C742C6B0029ED02 /* BluetoothManagerHelper.swift in Sources */,
