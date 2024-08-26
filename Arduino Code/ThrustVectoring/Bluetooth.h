@@ -26,11 +26,11 @@ private:
   BLECharacteristic *pBMP390;
   BLECharacteristic *pUtilities;
 
-  Servos servos;
-  IMU imu;
-  Altimeter altimeter;
-  PID pitchPID;
-  PID rollPID;
+  Servos *servos;
+  IMU *imu;
+  Altimeter *altimeter;
+  PID *pitchPID;
+  PID *rollPID;
   bool *armed;
   bool *bluetoothConnected;
   bool *sendBluetoothData;
@@ -45,7 +45,7 @@ private:
   bool *sendBluetoothPID;
 
 public:
-  void Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
+  void Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pitchPID, PID *_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
@@ -142,43 +142,50 @@ public:
 
 class ServoCallbacks : public BLECharacteristicCallbacks {
 private:
-  Servos servos;
+  Servos *servos;
 public:
-  ServoCallbacks(Servos &_servos) {
+  ServoCallbacks(Servos *_servos) {
     servos = _servos;
   };
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
     if (value.substring(0, 1) == "0") {
-      servos.writeGimbalServoPosition(0, value.substring(1, value.length()).toInt());
+      Serial.println("Servo 0 Gimbal: " + String(servos->writeGimbalServoPosition(0, value.substring(1, value.length()).toInt())));
     } else if (value.substring(0, 1) == "1") {
-      servos.writeGimbalServoPosition(1, value.substring(1, value.length()).toInt());
-    } else if (value.substring(0, 1) == "Open Parachute") {
-      servos.openParachuteServo();
-    } else if (value.substring(0, 1) == "Close Parachute") {
-      servos.closeParachuteServo();
+      Serial.println("Servo 1 Gimbal: " + String(servos->writeGimbalServoPosition(1, value.substring(1, value.length()).toInt())));
+    } else if (value == "Open Parachute") {
+      servos->openParachuteServo();
+    } else if (value == "Close Parachute") {
+      servos->closeParachuteServo();
     } else if (value.substring(0, 1) == "4") {
-      servos.bluetoothWriteGimbalServoPosition(0, value.substring(1, value.length()).toInt());
+      servos->bluetoothWriteGimbalServoPosition(0, value.substring(1, value.length()).toInt());
+      Serial.println("Writing bluetooth servo 0");
     } else if (value.substring(0, 1) == "5") {
-      servos.bluetoothWriteGimbalServoPosition(1, value.substring(1, value.length()).toInt());
+      servos->bluetoothWriteGimbalServoPosition(1, value.substring(1, value.length()).toInt());
+      Serial.println("Writing bluetooth servo 1");
     } else if (value.substring(0, 1) == "6") {
       int output[] = { 0, 0 };
-      servos.getGimbalServosStartingPositions(output);
+      servos->getGimbalServosStartingPositions(output);
       pCharacteristic->setValue("0" + String(output[0]) + "," + String(output[1]));
       pCharacteristic->notify();
     } else if (value.substring(0, 1) == "7") {
-      servos.setGimbalServosStartingPosition(value.substring(1, 2).toInt(), value.substring(2, value.length()).toInt());
+      servos->setGimbalServosStartingPosition(value.substring(1, 2).toInt(), value.substring(2, value.length()).toInt());
     } else if (value == "Get Max Position") {
-      pCharacteristic->setValue("91" + servos.getMaxGimbalPosition());
+      pCharacteristic->setValue("91" + servos->getMaxGimbalPosition());
+      pCharacteristic->notify();
+    } else if (value == "Circle Gimbal") {
+        servos->circleGimbalServos();
+    } else if (value == "Home") {
+      servos->homeGimbalServos();
     }
   };
 };
 
 class BMI088Callbacks : public BLECharacteristicCallbacks {
 private:
-  IMU imu;
+  IMU *imu;
 public:
-  BMI088Callbacks(IMU &_imu) {
+  BMI088Callbacks(IMU *_imu) {
     imu = _imu;
   };
   void onWrite(BLECharacteristic *pCharacteristic){};
@@ -186,9 +193,9 @@ public:
 
 class BMP390Callbacks : public BLECharacteristicCallbacks {
 private:
-  Altimeter altimeter;
+  Altimeter *altimeter;
 public:
-  BMP390Callbacks(Altimeter &_altimeter) {
+  BMP390Callbacks(Altimeter *_altimeter) {
     altimeter = _altimeter;
   };
   void onWrite(BLECharacteristic *pCharacteristic){};
@@ -196,25 +203,25 @@ public:
 
 class PIDCallbacks : public BLECharacteristicCallbacks {
 private:
-  PID pitchPID, rollPID;
+  PID *pitchPID, *rollPID;
 public:
-  PIDCallbacks(PID &_pitchPID, PID &_rollPID) {
+  PIDCallbacks(PID *_pitchPID, PID *_rollPID) {
     pitchPID = _pitchPID;
     rollPID = _rollPID;
   };
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
     if (value.substring(0, 1) == "0") {
-      pitchPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
-      pitchPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
-      pitchPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-      Serial.println("Pitch PID: " + String(pitchPID.Kp) + "\t" + String(pitchPID.Ki) + "\t" + String(pitchPID.Ki));
+      pitchPID->Kp = value.substring(1, value.indexOf(',')).toFloat();
+      pitchPID->Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      pitchPID->Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+      Serial.println("Pitch PID: " + String(pitchPID->Kp) + "\t" + String(pitchPID->Ki) + "\t" + String(pitchPID->Kd));
     }
     if (value.substring(0, 1) == "1") {
-      rollPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
-      rollPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
-      rollPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
-      Serial.println("Roll PID: " + String(rollPID.Kp) + "\t" + String(rollPID.Ki) + "\t" + String(rollPID.Ki));
+      rollPID->Kp = value.substring(1, value.indexOf(',')).toFloat();
+      rollPID->Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
+      rollPID->Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+      Serial.println("Roll PID: " + String(rollPID->Kp) + "\t" + String(rollPID->Ki) + "\t" + String(rollPID->Kd));
     }
   };
 };

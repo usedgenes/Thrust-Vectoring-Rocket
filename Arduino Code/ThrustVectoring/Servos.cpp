@@ -18,6 +18,7 @@ void Servos::homeGimbalServos() {
 }
 
 void Servos::circleGimbalServos() {
+  Serial.println("Circling Gimbal");
   for (int num = 0; num <= 360; num += 20) {
     gimbalServos[0].write((maxGimbalPosition * sin(3.14 * num / 180)) + gimbalServoStartingPosition[0]);
     gimbalServos[1].write((maxGimbalPosition * cos(3.14 * num / 180)) + gimbalServoStartingPosition[1]);
@@ -36,21 +37,24 @@ void Servos::getGimbalServosStartingPositions(int output[]) {
 
 void Servos::setGimbalServosStartingPosition(int servoNumber, int position) {
   gimbalServoStartingPosition[servoNumber] = position;
+  Serial.println("Servo Starting Position: " + String(gimbalServoStartingPosition[0]) + " " + String(gimbalServoStartingPosition[1]));
 }
 
 void Servos::bluetoothWriteGimbalServoPosition(int servoNumber, int position) {
   gimbalServos[servoNumber].write(position);
+  gimbalServos[0].write(100);
 }
 
 float Servos::writeGimbalServoPosition(int servoNumber, float position) {
-  if (position > maxGimbalPosition) {
-    position = maxGimbalPosition;
+  int pos = (int) position;
+  if (pos > maxGimbalPosition) {
+    pos = maxGimbalPosition;
   }
-  if (position < -maxGimbalPosition) {
-    position = -maxGimbalPosition;
+  if (pos < -maxGimbalPosition) {
+    pos = -maxGimbalPosition;
   }
-  gimbalServos[servoNumber].write(gimbalServoStartingPosition[servoNumber] + position);
-  return position;
+  gimbalServos[servoNumber].write(gimbalServoStartingPosition[servoNumber] + pos);
+  return pos;
 }
 
 void Servos::openParachuteServo() {

@@ -5,11 +5,11 @@
 
 class Servos {
 private:
-  #define PARACHUTE_SERVO_PIN -1
+  #define PARACHUTE_SERVO_PIN 13
   Servo gimbalServos[2];
   Servo parachuteServo;
-  int gimbalServoPins[2] = { 0, 0 };
-  int gimbalServoStartingPosition[4] = { 90, 90 };
+  int gimbalServoPins[2] = { 23, 22 };
+  int gimbalServoStartingPosition[2] = { 90, 90 };
   int maxGimbalPosition = 15;
   int parachuteServoOpenPosition = 140;
   int parachuteServoClosedPosition = 50;

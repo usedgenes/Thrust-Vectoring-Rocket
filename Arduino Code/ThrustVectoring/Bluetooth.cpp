@@ -1,6 +1,6 @@
 #include "Bluetooth.h"
 
-void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
+void Bluetooth::Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pitchPID, PID *_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
   servos = _servos;
   imu = _imu;
   altimeter = _altimeter;
@@ -12,7 +12,7 @@ void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pi
   sendBluetoothBMI088 = _sendBluetoothBMI088;
   sendBluetoothOrientation = _sendBluetoothOrientation;
   sendBluetoothAltimeter = _sendBluetoothAltimeter;
-  sendBluetoothPID = _sendBluetoothBMI088;
+  sendBluetoothPID = _sendBluetoothPID;
   bluetoothBypassOnPad = _bluetoothBypassOnPad;
   bluetoothBypassTVCActive = _bluetoothBypassTVCActive;
   bluetoothBypassCoasting = _bluetoothBypassCoasting;

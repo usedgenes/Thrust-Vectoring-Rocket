@@ -58,7 +58,8 @@ float accelerometer[] = { 0, 0, 0 };
 float gyroscope[] = { 0, 0, 0 };
 float pitch = 0, roll = 0;
 float pitchCommand = 0, rollCommand = 0;
-int apogee = 0;
+float servo0Position = 0, servo1Position = 0;
+float apogee = 0;
 
 bool sendBluetoothData = false;
 bool bluetoothConnected = false;
@@ -75,7 +76,7 @@ bool sendBluetoothOrientation = false;
 
 void setup() {
   Serial.begin(115200);
-  bluetooth.Init(servos, imu, altimeter, pitchPID, rollPID, &armed, &bluetoothConnected, &sendLoopTime, &sendBluetoothBMI088, &sendBluetoothOrientation, &sendBluetoothAltimeter, &sendBluetoothPID, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
+  bluetooth.Init(&servos, &imu, &altimeter, &pitchPID, &rollPID, &armed, &bluetoothConnected, &sendLoopTime, &sendBluetoothBMI088, &sendBluetoothOrientation, &sendBluetoothAltimeter, &sendBluetoothPID, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
   while (!bluetoothConnected) {
     delay(1000);
   }
@@ -168,8 +169,8 @@ void thrustVectorActive() {
   dataLoop();
   pitchCommand = pitchPID.ComputeCorrection(pitch, loopTime);
   rollCommand = rollPID.ComputeCorrection(roll, loopTime);
-  servos.writeGimbalServoPosition(0, pitchCommand);
-  servos.writeGimbalServoPosition(1, rollCommand);
+  servo0Position = servos.writeGimbalServoPosition(0, pitchCommand);
+  servo1Position = servos.writeGimbalServoPosition(1, rollCommand);
   logger.log(Pid, String(pitchCommand) + "\t" + String(rollCommand), currentTime);
   Serial.println("Pitch Command: " + String(pitchCommand));
   Serial.println("Roll Command: " + String(rollCommand));
@@ -237,7 +238,7 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
     }
     if (sendLoopTime) {
       Serial.println("Sending Bluetooth Loop Time");
-      bluetooth.writeUtilities("90" + loopTime);
+      bluetooth.writeUtilities("90" + String(loopTime));
     }
     logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
     logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
