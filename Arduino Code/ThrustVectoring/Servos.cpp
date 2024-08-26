@@ -11,12 +11,22 @@ void Servos::Init() {
   parachuteServo.write(parachuteServoOpenPosition);
 }
 
+void Servos::homeGimbalServos() {
+  for(int i = 0; i < 2; i++) {
+    gimbalServos[i].write(gimbalServoStartingPosition[i]);
+  }
+}
+
+void Servos::circleGimbalServos() {
+  
+}
+
 void Servos::getGimbalServosStartingPositions(int output[]) {
+  output[0] = gimbalServoStartingPosition[0];
   output[1] = gimbalServoStartingPosition[0];}
 
-void Servos::setGimbalServosStartingPosition(int positions[]) {
-  gimbalServoStartingPosition[0] = positions[0];
-  gimbalServoStartingPosition[1] = positions[1]; 
+void Servos::setGimbalServosStartingPosition(int servoNumber, int position) {
+  gimbalServoStartingPosition[servoNumber] = position;
 }
 
 void Servos::bluetoothWriteGimbalServoPosition(int servoNumber, int position) {

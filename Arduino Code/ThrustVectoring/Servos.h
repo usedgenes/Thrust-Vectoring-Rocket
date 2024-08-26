@@ -16,11 +16,13 @@ private:
 public:
   void Init();
   void getGimbalServosStartingPositions(int output[]);
-  void setGimbalServosStartingPosition(int positions[]);
+  void setGimbalServosStartingPosition(int servoNumber, int position);
   void bluetoothWriteGimbalServoPosition(int servoNumber, int position);
   float writeGimbalServoPosition(int servoNumber, float position);
   void openParachuteServo();
   void closeParachuteServo();
+  void homeGimbalServos();
+  void circleGimbalServos();
 };
 
 

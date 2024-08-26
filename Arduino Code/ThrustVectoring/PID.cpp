@@ -10,7 +10,6 @@ float PID::ComputeCorrection(float rocketOrientation, unsigned long loopTime) {
   if (loopTime == 0) {
     return 0;
   }
-  loopTime = loopTime / 1000;
   float error = setpoint - rocketOrientation;
   float deltaTime = loopTime / 1000;
   integrator += error * deltaTime;

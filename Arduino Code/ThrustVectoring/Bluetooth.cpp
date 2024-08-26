@@ -1,6 +1,6 @@
 #include "Bluetooth.h"
 
-void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendBluetoothBMI088, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
+void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pitchPID, PID &_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
   servos = _servos;
   imu = _imu;
   altimeter = _altimeter;
@@ -8,7 +8,9 @@ void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pi
   rollPID = _rollPID;
   armed = _armed;
   bluetoothConnected = _bluetoothConnected;
+  sendLoopTime = _sendLoopTime;
   sendBluetoothBMI088 = _sendBluetoothBMI088;
+  sendBluetoothOrientation = _sendBluetoothOrientation;
   sendBluetoothAltimeter = _sendBluetoothBMI088;
   sendBluetoothPID = _sendBluetoothBMI088;
   bluetoothBypassOnPad = _bluetoothBypassOnPad;
@@ -39,7 +41,7 @@ void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pi
   pPID->setCallbacks(new PIDCallbacks(pitchPID, rollPID));
 
   pUtilities = pService->createCharacteristic(UTILITIES_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
-  pUtilities->setCallbacks(new UtilitiesCallbacks(armed, sendBluetoothBMI088, sendBluetoothAltimeter, sendBluetoothPID, bluetoothBypassOnPad, bluetoothBypassTVCActive, bluetoothBypassCoasting, bluetoothBypassParachuteOut));
+  pUtilities->setCallbacks(new UtilitiesCallbacks(armed, sendLoopTime, sendBluetoothBMI088, sendBluetoothOrientation, sendBluetoothAltimeter, sendBluetoothPID, bluetoothBypassOnPad, bluetoothBypassTVCActive, bluetoothBypassCoasting, bluetoothBypassParachuteOut));
 
   pService->start();
 
@@ -63,6 +65,11 @@ void Bluetooth::writeUtilitiesNotifications(String message) {
 
 void Bluetooth::writeUtilitiesEvents(String message) {
   pUtilities->setValue("2" + message);
+  pUtilities->notify();
+}
+
+void Bluetooth::writeUtilities(String message) {
+  pUtilities->setValue(message);
   pUtilities->notify();
 }
 
