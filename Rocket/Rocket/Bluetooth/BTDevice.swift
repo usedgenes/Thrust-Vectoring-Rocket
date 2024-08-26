@@ -193,7 +193,7 @@ extension BTDevice: CBPeripheralDelegate {
         if characteristic.uuid == servoChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value != "") {
-                if(value[...value.startIndex] == "5") {
+                if(value[...value.startIndex] == "9") {
                     value.remove(at: value.startIndex)
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
@@ -211,6 +211,10 @@ extension BTDevice: CBPeripheralDelegate {
                         
                         return;
                     }
+                }
+                if(value[...value.startIndex] == "0") {
+                    value.remove(at: value.startIndex)
+                    rocket!.maxPosition = Double(value)!
                 }
             }
         }
@@ -245,6 +249,16 @@ extension BTDevice: CBPeripheralDelegate {
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
                         rocket!.addAltitude(altitude: Float(value)!)
+                        return;
+                    }
+                    if(value[...value.startIndex] == "1") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addTemperature(temperature: Float(value)!)
+                        return;
+                    }
+                    if(value[...value.startIndex] == "2") {
+                        value.remove(at: value.startIndex)
+                        rocket!.addPressure(pressure: Float(value)!)
                         return;
                     }
                 }
@@ -325,6 +339,7 @@ extension BTDevice: CBPeripheralDelegate {
                     }
                 }
                 if(value[...value.startIndex] == "9") {
+                    value.remove(at: value.startIndex)
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
                         rocket!.deltaTime = value

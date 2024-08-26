@@ -57,6 +57,9 @@ struct TVCView: View {
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Reset")
                     rocket.reset()
+                    if(bluetoothDevice.isConnected) {
+                        bluetoothDevice.disconnect()
+                    }
                 }) {
                     Text("Reset Rocket")
                         .font(.title2)

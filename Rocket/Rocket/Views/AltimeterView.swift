@@ -14,10 +14,10 @@ struct AltimeterView: View {
             Spacer()
             Button(action: {
                 if(!getData) {
-                    bluetoothDevice.setBMP390(input: "Altimeter Get")
+                    bluetoothDevice.setUtilities(input: "Altimeter Get")
                 }
                 else {
-                    bluetoothDevice.setBMP390(input: "Altimeter Stop")
+                    bluetoothDevice.setUtilities(input: "Altimeter Stop")
                 }
                 getData.toggle()
 
@@ -41,7 +41,7 @@ struct AltimeterView: View {
                 .cornerRadius(10)
             Spacer()
         }.onDisappear(perform: {
-                bluetoothDevice.setBMI088(input: "Altimeter Stop")
+                bluetoothDevice.setUtilities(input: "Altimeter Stop")
             })
         Divider()
         Text("Altitude")

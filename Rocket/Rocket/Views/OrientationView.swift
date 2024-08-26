@@ -14,10 +14,10 @@ struct OrientationView : View {
             Spacer()
             Button(action: {
                 if(!getData) {
-                    bluetoothDevice.setBMI088(input: "Orientation Get")
+                    bluetoothDevice.setUtilities(input: "Orientation Get")
                 }
                 else {
-                    bluetoothDevice.setBMI088(input: "Orientation Stop")
+                    bluetoothDevice.setUtilities(input: "Orientation Stop")
                 }
                 getData.toggle()
 
@@ -41,7 +41,7 @@ struct OrientationView : View {
                 .cornerRadius(10)
             Spacer()
         }.onDisappear(perform: {
-                bluetoothDevice.setBMI088(input: "Orientation Stop")
+                bluetoothDevice.setUtilities(input: "Orientation Stop")
             })
         Divider()
         Text("Pitch")

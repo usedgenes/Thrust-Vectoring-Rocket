@@ -15,10 +15,10 @@ struct BMI088View: View {
                 Spacer()
                 Button(action: {
                     if(!getData) {
-                        bluetoothDevice.setBMI088(input: "BMI088 Get")
+                        bluetoothDevice.setUtilities(input: "BMI088 Get")
                     }
                     else {
-                        bluetoothDevice.setBMI088(input: "BMI088 Stop")
+                        bluetoothDevice.setUtilities(input: "BMI088 Stop")
                     }
                     getData.toggle()
                     
@@ -31,7 +31,7 @@ struct BMI088View: View {
                     .cornerRadius(10)
                 Spacer()
                 Button(action: {
-                    rocket.resetBMP390()
+                    rocket.resetBMI088()
                 }) {
                     Text("Reset All")
                         .font(.title2)
@@ -42,7 +42,7 @@ struct BMI088View: View {
                     .cornerRadius(10)
                 Spacer()
             }.onDisappear(perform: {
-                bluetoothDevice.setBMI088(input: "BMI088 Stop")
+                bluetoothDevice.setUtilities(input: "BMI088 Stop")
             })
             Divider()
             Section {

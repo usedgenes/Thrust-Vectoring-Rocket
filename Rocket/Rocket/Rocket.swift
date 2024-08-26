@@ -11,6 +11,7 @@ import SwiftUICharts
 class Rocket : ObservableObject {
     @Published var logs = ""
     @Published var deltaTime = "-1"
+    @Published var maxPosition : Double = 15
     
     @Published var rollKp : String = "10.0"
     @Published var rollKi : String = "0.0"
@@ -88,15 +89,15 @@ class Rocket : ObservableObject {
     }
     
     func addYaw(yaw: Float) {
-        yawData.append(LineChartDataPoint(value: Double(yaw * 57.29), xAxisLabel: " ", description: "Yaw"))
+        yawData.append(LineChartDataPoint(value: Double(yaw), xAxisLabel: " ", description: "Yaw"))
     }
     
     func addPitch(pitch: Float) {
-        pitchData.append(LineChartDataPoint(value: Double(pitch * 57.29), xAxisLabel: " ", description: "Y"))
+        pitchData.append(LineChartDataPoint(value: Double(pitch), xAxisLabel: " ", description: "Y"))
     }
     
     func addRoll(roll: Float) {
-        rollData.append(LineChartDataPoint(value: Double(roll * 57.29), xAxisLabel: " ", description: "Z"))
+        rollData.append(LineChartDataPoint(value: Double(roll), xAxisLabel: " ", description: "Z"))
     }
     
     func addServo0Pos(pos: Float) {

@@ -5,8 +5,8 @@ struct ServoView : View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var servo0Position : Double = 0
     @State var servo1Position : Double = 0
-    @State var maxPosition : Double = 15
     @State var setHomePosition = false
+    @State var parachuteServoOpen = true
     
     var body: some View {
         Section {
@@ -17,9 +17,9 @@ struct ServoView : View {
             HStack {
                 Spacer()
                 Button(action: {
-                    setHomePosition.toggle()
+                    parachuteServoOpen.toggle()
                 }) {
-                    Text("Open Parachute")
+                    Text(parachuteServoOpen ? "Close Parachute" : "Open Parachute")
                         .font(.title2)
                         .foregroundColor(.blue)
                 }
@@ -30,9 +30,9 @@ struct ServoView : View {
                 .cornerRadius(10)
                 Spacer()
                 Button(action: {
-                    setHomePosition.toggle()
+                    bluetoothDevice.setServos(input: "90")
                 }) {
-                    Text("Close Parachute")
+                    Text("Rotate Gimbal")
                         .font(.title2)
                         .foregroundColor(.blue)
                 }
@@ -82,10 +82,16 @@ struct ServoView : View {
                     servo0Position
                 }, set: { (newVal) in
                     servo0Position = newVal
-                }), in: (setHomePosition ? 0...180 : -maxPosition...maxPosition), step: 1) { editing in
+                }), in: (setHomePosition ? 0...180 : -rocket.maxPosition...rocket.maxPosition), step: 1) { editing in
                     if(!editing) {
                         bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
                     }
+                }
+                Button(action: {
+                    bluetoothDevice.setServos(input: "90")
+                }) {
+                    Text("Home")
+                        .font(.title3)
                 }
             }.padding()
             HStack {
@@ -96,10 +102,16 @@ struct ServoView : View {
                     servo1Position
                 }, set: { (newVal) in
                     servo1Position = newVal
-                }), in: (setHomePosition ? 0...180 : -maxPosition...maxPosition), step: 1) { editing in
+                }), in: (setHomePosition ? 0...180 : -rocket.maxPosition...rocket.maxPosition), step: 1) { editing in
                     if(!editing) {
                         bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
                     }
+                }
+                Button(action: {
+                    bluetoothDevice.setServos(input: "90")
+                }) {
+                    Text("Home")
+                        .font(.title3)
                 }
             }.padding()
             Divider()

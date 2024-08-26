@@ -9,8 +9,18 @@ struct PIDView : View {
     var body : some View {
         Section {
             Text("PID Values")
-                .frame(maxWidth: .infinity, alignment: .center)
+                .font(.title)
+                .fontWeight(.bold)
+            Divider()
             HStack {
+                Text("Roll:")
+                    .font(.title2)
+//                Picker("Coefficient Type", selection: "test") {
+//                    ForEach(rocket.temperature, id: \.self) {
+//                        Text($0)
+//                    }
+//                }.pickerStyle(.menu)
+
                 Button(action: {
                     bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
                     bluetoothDevice.setPID(input: "1" + rocket.pitchKp + "," + rocket.pitchKi + "!" + rocket.pitchKd)
@@ -19,15 +29,8 @@ struct PIDView : View {
                     Text("Apply")
                 }.buttonStyle(BorderlessButtonStyle())
                     .frame(maxWidth: .infinity, alignment: .center)
-                Button(action: {
-                    bluetoothDevice.setUtilities(input: "0")
-                }) {
-                    Text("RESET ESP32")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
             }.padding(.bottom)
             HStack {
-                Text("Roll:")
                 Text("Kp:")
                 TextField(rocket.rollKp, text: Binding<String>(
                     get: { rocket.rollKp },
@@ -101,10 +104,8 @@ struct PIDView : View {
                 .keyboardType(UIKeyboardType.decimalPad)
             }
             
+            Divider()
             Section {
-                Text("PID Command Graphs")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
                 HStack {
                     Button(action: {
                         bluetoothDevice.setPID(input: "PID Get")
