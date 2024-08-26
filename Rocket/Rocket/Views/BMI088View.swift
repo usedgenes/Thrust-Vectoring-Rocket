@@ -6,62 +6,73 @@ struct BMI088View: View {
     @State var getData = false
     
     var body : some View {
-        Text("BMI088 Data Graphs")
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding()
-        HStack {
-            Button(action: {
-                bluetoothDevice.setBMI088(input: "BMI088 Get")
-                getData.toggle()
-            }) {
-                Text("Get Data")
-            }.disabled(getData)
-                .buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-            
-            Button(action: {
-                bluetoothDevice.setBMI088(input: "BMI088 Stop")
-                getData.toggle()
-            }) {
-                Text("Stop")
-            }.disabled(!getData)
-                .buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-            Button(action: {
-                rocket.resetRotation()
-            }) {
-                Text("Reset All")
-            }.buttonStyle(BorderlessButtonStyle())
-                .frame(maxWidth: .infinity, alignment: .center)
-        }.padding(.bottom)
-            .onDisappear(perform: {
+        ScrollView {
+            Text("BMI088 Data Graphs")
+                .font(.title)
+                .fontWeight(.bold)
+            Divider()
+            HStack {
+                Spacer()
+                Button(action: {
+                    if(!getData) {
+                        bluetoothDevice.setBMI088(input: "BMI088 Get")
+                    }
+                    else {
+                        bluetoothDevice.setBMI088(input: "BMI088 Stop")
+                    }
+                    getData.toggle()
+                    
+                }) {
+                    Text(!getData ? "Get Data" : "Stop")
+                        .font(.title2)
+                }.frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    .background(Color("Light Gray"))
+                    .cornerRadius(10)
+                Spacer()
+                Button(action: {
+                    rocket.resetBMP390()
+                }) {
+                    Text("Reset All")
+                        .font(.title2)
+                }.buttonStyle(BorderlessButtonStyle())
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    .background(Color("Light Gray"))
+                    .cornerRadius(10)
+                Spacer()
+            }.onDisappear(perform: {
                 bluetoothDevice.setBMI088(input: "BMI088 Stop")
             })
-        Section {
-            Text("Acceleration X")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getAccelX(), colour: .red)
+            Divider()
+            Section {
+                Text("Acceleration X")
+                    .font(.title2)
+                    .padding(.top)
+                ChartStyle().getGraph(datasets: rocket.getAccelX(), colour: .red)
+                
+                Text("Acceleration Y")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getAccelY(), colour: .green)
+                
+                Text("Acceleration Z")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getAccelZ(), colour: .blue)
+            }
             
-            Text("Acceleration Y")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getAccelY(), colour: .green)
-            
-            Text("Acceleration Z")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getAccelZ(), colour: .blue)
-        }
-        Section {
-            Text("Gyroscope X")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getGyroX(), colour: .purple)
-            
-            Text("Gyroscope Y")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getGyroY(), colour: .yellow)
-            
-            Text("Gyroscope Z")
-                .font(.title2)
-            ChartStyle().getGraph(datasets: rocket.getGyroZ(), colour: .orange)
+            Section {
+                Text("Gyroscope X")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getGyroX(), colour: .purple)
+                
+                Text("Gyroscope Y")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getGyroY(), colour: .yellow)
+                
+                Text("Gyroscope Z")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getGyroZ(), colour: .orange)
+            }
         }
     }
 }

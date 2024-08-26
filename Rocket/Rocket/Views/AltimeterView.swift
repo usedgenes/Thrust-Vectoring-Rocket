@@ -7,8 +7,9 @@ struct AltimeterView: View {
     
     var body: some View {
         Text("Altimeter Graphs")
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding()
+            .font(.title)
+            .fontWeight(.bold)
+        Divider()
         HStack {
             Spacer()
             Button(action: {
@@ -29,7 +30,7 @@ struct AltimeterView: View {
                 .cornerRadius(10)
             Spacer()
             Button(action: {
-                rocket.resetAltitude()
+                rocket.resetBMP390()
             }) {
                 Text("Reset All")
                     .font(.title2)
@@ -39,14 +40,22 @@ struct AltimeterView: View {
                 .background(Color("Light Gray"))
                 .cornerRadius(10)
             Spacer()
-        }.padding(.bottom)
-            .onDisappear(perform: {
+        }.onDisappear(perform: {
                 bluetoothDevice.setBMI088(input: "Altimeter Stop")
             })
-        
+        Divider()
         Text("Altitude")
             .font(.title2)
+            .padding(.top)
         ChartStyle().getGraph(datasets: rocket.getAltitude(), colour: .red)
+        
+        Text("Temperature")
+            .font(.title2)
+        ChartStyle().getGraph(datasets: rocket.getTemperature(), colour: .green)
+        
+        Text("Pressure")
+            .font(.title2)
+        ChartStyle().getGraph(datasets: rocket.getPressure(), colour: .blue)
     }
 }
 

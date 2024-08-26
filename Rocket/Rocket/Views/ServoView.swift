@@ -5,110 +5,119 @@ struct ServoView : View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var servo0Position : Double = 0
     @State var servo1Position : Double = 0
-    @State var servo0StartingPosition : Double = 90
-    @State var servo1StartingPosition : Double = 90
+    @State var maxPosition : Double = 15
+    @State var setHomePosition = false
     
     var body: some View {
         Section {
-            Section {
-                Text("Gimbal Servo Positions")
-                    .font(.title2)
-                    .padding(.bottom)
-                HStack {
-                    Text("Servo 0: " + String(Int(servo0Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo0Position
-                    }, set: { (newVal) in
-                        servo0Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
-                        }
-                    }
-                }.padding()
-                HStack {
-                    Text("Servo 1: " + String(Int(servo1Position)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo1Position
-                    }, set: { (newVal) in
-                        servo1Position = newVal
-                    }), in: -30...30, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
-                        }
-                    }
-                }.padding()
+            Text("Gimbal Servo Positions")
+                .font(.title)
+                .fontWeight(.bold)
+            Divider()
+            HStack {
+                Spacer()
+                Button(action: {
+                    setHomePosition.toggle()
+                }) {
+                    Text("Open Parachute")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+                Spacer()
+                Button(action: {
+                    setHomePosition.toggle()
+                }) {
+                    Text("Close Parachute")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+                .disabled(setHomePosition)
+                Spacer()
             }
             Divider()
-            Section {
-                Text("Parachute Servo")
-                    .font(.title2)
-                    .padding()
-                HStack {
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "Open Parachute")
-                    }) {
-                        Text("OPEN")
-                            .font(.title3)
-                            .padding()
-                            .buttonStyle(.borderless)
-                    }
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "Close Parachute")
-                    }) {
-                        Text("CLOSE")
-                            .font(.title3)
-                            .padding()
-                            .buttonStyle(.borderless)
+            HStack {
+                Spacer()
+                Button(action: {
+                    setHomePosition.toggle()
+                }) {
+                    Text(setHomePosition ? "Home Servos" : "Move Servos")
+                        .font(.title2)
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+                Spacer()
+                Button(action: {
+                    bluetoothDevice.setServos(input: "90")
+                }) {
+                    Text("Set As Origin")
+                        .font(.title2)
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+                .disabled(!setHomePosition)
+                Spacer()
+            }
+            Divider()
+            HStack {
+                Text("Servo 0: " + String(Int(servo0Position)))
+                    .padding(.trailing)
+                    .font(.title3)
+                Slider(value: Binding(get: {
+                    servo0Position
+                }, set: { (newVal) in
+                    servo0Position = newVal
+                }), in: (setHomePosition ? 0...180 : -maxPosition...maxPosition), step: 1) { editing in
+                    if(!editing) {
+                        bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
                     }
                 }
-            }
+            }.padding()
+            HStack {
+                Text("Servo 1: " + String(Int(servo1Position)))
+                    .padding(.trailing)
+                    .font(.title3)
+                Slider(value: Binding(get: {
+                    servo1Position
+                }, set: { (newVal) in
+                    servo1Position = newVal
+                }), in: (setHomePosition ? 0...180 : -maxPosition...maxPosition), step: 1) { editing in
+                    if(!editing) {
+                        bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
+                    }
+                }
+            }.padding()
             Divider()
             Section {
-                Text("Set Gimbal Servo Starting Positions")
+                Text("Servo 0 Position")
                     .font(.title2)
-                    .padding()
-                HStack {
-                    Text("Servo 0: " + String(Int(servo0StartingPosition)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo0StartingPosition
-                    }, set: { (newVal) in
-                        servo0StartingPosition = newVal
-                    }), in: 0...180, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "4" + String(Int(servo0StartingPosition)))
-                        }
-                    }
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "70" + String(Int(servo0StartingPosition)))
-                    }) {
-                        Text("Set as origin")
-                    }
-                }.padding()
-                HStack {
-                    Text("Servo 1: " + String(Int(servo1StartingPosition)))
-                        .padding(.trailing)
-                    Slider(value: Binding(get: {
-                        servo1StartingPosition
-                    }, set: { (newVal) in
-                        servo1StartingPosition = newVal
-                    }), in: 0...180, step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "5" + String(Int(servo1StartingPosition)))
-                        }
-                    }
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "71" + String(Int(servo1StartingPosition)))
-                    }) {
-                        Text("Set as origin")
-                    }
-                }.padding()
+                    .padding(.top)
+                ChartStyle().getGraph(datasets: rocket.getServo0Pos(), colour: .red)
+                
+                Text("Servo 1 Position")
+                    .font(.title2)
+                ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
             }
-            
         }
+
+        .onAppear(perform: {
+            bluetoothDevice.setServos(input: "Get Max Position")
+        })
         .onDisappear(perform: {
             bluetoothDevice.setServos(input: "10")
         })

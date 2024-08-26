@@ -48,6 +48,8 @@ class Rocket : ObservableObject {
     @Published var gyroZ : [LineChartDataPoint] = []
 
     @Published var altitude : [LineChartDataPoint] = []
+    @Published var temperature : [LineChartDataPoint] = []
+    @Published var pressure : [LineChartDataPoint] = []
     
     func addAccelX(accelX: Float) {
         self.accelX.append(LineChartDataPoint(value: Double(accelX), xAxisLabel: " ", description: "Acceleration X"))
@@ -75,6 +77,14 @@ class Rocket : ObservableObject {
     
     func addAltitude(altitude: Float) {
         self.altitude.append(LineChartDataPoint(value: Double(altitude), xAxisLabel: " ", description: "Altitude"))
+    }
+    
+    func addTemperature(temperature: Float) {
+        self.temperature.append(LineChartDataPoint(value: Double(temperature), xAxisLabel: " ", description: "°C"))
+    }
+    
+    func addPressure(pressure: Float) {
+        self.pressure.append(LineChartDataPoint(value: Double(pressure), xAxisLabel: " ", description: "Pascals"))
     }
     
     func addYaw(yaw: Float) {
@@ -215,6 +225,20 @@ class Rocket : ObservableObject {
                            style: LineStyle(lineColour: ColourStyle(colour: .red), lineType: .line))
     }
     
+    func getTemperature() -> LineDataSet {
+        return LineDataSet(dataPoints: temperature,
+                           legendTitle: "°C",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .green), lineType: .line))
+    }
+    
+    func getPressure() -> LineDataSet {
+        return LineDataSet(dataPoints: pressure,
+                           legendTitle: "Pascals",
+                           pointStyle: PointStyle(),
+                           style: LineStyle(lineColour: ColourStyle(colour: .blue), lineType: .line))
+    }
+    
     func resetBMI088() {
         accelX.removeAll()
         accelY.removeAll()
@@ -241,8 +265,10 @@ class Rocket : ObservableObject {
         rollPIDCommand.removeAll()
     }
     
-    func resetAltitude() {
+    func resetBMP390() {
         altitude.removeAll()
+        temperature.removeAll()
+        pressure.removeAll()
     }
     
     func clearLogs() {
@@ -253,7 +279,7 @@ class Rocket : ObservableObject {
         resetRotation()
         resetServoPos()
         resetPIDCommands()
-        resetAltitude()
+        resetBMP390()
         resetBMI088()
         clearLogs()
         deltaTime = "-1"

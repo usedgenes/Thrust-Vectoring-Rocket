@@ -40,13 +40,13 @@ struct OrientationView : View {
                 .background(Color("Light Gray"))
                 .cornerRadius(10)
             Spacer()
-        }.padding(.bottom)
-            .onDisappear(perform: {
+        }.onDisappear(perform: {
                 bluetoothDevice.setBMI088(input: "Orientation Stop")
             })
-        
+        Divider()
         Text("Pitch")
             .font(.title2)
+            .padding(.top)
         ChartStyle().getGraph(datasets: rocket.getPitch(), colour: .green)
         
         Text("Roll")
