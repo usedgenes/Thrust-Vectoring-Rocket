@@ -5,146 +5,211 @@ struct PIDView : View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @EnvironmentObject var rocket : Rocket
     @State var getData = false
+    let coefficientType = ["Kp", "Ki", "Kd"]
+    @State var selectedPitchCoefficient = "Kp"
+    @State var selectedRollCoefficient = "Kp"
+    @State var selectedYawCoefficient = "Kp"
+    @State var pitchCoefficient = "10.0"
+    @State var rollCoefficient = "10.0"
+    @State var yawCoefficient = "10.0"
     
     var body : some View {
-        Section {
+        ScrollView {
             Text("PID Values")
                 .font(.title)
                 .fontWeight(.bold)
             Divider()
-            HStack {
-                Text("Roll:")
-                    .font(.title2)
-//                Picker("Coefficient Type", selection: "test") {
-//                    ForEach(rocket.temperature, id: \.self) {
-//                        Text($0)
-//                    }
-//                }.pickerStyle(.menu)
-
-                Button(action: {
-                    bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
-                    bluetoothDevice.setPID(input: "1" + rocket.pitchKp + "," + rocket.pitchKi + "!" + rocket.pitchKd)
-                    bluetoothDevice.setPID(input: "2" + rocket.yawKp + "," + rocket.yawKi + "!" + rocket.yawKd)
-                }) {
-                    Text("Apply")
-                }.buttonStyle(BorderlessButtonStyle())
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }.padding(.bottom)
-            HStack {
-                Text("Kp:")
-                TextField(rocket.rollKp, text: Binding<String>(
-                    get: { rocket.rollKp },
-                    set: {
-                        rocket.rollKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.rollKi, text: Binding<String>(
-                    get: { rocket.rollKi },
-                    set: {
-                        rocket.rollKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.rollKd, text: Binding<String>(
-                    get: { rocket.rollKd },
-                    set: {
-                        rocket.rollKd = $0
-                        
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            HStack {
-                Text("Pitch:")
-                Text("Kp:")
-                TextField(rocket.pitchKp, text: Binding<String>(
-                    get: { rocket.pitchKp },
-                    set: {
-                        rocket.pitchKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.pitchKi, text: Binding<String>(
-                    get: { rocket.pitchKi },
-                    set: {
-                        
-                        rocket.pitchKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.pitchKd, text: Binding<String>(
-                    get: { rocket.pitchKd },
-                    set: {
-                        rocket.pitchKd = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            HStack {
-                Text("Yaw:")
-                Text("Kp:")
-                TextField(rocket.yawKp, text: Binding<String>(
-                    get: { rocket.yawKp },
-                    set: {
-                        rocket.yawKp = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Ki:")
-                TextField(rocket.yawKi, text: Binding<String>(
-                    get: { rocket.yawKi },
-                    set: {
-                        rocket.yawKi = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-                Text("Kd:")
-                TextField(rocket.yawKd, text: Binding<String>(
-                    get: { rocket.yawKd },
-                    set: {
-                        rocket.yawKd = $0
-                    }))
-                .keyboardType(UIKeyboardType.decimalPad)
-            }
-            
-            Divider()
             Section {
                 HStack {
+                    HStack {
+                        Spacer()
+                        Text("Pitch")
+                            .font(.title2)
+                            .padding(.leading)
+                        Menu {
+                            Picker(selection: $selectedPitchCoefficient) {
+                                ForEach(coefficientType, id: \.self) {
+                                    Text($0)
+                                }
+                            } label: {}
+                        } label: {
+                            Text(selectedPitchCoefficient + ":")
+                                .font(.title2)
+                        }.padding(.trailing)
+                        TextField(pitchCoefficient, text: Binding<String>(
+                            get: { pitchCoefficient },
+                            set: {
+                                pitchCoefficient = $0
+                                if(selectedPitchCoefficient == "Kp") {
+                                    rocket.pitchKp = pitchCoefficient
+                                }
+                                else if(selectedPitchCoefficient == "Ki") {
+                                    rocket.pitchKi = pitchCoefficient
+                                }
+                                else if(selectedPitchCoefficient == "Kd") {
+                                    rocket.pitchKd = pitchCoefficient
+                                }
+                            }))
+                        .keyboardType(UIKeyboardType.decimalPad)
+                        .font(.title2)
+                        .padding(.horizontal)
+                        Spacer()
+                    }
+                    Divider()
                     Button(action: {
-                        bluetoothDevice.setPID(input: "PID Get")
-                        getData.toggle()
+                        bluetoothDevice.setPID(input: "0" + rocket.pitchKp + "," + rocket.pitchKi + "!" + rocket.pitchKd)
                     }) {
-                        Text("Get Data")
-                    }.disabled(getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
+                        Text("Apply")
+                            .font(.title2)
+                    }.frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color("Light Gray"))
+                        .cornerRadius(10)
+                }
+                HStack {
+                    HStack {
+                        Spacer()
+                        Text("Roll")
+                            .font(.title2)
+                            .padding(.leading)
+                        Menu {
+                            Picker(selection: $selectedRollCoefficient) {
+                                ForEach(coefficientType, id: \.self) {
+                                    Text($0)
+                                }
+                            } label: {}
+                        } label: {
+                            Text(selectedRollCoefficient + ":")
+                                .font(.title2)
+                        }.padding(.trailing)
+                        TextField(rollCoefficient, text: Binding<String>(
+                            get: { rollCoefficient },
+                            set: {
+                                rollCoefficient = $0
+                                if(selectedRollCoefficient == "Kp") {
+                                    rocket.rollKp = rollCoefficient
+                                }
+                                else if(selectedRollCoefficient == "Ki") {
+                                    rocket.rollKi = rollCoefficient
+                                }
+                                else if(selectedRollCoefficient == "Kd") {
+                                    rocket.rollKd = rollCoefficient
+                                }
+                            }))
+                        .keyboardType(UIKeyboardType.decimalPad)
+                        .font(.title2)
+                        .padding(.horizontal)
+                        Spacer()
+                    }
+                    Divider()
+                    Button(action: {
+                        bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
+                    }) {
+                        Text("Apply")
+                            .font(.title2)
+                    }.frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color("Light Gray"))
+                        .cornerRadius(10)
+                }
+                HStack {
+                    HStack {
+                        Spacer()
+                        Text("Yaw")
+                            .font(.title2)
+                            .padding(.leading)
+                        Menu {
+                            Picker(selection: $selectedYawCoefficient) {
+                                ForEach(coefficientType, id: \.self) {
+                                    Text($0)
+                                }
+                            } label: {}
+                        } label: {
+                            Text(selectedYawCoefficient + ":")
+                                .font(.title2)
+                        }.padding(.trailing)
+                        TextField(yawCoefficient, text: Binding<String>(
+                            get: { yawCoefficient },
+                            set: {
+                                yawCoefficient = $0
+                                if(selectedYawCoefficient == "Kp") {
+                                    rocket.yawKp = yawCoefficient
+                                }
+                                else if(selectedRollCoefficient == "Ki") {
+                                    rocket.yawKi = yawCoefficient
+                                }
+                                else if(selectedRollCoefficient == "Kd") {
+                                    rocket.yawKd = yawCoefficient
+                                }
+                            }))
+                        .keyboardType(UIKeyboardType.decimalPad)
+                        .font(.title2)
+                        .padding(.horizontal)
+                        Spacer()
+                    }
+                    Divider()
+                    Button(action: {
+                        bluetoothDevice.setPID(input: "0" + rocket.rollKp + "," + rocket.rollKi + "!" + rocket.rollKd)
+                    }) {
+                        Text("Apply")
+                            .font(.title2)
+                    }.frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color("Light Gray"))
+                        .cornerRadius(10)
+                }
+            }.hideKeyboardWhenTappedAround()
+            Divider()
+            HStack {
+                Spacer()
+                Button(action: {
+                    if(!getData) {
+                        bluetoothDevice.setUtilities(input: "PID Get")
+                    }
+                    else {
+                        bluetoothDevice.setUtilities(input: "PID Stop")
+                    }
+                    getData.toggle()
                     
-                    Button(action: {
-                        bluetoothDevice.setPID(input: "PID Stop")
-                        getData.toggle()
-                    }) {
-                        Text("Stop")
-                    }.disabled(!getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Button(action: {
-                        rocket.resetPIDCommands()
-                    }) {
-                        Text("Reset All")
-                    }.buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }.padding(.bottom)
+                }) {
+                    Text(!getData ? "Get Data" : "Stop")
+                        .font(.title2)
+                }.frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    .background(Color("Light Gray"))
+                    .cornerRadius(10)
+                Spacer()
+                Button(action: {
+                    rocket.resetPIDCommands()
+                }) {
+                    Text("Reset All")
+                        .font(.title2)
+                }.buttonStyle(BorderlessButtonStyle())
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    .background(Color("Light Gray"))
+                    .cornerRadius(10)
+                Spacer()
             }.onDisappear(perform: {
-                bluetoothDevice.setPID(input: "PID Stop")
+                bluetoothDevice.setUtilities(input: "PID Stop")
             })
             Section {
                 Text("Yaw Command")
+                    .font(.title2)
+                    .padding(.top)
                 ChartStyle().getGraph(datasets: rocket.getYawCommand(), colour: .red)
                 
                 Text("Pitch Command")
+                    .font(.title2)
                 ChartStyle().getGraph(datasets: rocket.getPitchCommand(), colour: .green)
                 
                 Text("Roll Command")
+                    .font(.title2)
                 ChartStyle().getGraph(datasets: rocket.getRollCommand(), colour: .blue)
             }
-        }.padding(.leading)
+        }.onDisappear(perform: {
+            bluetoothDevice.setUtilities(input: "10")
+        })
     }
 }
 

@@ -3,6 +3,7 @@ import SwiftUI
 struct ServoView : View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
+    @State var getData = false
     @State var servo0Position : Double = 0
     @State var servo1Position : Double = 0
     @State var setHomePosition = false
@@ -116,24 +117,52 @@ struct ServoView : View {
             }.padding()
             Divider()
             Section {
-                Text("Servo 0 Position")
-                    .font(.title2)
-                    .padding(.top)
-                ChartStyle().getGraph(datasets: rocket.getServo0Pos(), colour: .red)
-                
-                Text("Servo 1 Position")
-                    .font(.title2)
-                ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        if(!getData) {
+                            bluetoothDevice.setUtilities(input: "Servo Get")
+                        }
+                        else {
+                            bluetoothDevice.setUtilities(input: "Servo Stop")
+                        }
+                        getData.toggle()
+                        
+                    }) {
+                        Text(!getData ? "Get Data" : "Stop")
+                            .font(.title2)
+                    }.frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color("Light Gray"))
+                        .cornerRadius(10)
+                    Spacer()
+                    Button(action: {
+                        rocket.resetServoPos()
+                    }) {
+                        Text("Reset All")
+                            .font(.title2)
+                    }.buttonStyle(BorderlessButtonStyle())
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color("Light Gray"))
+                        .cornerRadius(10)
+                    Spacer()
+                }.onDisappear(perform: {
+                    bluetoothDevice.setUtilities(input: "Servo Stop")
+                })
+                Divider()
+                Section {
+                    Text("Servo 0 Position")
+                        .font(.title2)
+                        .padding(.top)
+                    ChartStyle().getGraph(datasets: rocket.getServo0Pos(), colour: .red)
+                    
+                    Text("Servo 1 Position")
+                        .font(.title2)
+                    ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
+                }
             }
         }
-
-        .onAppear(perform: {
-            bluetoothDevice.setServos(input: "Get Max Position")
-        })
-        .onDisappear(perform: {
-            bluetoothDevice.setServos(input: "10")
-        })
-        .hideKeyboardWhenTappedAround()
     }
 }
 

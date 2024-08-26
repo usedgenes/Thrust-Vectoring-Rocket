@@ -243,7 +243,7 @@ class Rocket : ObservableObject {
     func resetBMI088() {
         accelX.removeAll()
         accelY.removeAll()
-        accelY.removeAll()
+        accelZ.removeAll()
         gyroX.removeAll()
         gyroY.removeAll()
         gyroZ.removeAll()
