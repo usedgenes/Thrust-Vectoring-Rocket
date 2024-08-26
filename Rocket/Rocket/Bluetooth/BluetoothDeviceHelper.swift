@@ -48,17 +48,6 @@ class BluetoothDeviceHelper: ObservableObject {
         }
     }
     
-    func blinkChanged() {
-        device?.blink.toggle()
-    }
-    
-    func blinkState() -> Bool {
-        if(device?.blink == nil) {
-            return false
-        }
-        return device!._blink
-    }
-    
     func setServos(input : String) {
         if (device != nil) {
             device!.servoString = input
@@ -98,10 +87,6 @@ class BluetoothDeviceHelper: ObservableObject {
 
 extension BluetoothDeviceHelper: BTDeviceDelegate {
     func deviceSerialChanged(value: String) {
-        
-    }
-    
-    func deviceSpeedChanged(value: Int) {
     }
     
     func deviceConnected() {
@@ -111,10 +96,6 @@ extension BluetoothDeviceHelper: BTDeviceDelegate {
     }
     
     func deviceReady() {
-    }
-    
-    func deviceBlinkChanged(value: Bool) {
-        
     }
 }
     

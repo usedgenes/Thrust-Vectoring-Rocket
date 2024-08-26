@@ -8,8 +8,6 @@ import CoreBluetooth
 protocol BTDeviceDelegate: AnyObject {
     func deviceConnected()
     func deviceReady()
-    func deviceBlinkChanged(value: Bool)
-    func deviceSpeedChanged(value: Int)
     func deviceSerialChanged(value: String)
     func deviceDisconnected()
     
@@ -18,9 +16,6 @@ protocol BTDeviceDelegate: AnyObject {
 class BTDevice: NSObject {
     private let peripheral: CBPeripheral
     private let manager: CBCentralManager
-    private var blinkChar: CBCharacteristic?
-    private var speedChar: CBCharacteristic?
-    public var _blink: Bool = false
     
     private var servoChar: CBCharacteristic?
     
@@ -102,20 +97,6 @@ class BTDevice: NSObject {
         }
     }
     
-    var blink: Bool {
-        get {
-            return _blink
-        }
-        set {
-            guard _blink != newValue else { return }
-            
-            _blink = newValue
-            if let char = blinkChar {
-                peripheral.writeValue(Data(_: [_blink ? 1 : 0]), for: char, type: .withResponse)
-            }
-        }
-    }
-    
     var name: String {
         return peripheral.name ?? "Unknown device"
     }
@@ -169,7 +150,7 @@ extension BTDevice: CBPeripheralDelegate {
         peripheral.services?.forEach {
             print("  \($0)")
             if $0.uuid == BTUUIDs.esp32Service {
-                peripheral.discoverCharacteristics([BTUUIDs.blinkUUID, BTUUIDs.servoUUID, BTUUIDs.esp32Service, BTUUIDs.bmp390UUID, BTUUIDs.buzzerUUID, BTUUIDs.bmi088UUID, BTUUIDs.pidUUID, BTUUIDs.utilitiesUUID], for: $0)
+                peripheral.discoverCharacteristics([BTUUIDs.servoUUID, BTUUIDs.esp32Service, BTUUIDs.bmp390UUID, BTUUIDs.buzzerUUID, BTUUIDs.bmi088UUID, BTUUIDs.pidUUID, BTUUIDs.utilitiesUUID], for: $0)
             } else {
                 peripheral.discoverCharacteristics(nil, for: $0)
             }
@@ -179,11 +160,7 @@ extension BTDevice: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         service.characteristics?.forEach {
-            if $0.uuid == BTUUIDs.blinkUUID {
-                self.blinkChar = $0
-                peripheral.readValue(for: $0)
-                peripheral.setNotifyValue(true, for: $0)
-            } else if $0.uuid == BTUUIDs.servoUUID {
+            if $0.uuid == BTUUIDs.servoUUID {
                 self.servoChar = $0
                 peripheral.readValue(for: $0)
                 peripheral.setNotifyValue(true, for: $0)
@@ -213,17 +190,7 @@ extension BTDevice: CBPeripheralDelegate {
     }
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        if characteristic.uuid == blinkChar?.uuid, let b = characteristic.value {
-            let temp = String(decoding: b, as: UTF8.self)
-            if(temp == "On") {
-                _blink = true
-            }
-            else {
-                _blink = false
-            }
-            delegate?.deviceBlinkChanged(value: _blink)
-        }
-        else if characteristic.uuid == servoChar?.uuid, let b = characteristic.value {
+        if characteristic.uuid == servoChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
             if(value != "") {
                 if(value[...value.startIndex] == "5") {
@@ -337,7 +304,7 @@ extension BTDevice: CBPeripheralDelegate {
             if(value != "") {
                 if(value[...value.startIndex] == "1") {
                     value.remove(at: value.startIndex)
-                    rocket!.logs.append("\n" + value)
+                    rocket!.logs.append(value + "\n")
                 }
                 else if(value[...value.startIndex] == "2") {
                     value.remove(at: value.startIndex)

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUICharts
 
 class Rocket : ObservableObject {
-    @Published var logs = "Logs: "
+    @Published var logs = ""
     @Published var deltaTime = "-1"
     
     @Published var rollKp : String = "10.0"
@@ -246,7 +246,7 @@ class Rocket : ObservableObject {
     }
     
     func clearLogs() {
-        logs = "Logs: "
+        logs = ""
     }
     
     func reset() {

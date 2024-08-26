@@ -1,0 +1,66 @@
+import SwiftUI
+
+struct OrientationView : View {
+    @EnvironmentObject var rocket : Rocket
+    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
+    @State var getData = false
+    
+    var body : some View {
+        Text("Orientation Graphs")
+            .font(.title)
+            .fontWeight(.bold)
+        Divider()
+        HStack {
+            Spacer()
+            Button(action: {
+                if(!getData) {
+                    bluetoothDevice.setBMI088(input: "Orientation Get")
+                }
+                else {
+                    bluetoothDevice.setBMI088(input: "Orientation Stop")
+                }
+                getData.toggle()
+
+            }) {
+                Text(!getData ? "Get Data" : "Stop")
+                    .font(.title2)
+            }.frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+            Spacer()
+            Button(action: {
+                rocket.resetRotation()
+            }) {
+                Text("Reset All")
+                    .font(.title2)
+            }.buttonStyle(BorderlessButtonStyle())
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+                .background(Color("Light Gray"))
+                .cornerRadius(10)
+            Spacer()
+        }.padding(.bottom)
+            .onDisappear(perform: {
+                bluetoothDevice.setBMI088(input: "Orientation Stop")
+            })
+        
+        Text("Pitch")
+            .font(.title2)
+        ChartStyle().getGraph(datasets: rocket.getPitch(), colour: .green)
+        
+        Text("Roll")
+            .font(.title2)
+        ChartStyle().getGraph(datasets: rocket.getRoll(), colour: .blue)
+        
+        Text("Yaw")
+            .font(.title2)
+        ChartStyle().getGraph(datasets: rocket.getYaw(), colour: .red)
+    }
+}
+
+struct OrientationView_Previews: PreviewProvider {
+    static var previews: some View {
+        OrientationView()
+    }
+}

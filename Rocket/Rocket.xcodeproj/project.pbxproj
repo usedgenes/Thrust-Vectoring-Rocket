@@ -117,6 +117,21 @@
 			path = Bluetooth;
 			sourceTree = "<group>";
 		};
+		44400A232C7C0EFD00D29279 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4423247B2C742CA70029ED02 /* HomeScreenView.swift */,
+				44400A212C7BF74900D29279 /* TVCView.swift */,
+				4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */,
+				44400A172C7A8B7400D29279 /* OrientationView.swift */,
+				44400A1D2C7A952900D29279 /* AltimeterView.swift */,
+				44400A1F2C7BCBE000D29279 /* BMI088View.swift */,
+				44400A192C7A8BB800D29279 /* ServoView.swift */,
+				44400A1B2C7A8C1000D29279 /* PIDView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		4479EE202C742BC00006BA07 = {
 			isa = PBXGroup;
 			children = (
@@ -141,14 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				4423246C2C742C6B0029ED02 /* Bluetooth */,
-				4423247B2C742CA70029ED02 /* HomeScreenView.swift */,
-				44400A212C7BF74900D29279 /* TVCView.swift */,
-				4423247D2C742CBF0029ED02 /* BluetoothConnectView.swift */,
-				44400A1B2C7A8C1000D29279 /* PIDView.swift */,
-				44400A192C7A8BB800D29279 /* ServoView.swift */,
-				44400A1D2C7A952900D29279 /* AltimeterView.swift */,
-				44400A1F2C7BCBE000D29279 /* BMI088View.swift */,
-				44400A172C7A8B7400D29279 /* OrientationView.swift */,
+				44400A232C7C0EFD00D29279 /* Views */,
 				442324792C742C840029ED02 /* Rocket.swift */,
 				4423246A2C742C540029ED02 /* ChartStyle.swift */,
 				4479EE2C2C742BC00006BA07 /* RocketApp.swift */,

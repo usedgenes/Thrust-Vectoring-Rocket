@@ -15,16 +15,26 @@ struct BluetoothConnectView: View {
     @State var bluetoothManagerHelper = BluetoothManagerHelper()
     @State var LED_On = false
     @EnvironmentObject var rocket : Rocket
+    
     var body: some View {
-        
-        VStack {
-            Text("Bluetooth")
-            Button("Refresh") {
+        Text("Bluetooth")
+            .font(.title)
+            .fontWeight(.bold)
+        Divider()
+        HStack {
+            Spacer()
+            Button(action: {
                 bluetoothDevice.refresh()
+            }) {
+                Text("Refresh")
+                    .font(.title2)
             }
-            .padding(.top)
-            
-            Button("Disconnect") {
+            .frame(maxWidth: .infinity)
+            .padding(.vertical)
+            .background(Color("Light Gray"))
+            .cornerRadius(10)
+            Spacer()
+            Button(action: {
                 if(bluetoothDevice.isConnected) {
                     bluetoothDevice.disconnect()
                 }
@@ -32,48 +42,46 @@ struct BluetoothConnectView: View {
                     showBluetoothAlert = true
                     
                 }
+            }) {
+                Text("Disconnect")
+                    .font(.title2)
             }
-            .padding()
-            
-            HStack{
-                Button("LED Blink Test") {
-                    if(bluetoothDevice.isConnected) {
-                        bluetoothDevice.blinkChanged()
-                    }
-                    else {
-                        showBluetoothAlert = true
-                    }
-                    LED_On = bluetoothDevice.blinkState()
-                }
-                Text(LED_On ? "On" : "Off")
-            }
-            .alert(isPresented: $showBluetoothAlert) {
-                Alert(
-                    title: Text("No Bluetooth Device Connected"),
-                    message: Text("Please select a device to connect to")
-                )
-            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical)
+            .background(Color("Light Gray"))
+            .cornerRadius(10)
+            Spacer()
         }
-        .cornerRadius(8)
-        .padding()
-        
-        VStack(spacing:-20) {
+        .alert(isPresented: $showBluetoothAlert) {
+            Alert(
+                title: Text("No Bluetooth Device Connected"),
+                message: Text("Please select a device to connect to")
+            )
+        }
+        Divider()
+        VStack {
             HStack{
-                Text("Device Name")
+                Text("Device Name:")
+                    .font(.title2)
                 Spacer()
                 Text(String(bluetoothDevice.deviceName))
+                    .font(.title2)
             }
-            .cornerRadius(8)
             .padding()
             
             HStack{
-                Text("Device State")
+                Text("Device State:")
+                    .font(.title2)
+                
                 Spacer()
                 Text(bluetoothDevice.isConnected ? "Connected" : "Not connected")
+                    .font(.title2)
+                
             }
-            .cornerRadius(8)
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom)
         }
+        Divider()
         List {
             ForEach(bluetoothManagerHelper.devices, id: \.self) { device in
                 HStack {
@@ -85,8 +93,9 @@ struct BluetoothConnectView: View {
                             bluetoothDevice.rocket = rocket
                         }
                     }) {
-                            Text("\(device.name)")
-                        }
+                        Text("\(device.name)")
+                            .font(.title3)
+                    }
                     Spacer()
                 }
                 .contentShape(Rectangle())
