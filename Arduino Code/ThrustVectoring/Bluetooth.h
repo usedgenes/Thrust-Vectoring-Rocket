@@ -76,7 +76,6 @@ public:
 class UtilitiesCallbacks : public BLECharacteristicCallbacks {
 private:
   bool *armed;
-  bool *sendBluetoothData;
   bool *bluetoothBypassOnPad;
   bool *bluetoothBypassTVCActive;
   bool *bluetoothBypassCoasting;
@@ -92,7 +91,7 @@ public:
   UtilitiesCallbacks(bool *_armed, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
     armed = _armed;
     sendLoopTime = _sendLoopTime;
-    sendBluetoothBMI088 = _sendBluetoothAltimeter;
+    sendBluetoothBMI088 = _sendBluetoothBMI088;
     sendBluetoothOrientation = _sendBluetoothOrientation;
     sendBluetoothAltimeter = _sendBluetoothAltimeter;
     sendBluetoothPID = _sendBluetoothPID;
@@ -109,8 +108,6 @@ public:
       pCharacteristic->notify();
     } else if (value == "Reset") {
       resetFunc();
-    } else if (value == "Send Data") {
-      *sendBluetoothData = true;
     } else if (value == "Bypass Pad") {
       *bluetoothBypassOnPad = true;
     } else if (value == "Bypass TVC") {
@@ -123,7 +120,7 @@ public:
       *sendBluetoothBMI088 = true;
     } else if (value == "BMI088 Stop") {
       *sendBluetoothBMI088 = false;
-    }  else if (value == "Orientation Get") {
+    } else if (value == "Orientation Get") {
       *sendBluetoothOrientation = true;
     } else if (value == "Orientation Stop") {
       *sendBluetoothOrientation = false;
@@ -171,6 +168,8 @@ public:
       pCharacteristic->notify();
     } else if (value.substring(0, 1) == "7") {
       servos.setGimbalServosStartingPosition(value.substring(1, 2).toInt(), value.substring(2, value.length()).toInt());
+    } else if (value == "Get Max Position") {
+      pCharacteristic->setValue("91" + servos.getMaxGimbalPosition());
     }
   };
 };
@@ -209,11 +208,13 @@ public:
       pitchPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
       pitchPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
       pitchPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+      Serial.println("Pitch PID: " + String(pitchPID.Kp) + "\t" + String(pitchPID.Ki) + "\t" + String(pitchPID.Ki));
     }
     if (value.substring(0, 1) == "1") {
       rollPID.Kp = value.substring(1, value.indexOf(',')).toFloat();
       rollPID.Ki = value.substring(value.indexOf(',') + 1, value.indexOf('!')).toFloat();
       rollPID.Kd = value.substring(value.indexOf('!') + 1, value.length()).toFloat();
+      Serial.println("Roll PID: " + String(rollPID.Kp) + "\t" + String(rollPID.Ki) + "\t" + String(rollPID.Ki));
     }
   };
 };

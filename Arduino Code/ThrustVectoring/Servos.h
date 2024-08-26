@@ -10,7 +10,7 @@ private:
   Servo parachuteServo;
   int gimbalServoPins[2] = { 0, 0 };
   int gimbalServoStartingPosition[4] = { 90, 90 };
-  int maxPosition = 15;
+  int maxGimbalPosition = 15;
   int parachuteServoOpenPosition = 140;
   int parachuteServoClosedPosition = 50;
 public:
@@ -23,6 +23,7 @@ public:
   void closeParachuteServo();
   void homeGimbalServos();
   void circleGimbalServos();
+  int getMaxGimbalPosition();
 };
 
 

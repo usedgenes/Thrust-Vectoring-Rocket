@@ -16,8 +16,7 @@ private:
   float alpha;
 public:
   bool Init(SPIClass * vspi);
-  void selectAltimeter();
-  void getReading(float& temperature, float& pressure, float& altitude);
+  void getTempAndPressure(float& temperature, float& pressure);
   void setLowpassFilterValues(float _cutoffFrequency, float initialAlpha);
   float getFilteredAltitude();
   float getAltitude();

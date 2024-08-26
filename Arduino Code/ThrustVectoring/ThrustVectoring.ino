@@ -29,8 +29,8 @@
 #define PARACHUTE_OUT_DATA_FREQUENCY 1000
 #define ON_GROUND_DATA_FREQUENCY 1000
 
-SPIClass * vspi = NULL;
-SPIClass * hspi = NULL;
+SPIClass* vspi = NULL;
+SPIClass* hspi = NULL;
 
 Bluetooth bluetooth;
 IMU imu;
@@ -48,6 +48,8 @@ unsigned long loopTime = 0;
 unsigned long lastDataLog = 0;
 
 float currentAltitude = 0;
+float currentTemperature = 0;
+float currentPressure = 0;
 float launchAltitude = 0;
 unsigned long motorIgnitionTime = 0;
 float previousAltitude = 0;
@@ -103,6 +105,8 @@ void setup() {
   utilities.initialized();
 
   while (!armed) {
+    dataLoop();
+    logData(ON_PAD_DATA_FREQUENCY);
     delay(100);
   }
   previousTime = 0;
@@ -200,12 +204,14 @@ void dataLoop() {
   imu.getIMUData(accelerometer, gyroscope);
   calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, pitch, roll);
   currentAltitude = altimeter.getAltitude();
+  altimeter.getTempAndPressure(currentTemperature, currentPressure);
 }
 
 void logData(int dataLoggingFrequencyInMilliseconds) {
   if (millis() - lastDataLog >= dataLoggingFrequencyInMilliseconds) {
     lastDataLog = millis();
     if (sendBluetoothBMI088) {
+      Serial.println("Sending Bluetooth BMI088");
       bluetooth.writeIMU("90" + String(accelerometer[0]));
       bluetooth.writeIMU("91" + String(accelerometer[1]));
       bluetooth.writeIMU("92" + String(accelerometer[2]));
@@ -213,18 +219,24 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       bluetooth.writeIMU("94" + String(gyroscope[1]));
       bluetooth.writeIMU("95" + String(gyroscope[2]));
     }
-    if(sendBluetoothOrientation) {
+    if (sendBluetoothOrientation) {
+      Serial.println("Sending Bluetooth Orientation");
       bluetooth.writeIMU("96" + String(pitch));
       bluetooth.writeIMU("97" + String(roll));
     }
-    if(sendBluetoothAltimeter) {
+    if (sendBluetoothAltimeter) {
+      Serial.println("Sending Bluetooth Altimeter");
       bluetooth.writeAltimeter("90" + String(currentAltitude));
+      bluetooth.writeAltimeter("91" + String(currentTemperature));
+      bluetooth.writeAltimeter("92" + String(currentPressure));
     }
-    if(sendBluetoothPID) {
+    if (sendBluetoothPID) {
+      Serial.println("Sending Bluetooth PID");
       bluetooth.writePID("90" + String(pitchCommand));
       bluetooth.writePID("91" + String(rollCommand));
     }
-    if(sendLoopTime) {
+    if (sendLoopTime) {
+      Serial.println("Sending Bluetooth Loop Time");
       bluetooth.writeUtilities("90" + loopTime);
     }
     logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
@@ -237,7 +249,6 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
 void printToSerial() {
   Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
-  Serial.println("Pitch: " + String(pitch));
-  Serial.println("Roll: " + String(roll));
-  Serial.println("Altitude: " + String(currentAltitude));
+  Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
+  Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }

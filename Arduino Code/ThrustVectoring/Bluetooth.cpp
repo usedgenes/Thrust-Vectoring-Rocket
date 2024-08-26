@@ -11,7 +11,7 @@ void Bluetooth::Init(Servos &_servos, IMU &_imu, Altimeter &_altimeter, PID &_pi
   sendLoopTime = _sendLoopTime;
   sendBluetoothBMI088 = _sendBluetoothBMI088;
   sendBluetoothOrientation = _sendBluetoothOrientation;
-  sendBluetoothAltimeter = _sendBluetoothBMI088;
+  sendBluetoothAltimeter = _sendBluetoothAltimeter;
   sendBluetoothPID = _sendBluetoothBMI088;
   bluetoothBypassOnPad = _bluetoothBypassOnPad;
   bluetoothBypassTVCActive = _bluetoothBypassTVCActive;

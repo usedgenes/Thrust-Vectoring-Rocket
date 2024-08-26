@@ -19,23 +19,18 @@ bool Altimeter::Init(SPIClass * vspi) {
   return true;
 }
 
-void Altimeter::selectAltimeter() {
-}
-
-void Altimeter::getReading(float& temperature, float& pressure, float& altitude) {
-  selectAltimeter();
+void Altimeter::getTempAndPressure(float& temperature, float& pressure) {
+  digitalWrite(BMP_CS, LOW);
   while (!bmp.performReading()) {}
   temperature = bmp.temperature;
   pressure = bmp.pressure;
-  altitude = bmp.readAltitude(SEALEVELPRESSURE_HPA);
   digitalWrite(BMP_CS, HIGH);
 }
 
 float Altimeter::getAltitude() {
-  selectAltimeter();
+  digitalWrite(BMP_CS, LOW);
   bmp.performReading();
   while (isnan(bmp.readAltitude(SEALEVELPRESSURE_HPA))) {
-    selectAltimeter();
     bmp.performReading();
   }
   digitalWrite(BMP_CS, HIGH);
