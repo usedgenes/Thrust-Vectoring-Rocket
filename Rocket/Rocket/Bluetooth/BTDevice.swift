@@ -338,7 +338,8 @@ extension BTDevice: CBPeripheralDelegate {
                         rocket!.touchdown = true;
                     }
                 }
-                if(value[...value.startIndex] == "9") {
+                else if(value[...value.startIndex] == "9") {
+                    print(value)
                     value.remove(at: value.startIndex)
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)

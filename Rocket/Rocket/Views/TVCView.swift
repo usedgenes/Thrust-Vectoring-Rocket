@@ -24,6 +24,7 @@ struct TVCView: View {
                     }
                     else {
                         bluetoothDevice.setUtilities(input: "Time Stop")
+                        rocket.deltaTime = "-1"
                     }
                     getLoopTime.toggle()
                 }) {
@@ -57,8 +58,11 @@ struct TVCView: View {
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Reset")
                     rocket.reset()
-                    if(bluetoothDevice.isConnected) {
-                        bluetoothDevice.disconnect()
+                    let seconds = 1.0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                        if(bluetoothDevice.isConnected) {
+                            bluetoothDevice.disconnect()
+                        }
                     }
                 }) {
                     Text("Reset Rocket")

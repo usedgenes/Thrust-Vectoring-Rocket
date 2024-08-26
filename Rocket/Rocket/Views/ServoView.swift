@@ -18,6 +18,12 @@ struct ServoView : View {
             HStack {
                 Spacer()
                 Button(action: {
+                    if (parachuteServoOpen) {
+                        bluetoothDevice.setServos(input: "Close Parachute")
+                    }
+                    else {
+                        bluetoothDevice.setServos(input: "Open Parachute")
+                    }
                     parachuteServoOpen.toggle()
                 }) {
                     Text(parachuteServoOpen ? "Close Parachute" : "Open Parachute")
@@ -31,7 +37,7 @@ struct ServoView : View {
                 .cornerRadius(10)
                 Spacer()
                 Button(action: {
-                    bluetoothDevice.setServos(input: "90")
+                    bluetoothDevice.setServos(input: "Circle Gimbal")
                 }) {
                     Text("Rotate Gimbal")
                         .font(.title2)
@@ -49,9 +55,17 @@ struct ServoView : View {
             HStack {
                 Spacer()
                 Button(action: {
+                    if(!setHomePosition) {
+                        servo0Position = 90
+                        servo1Position = 90
+                    }
+                    else {
+                        servo0Position = 0
+                        servo1Position = 0
+                    }
                     setHomePosition.toggle()
                 }) {
-                    Text(setHomePosition ? "Home Servos" : "Move Servos")
+                    Text(!setHomePosition ? "Home Servos" : "Move Servos")
                         .font(.title2)
                 }
                 .padding(.horizontal)
@@ -88,12 +102,6 @@ struct ServoView : View {
                         bluetoothDevice.setServos(input: "0" + String(Int(servo0Position)))
                     }
                 }
-                Button(action: {
-                    bluetoothDevice.setServos(input: "90")
-                }) {
-                    Text("Home")
-                        .font(.title3)
-                }
             }.padding()
             HStack {
                 Text("Servo 1: " + String(Int(servo1Position)))
@@ -107,12 +115,6 @@ struct ServoView : View {
                     if(!editing) {
                         bluetoothDevice.setServos(input: "1" + String(Int(servo1Position)))
                     }
-                }
-                Button(action: {
-                    bluetoothDevice.setServos(input: "90")
-                }) {
-                    Text("Home")
-                        .font(.title3)
                 }
             }.padding()
             Divider()
@@ -162,7 +164,9 @@ struct ServoView : View {
                     ChartStyle().getGraph(datasets: rocket.getServo1Pos(), colour: .green)
                 }
             }
-        }
+        }.onAppear(perform: {
+            bluetoothDevice.setServos(input: "90")
+        })
     }
 }
 
