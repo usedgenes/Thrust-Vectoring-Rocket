@@ -38,5 +38,6 @@ private:
 public:
   void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float& theta, float& phi);
   void normalizeVector(float vector[]);
+  float degToRad(float input);
 };
 #endif

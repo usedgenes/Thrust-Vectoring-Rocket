@@ -15,19 +15,17 @@ bool IMU::Init(SPIClass & _hspi) {
   }
   getCorrectedIMU();
   digitalWrite(ACCEL_CS, HIGH);
-  digitalWrite(ACCEL_CS, HIGH);
+  digitalWrite(GYRO_CS, HIGH);
   return true;
 }
 
 void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
   digitalWrite(ACCEL_CS, LOW);
-  digitalWrite(ACCEL_CS, LOW);
-  while(accel->begin() < 0) {
-    delay(10);
-  }
-  while(gyro->begin() < 0) {
-    delay(10);
-  }
+  digitalWrite(GYRO_CS, LOW);
+  // while(accel->begin() < 0) {
+  // }
+  // while(gyro->begin() < 0) {
+  // }
 
   accel->readSensor();
   gyro->readSensor();
@@ -39,8 +37,8 @@ void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
   gyroscope[0] = gyro->getGyroX_rads() - gyroscopeCorrected[0];
   gyroscope[1] = gyro->getGyroY_rads() - gyroscopeCorrected[1];
   gyroscope[2] = gyro->getGyroZ_rads() - gyroscopeCorrected[2];
-  digitalWrite(ACCEL_CS, HIGH);
-  digitalWrite(ACCEL_CS, HIGH);
+  digitalWrite(GYRO_CS, HIGH);
+  digitalWrite(GYRO_CS, HIGH);
 }
 
 void IMU::getCorrectedIMU() {

@@ -55,6 +55,10 @@ void Calculations::normalizeVector(float vector[]) {
 #endif
 }
 
+float Calculations::degToRad(float input) {
+  return input / 57.29577;
+}
+
 
 
 

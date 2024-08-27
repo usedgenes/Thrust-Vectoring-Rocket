@@ -19,15 +19,15 @@
 
 #define BLUETOOTH_REFRESH_THRESHOLD 50
 #define LAUNCH_ALTITUDE_THRESHOLD_METERS 4
-#define MOTOR_BURN_TIME_MILLISECONDS 3000
+#define MOTOR_BURN_TIME_MILLISECONDS 100000
 #define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
 #define RECOVERY_ALTITUDE_THRESHOLD_METERS 1000
 
-#define ON_PAD_DATA_FREQUENCY 1000
-#define TVC_ACTIVE_DATA_FREQUENCY 1000
-#define COASTING_DATA_FREQUENCY 1000
-#define PARACHUTE_OUT_DATA_FREQUENCY 1000
-#define ON_GROUND_DATA_FREQUENCY 1000
+#define ON_PAD_DATA_FREQUENCY 1
+#define TVC_ACTIVE_DATA_FREQUENCY 1
+#define COASTING_DATA_FREQUENCY 1
+#define PARACHUTE_OUT_DATA_FREQUENCY 1
+#define ON_GROUND_DATA_FREQUENCY 1
 
 SPIClass* vspi = NULL;
 SPIClass* hspi = NULL;
@@ -84,7 +84,7 @@ void setup() {
   hspi = new SPIClass(HSPI);
   vspi->begin(SPI1_SCK, SPI1_MISO, SPI1_MOSI, SPI1_CS);
   hspi->begin(SPI2_SCK, SPI2_MISO, SPI2_MOSI, SPI2_CS);
-  utilities.Init();
+  // utilities.Init();
   servos.Init();
   pitchPID.Init(1, 0.5, 0.2);
   rollPID.Init(1, 0.5, 0.2);
@@ -103,12 +103,11 @@ void setup() {
     Serial.println("SD Initialization Error");
   }
 
-  utilities.initialized();
+  // utilities.initialized();
 
   while (!armed) {
     dataLoop();
     logData(ON_PAD_DATA_FREQUENCY);
-    delay(100);
   }
   previousTime = 0;
   launchAltitude = altimeter.getAltitude();
@@ -116,7 +115,7 @@ void setup() {
   logger.log(Events, "Launch Altitude: " + String(launchAltitude), millis());
   Serial.println("Launch Altitude: " + String(launchAltitude));
 
-  utilities.armed();
+  // utilities.armed();
   bluetooth.writeUtilitiesEvents("On Pad");
   logger.log(Events, "On Pad", millis());
   Serial.println("On Pad");
@@ -167,8 +166,8 @@ void onPad() {
 
 void thrustVectorActive() {
   dataLoop();
-  pitchCommand = pitchPID.ComputeCorrection(pitch, loopTime);
-  rollCommand = rollPID.ComputeCorrection(roll, loopTime);
+  pitchCommand = pitchPID.ComputeCorrection(calculations.degToRad(pitch), loopTime);
+  rollCommand = rollPID.ComputeCorrection(calculations.degToRad(roll), loopTime);
   servo0Position = servos.writeGimbalServoPosition(0, pitchCommand);
   servo1Position = servos.writeGimbalServoPosition(1, rollCommand);
   logger.log(Pid, String(pitchCommand) + "\t" + String(rollCommand), currentTime);
@@ -201,11 +200,16 @@ void dataLoop() {
   currentTime = millis();
   loopTime = millis() - previousTime;
   previousTime = currentTime;
+  // Serial.println(String(currentTime) + "\t" + loopTime + "\t" + previousTime);
 
   imu.getIMUData(accelerometer, gyroscope);
+  // Serial.println(millis());
   calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, pitch, roll);
+  // Serial.println(millis());
   currentAltitude = altimeter.getAltitude();
+  // Serial.println(millis());
   altimeter.getTempAndPressure(currentTemperature, currentPressure);
+  // Serial.println(millis());
 }
 
 void logData(int dataLoggingFrequencyInMilliseconds) {
@@ -240,10 +244,10 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       Serial.println("Sending Bluetooth Loop Time");
       bluetooth.writeUtilities("90" + String(loopTime));
     }
-    logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
-    logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
-    logger.log(Altitude, String(currentAltitude), currentTime);
-    printToSerial();
+    // logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
+    // logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
+    // logger.log(Altitude, String(currentAltitude), currentTime);
+    // printToSerial();
   }
 }
 

@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['Rocket.py', 'PID.py', 'MotorThrustCurve.py', 'Simulator.py', 'Grapher.py']
+recent_files = ['Grapher.py', 'MotorThrustCurve.py', 'Rocket.py', 'Simulator.py', 'PID.py', 'example sim.py']
 
 [main]
 version = 0.2.0
