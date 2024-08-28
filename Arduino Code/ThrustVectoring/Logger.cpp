@@ -15,7 +15,8 @@ bool Logger::Init(SPIClass & _vspi) {
 }
 
 void Logger::log(LogType type, String _message, unsigned long time) {
-  SD.begin(SD_CS, vspi);
+  // SD.begin(SD_CS, vspi);
+  digitalWrite(SD_CS, LOW);
   String filePath;
   switch (type) {
     case Altitude:

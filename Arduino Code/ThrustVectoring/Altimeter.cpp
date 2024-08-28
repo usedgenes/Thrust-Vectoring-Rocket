@@ -1,6 +1,7 @@
 #include "Altimeter.h"
 
 bool Altimeter::Init(SPIClass * vspi) {
+  
   if (!bmp.begin_SPI(BMP_CS, vspi)) {  // software SPI mode
     return false;
   }

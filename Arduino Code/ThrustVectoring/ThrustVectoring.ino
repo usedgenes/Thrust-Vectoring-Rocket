@@ -247,13 +247,13 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
     // logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
     // logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
     // logger.log(Altitude, String(currentAltitude), currentTime);
-    // printToSerial();
+    printToSerial();
   }
 }
 
 void printToSerial() {
   Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
-  Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
-  Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
+  // Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
+  // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }
