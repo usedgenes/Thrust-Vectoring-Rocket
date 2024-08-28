@@ -27,10 +27,10 @@ void IMU::getIMUData(float accelerometer[], float gyroscope[]) {
   accelerometer[1] = accel->getAccelY_mss();
   accelerometer[2] = accel->getAccelZ_mss();
 
-  gyroscope[0] = gyro->getGyroX_rads() - gyroscopeCorrected[0];
-  gyroscope[1] = gyro->getGyroY_rads() - gyroscopeCorrected[1];
-  gyroscope[2] = gyro->getGyroZ_rads() - gyroscopeCorrected[2];
-  digitalWrite(GYRO_CS, HIGH);
+  gyroscope[0] = gyro->getGyroX_rads();
+  gyroscope[1] = gyro->getGyroY_rads();
+  gyroscope[2] = gyro->getGyroZ_rads();
+  digitalWrite(ACCEL_CS, HIGH);
   digitalWrite(GYRO_CS, HIGH);
 }
 

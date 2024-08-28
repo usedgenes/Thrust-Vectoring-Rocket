@@ -26,7 +26,7 @@ void Logger::logData(String message) {
   }
 }
 
-void Logger::logEvents(String message) {
+void Logger::logEvent(String message) {
   if (isConnected) {
     digitalWrite(SD_CS);
     file.close();

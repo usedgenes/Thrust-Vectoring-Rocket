@@ -18,7 +18,7 @@ public:
   bool Init(SPIClass& vspi);
   void log(LogType type, String _message, unsigned long time);
   void logData();
-  void logEvents();
+  void logEvent();
   void stopLogging();
 };
 

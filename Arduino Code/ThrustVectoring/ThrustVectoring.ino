@@ -112,12 +112,12 @@ void setup() {
   previousTime = 0;
   launchAltitude = altimeter.getAltitude();
   bluetooth.writeUtilitiesNotifications("Launch Altitude: " + String(launchAltitude));
-  logger.log(Events, "Launch Altitude: " + String(launchAltitude), millis());
+  logger.logEvent("Launch Altitude: " + String(launchAltitude) + ", " + String(millis()));
   Serial.println("Launch Altitude: " + String(launchAltitude));
 
   // utilities.armed();
   bluetooth.writeUtilitiesEvents("On Pad");
-  logger.log(Events, "On Pad", millis());
+  logger.logEvent("On Pad, " + String(millis()));
   Serial.println("On Pad");
   while (altimeter.getFilteredAltitude() - launchAltitude < LAUNCH_ALTITUDE_THRESHOLD_METERS && !bluetoothBypassOnPad) {
     onPad();
@@ -125,31 +125,31 @@ void setup() {
 
   motorIgnitionTime = millis();
   bluetooth.writeUtilitiesEvents("TVC Active");
-  logger.log(Events, "TVC Active", millis());
+  logger.logEvent("TVC Active, " + String(millis()));
   Serial.println("Thrust Vector Active");
   while (millis() - motorIgnitionTime < MOTOR_BURN_TIME_MILLISECONDS && !bluetoothBypassTVCActive) {
     thrustVectorActive();
   }
 
   bluetooth.writeUtilitiesEvents("Coasting");
-  logger.log(Events, "Coasting", millis());
+  logger.logEvent("Coasting, " + String(millis()));
   Serial.println("Coasting");
   while ((altimeter.getFilteredAltitude() - previousAltitude) / loopTime < PARACHUTE_EJECTION_VELOCITY_THRESHOLD && !bluetoothBypassCoasting) {
     coasting();
   }
 
-  logger.log(Events, "Deploying Parachute", millis());
+  logger.logEvent("Launch Altitude: " + String(currentAltitude) + ", " + String(millis()));
   deployParachute();
 
   bluetooth.writeUtilitiesEvents("Parachute Out");
-  logger.log(Events, "Parachute Out", millis());
+  logger.logEvent("Parachute Out, " + String(millis()));
   Serial.println("Parachute Out");
   while (altimeter.getFilteredAltitude() - launchAltitude > RECOVERY_ALTITUDE_THRESHOLD_METERS && !bluetoothBypassParachuteOut) {
     parachuteOut();
   }
 
   bluetooth.writeUtilitiesEvents("Touchdown");
-  logger.log(Events, "Touchdown", millis());
+  logger.logEvent("Touchdown, " + String(millis()));
   Serial.println("Touchdown");
   while (true) {
     touchdown();
