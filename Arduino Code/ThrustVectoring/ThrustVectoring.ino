@@ -1,4 +1,3 @@
-//change BMI088 G range
 #include "Bluetooth.h"
 #include "IMU.h"
 #include "Servos.h"
@@ -109,6 +108,7 @@ void setup() {
     dataLoop();
     logData(ON_PAD_DATA_FREQUENCY);
   }
+
   previousTime = 0;
   launchAltitude = altimeter.getAltitude();
   bluetooth.writeUtilitiesNotifications("Launch Altitude: " + String(launchAltitude));
@@ -244,9 +244,7 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       Serial.println("Sending Bluetooth Loop Time");
       bluetooth.writeUtilities("90" + String(loopTime));
     }
-    // logger.log(Accelerometer, String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]), currentTime);
-    // logger.log(Gyroscope, String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]), currentTime);
-    // logger.log(Altitude, String(currentAltitude), currentTime);
+    logger.logData("Data log\t" + String(currentTime) + "\t" + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]) + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]) + "\t" + String(currentAltitude));
     printToSerial();
   }
 }
@@ -254,6 +252,6 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
 void printToSerial() {
   Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
-  // Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
-  // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
+  Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
+  Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }

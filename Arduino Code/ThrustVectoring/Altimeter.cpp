@@ -16,12 +16,10 @@ bool Altimeter::Init(SPIClass * vspi) {
     Serial.println("BMP Initial Readings: " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
   }
   previousAltitude = getAltitude();
-  digitalWrite(BMP_CS, HIGH);
   return true;
 }
 
 void Altimeter::getTempAndPressure(float& temperature, float& pressure) {
-  digitalWrite(BMP_CS, LOW);
   while (!bmp.performReading()) {}
   temperature = bmp.temperature;
   pressure = bmp.pressure;
@@ -29,12 +27,10 @@ void Altimeter::getTempAndPressure(float& temperature, float& pressure) {
 }
 
 float Altimeter::getAltitude() {
-  digitalWrite(BMP_CS, LOW);
   bmp.performReading();
   while (isnan(bmp.readAltitude(SEALEVELPRESSURE_HPA))) {
     bmp.performReading();
   }
-  digitalWrite(BMP_CS, HIGH);
   return bmp.readAltitude(SEALEVELPRESSURE_HPA);
 }
 

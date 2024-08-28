@@ -4,14 +4,6 @@
 #include "SD.h"
 #include "SPI.h"
 
-enum LogType {
-  Altitude,
-  Accelerometer,
-  Gyroscope,
-  Pid,
-  Events,
-};
-
 class Logger {
 #define SD_SCK 5
 #define SD_MISO 16
@@ -19,11 +11,15 @@ class Logger {
 #define SD_CS 18
 
 private:
-SPIClass vspi;
+  File file;
+  SPIClass vspi;
+  bool isConnected;
 public:
-  bool Init(SPIClass & vspi);
+  bool Init(SPIClass& vspi);
   void log(LogType type, String _message, unsigned long time);
-  void testLog();
+  void logData();
+  void logEvents();
+  void stopLogging();
 };
 
 #endif

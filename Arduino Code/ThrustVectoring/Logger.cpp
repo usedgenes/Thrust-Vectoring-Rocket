@@ -1,43 +1,43 @@
 #include "SD.h"
 #include "Logger.h"
 
-bool Logger::Init(SPIClass & _vspi) {
+bool Logger::Init(SPIClass& _vspi) {
   vspi = _vspi;
-  if(!SD.begin(SD_CS, vspi)) {
+  if (!SD.begin(SD_CS, vspi)) {
+    isConnected = false;
     return false;
   }
   uint8_t cardType = SD.cardType();
   if (cardType == CARD_NONE) {
+    isConnected = false;
     return false;
   }
+  File file = SD.open("/TVC_DATA.txt", FILE_APPEND);
   digitalWrite(SD_CS, HIGH);
+  isConnected = true;
   return true;
 }
 
-void Logger::log(LogType type, String _message, unsigned long time) {
-  // SD.begin(SD_CS, vspi);
-  digitalWrite(SD_CS, LOW);
-  String filePath;
-  switch (type) {
-    case Altitude:
-      filePath = "/Altitude.txt";
-      break;
-    case Accelerometer:
-      filePath = "/Accelerometer.txt";
-      break;
-    case Gyroscope:
-      filePath = "/Gyroscope.txt";
-      break;
-    case Events:
-      filePath = "/Events.txt";
-      break;
-    case Pid:
-      filePath = "/Pid.txt";
-      break;
+void Logger::logData(String message) {
+  if (isConnected) {
+    digitalWrite(SD_CS, LOW);
+    file.println(message);
+    digitalWrite(SD_CS, HIGH);
   }
-  File file = SD.open(filePath, FILE_APPEND);
-  String message = String(time) + "\t" + _message;
-  file.println(message);
+}
+
+void Logger::logEvents(String message) {
+  if (isConnected) {
+    digitalWrite(SD_CS);
+    file.close();
+    file = SD.open("\TVC_EVENTS.txt", FILE_APPEND);
+    file.println(message);
+    file.close();
+    file = SD.open("/TVC_DATA.txt", FILE_APPEND);
+    digitalWrite(SD_CS, HIGH);
+  }
+}
+
+void Logger::stopLogging() {
   file.close();
-  digitalWrite(SD_CS, HIGH);
 }
