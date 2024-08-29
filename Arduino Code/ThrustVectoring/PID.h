@@ -1,6 +1,8 @@
 #ifndef PID_H_
 #define PID_H_
 
+#include "Arduino.h"
+
 class PID {
 #define MAX_PID_OUTPUT 0
 #define MIN_PID_OUTPUT 0 

@@ -16,9 +16,8 @@ private:
   bool isConnected;
 public:
   bool Init(SPIClass& vspi);
-  void log(LogType type, String _message, unsigned long time);
-  void logData();
-  void logEvent();
+  void logData(String message);
+  void logEvent(String message);
   void stopLogging();
 };
 

@@ -28,7 +28,7 @@ void Logger::logData(String message) {
 
 void Logger::logEvent(String message) {
   if (isConnected) {
-    digitalWrite(SD_CS);
+    digitalWrite(SD_CS, LOW);
     file.close();
     file = SD.open("\TVC_EVENTS.txt", FILE_APPEND);
     file.println(message);

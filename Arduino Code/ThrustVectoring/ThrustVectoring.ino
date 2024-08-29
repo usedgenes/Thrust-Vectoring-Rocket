@@ -22,11 +22,11 @@
 #define PARACHUTE_EJECTION_VELOCITY_THRESHOLD 3
 #define RECOVERY_ALTITUDE_THRESHOLD_METERS 1000
 
-#define ON_PAD_DATA_FREQUENCY 1
-#define TVC_ACTIVE_DATA_FREQUENCY 1
-#define COASTING_DATA_FREQUENCY 1
-#define PARACHUTE_OUT_DATA_FREQUENCY 1
-#define ON_GROUND_DATA_FREQUENCY 1
+#define ON_PAD_DATA_FREQUENCY 1000
+#define TVC_ACTIVE_DATA_FREQUENCY 1000
+#define COASTING_DATA_FREQUENCY 1000
+#define PARACHUTE_OUT_DATA_FREQUENCY 1000
+#define ON_GROUND_DATA_FREQUENCY 1000
 
 SPIClass* vspi = NULL;
 SPIClass* hspi = NULL;
@@ -84,6 +84,7 @@ void setup() {
   vspi->begin(SPI1_SCK, SPI1_MISO, SPI1_MOSI, SPI1_CS);
   hspi->begin(SPI2_SCK, SPI2_MISO, SPI2_MOSI, SPI2_CS);
   // utilities.Init();
+  calculations.Init();
   servos.Init();
   pitchPID.Init(1, 0.5, 0.2);
   rollPID.Init(1, 0.5, 0.2);
@@ -170,7 +171,7 @@ void thrustVectorActive() {
   rollCommand = rollPID.ComputeCorrection(calculations.degToRad(roll), loopTime);
   servo0Position = servos.writeGimbalServoPosition(0, pitchCommand);
   servo1Position = servos.writeGimbalServoPosition(1, rollCommand);
-  logger.log(Pid, String(pitchCommand) + "\t" + String(rollCommand), currentTime);
+  logger.logData("PID Log\t" + String(currentTime) + "\t" + String(pitchCommand) + "\t" + String(rollCommand));
   Serial.println("Pitch Command: " + String(pitchCommand));
   Serial.println("Roll Command: " + String(rollCommand));
   logData(TVC_ACTIVE_DATA_FREQUENCY);
@@ -210,6 +211,7 @@ void dataLoop() {
   // Serial.println(millis());
   altimeter.getTempAndPressure(currentTemperature, currentPressure);
   // Serial.println(millis());
+  calculations.applyOffsets(pitch, roll);
 }
 
 void logData(int dataLoggingFrequencyInMilliseconds) {
@@ -250,8 +252,8 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
 }
 
 void printToSerial() {
-  Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
-  Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
+  // Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
+  // Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
   Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
-  Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
+  // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }

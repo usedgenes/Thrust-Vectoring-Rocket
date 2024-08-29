@@ -4,40 +4,48 @@
 #include "Arduino.h"
 
 class Calculations {
-#define MAX_PID_OUTPUT 0
-#define MIN_PID_OUTPUT 0
-//Kalman Filter
-#define Q 0.1
-#define R 4
+
 private:
-  float angularVelocityX = 0;
-  float angularyVelocityY = 0;
-  float thetaModel = 0;
-  float phiModel = 0;
-  float thetaSensor = 0;
-  float phiSensor = 0;
+  //Kalman filter taken from https://github.com/TKJElectronics/KalmanFilter
+  /* Kalman filter variables */
+  float Q_angle;    // Process noise variance for the accelerometer
+  float Q_bias;     // Process noise variance for the gyro bias
+  float R_measure;  // Measurement noise variance - this is actually the variance of the measurement noise
 
-  float theta_n;      // a priori estimation of Theta
-  float theta_p = 0;  // a posteriori estimation on Theta (set to zero for the initial time step k=0)
-  float phi_n;        // a priori estimation of Phi
-  float phi_p = 0;    // a posteriori estimation on Phi (set to zero for the initial time step k=0)
+  float angle;  // The angle calculated by the Kalman filter - part of the 2x1 state vector
+  float bias;   // The gyro bias calculated by the Kalman filter - part of the 2x1 state vector
+  float rate;   // Unbiased rate calculated from the rate and the calculated bias - you have to call getAngle to update the rate
 
-  float P_theta_n;      // a priori cobvariance of Theta
-  float P_phi_n;        // a priori covariance of Phi
-  float P_theta_p = 0;  // a posteriori covariance of Theta
-  float P_phi_p = 0;    // a posteriori covariance of Phi
+  float P[2][2];  // Error covariance matrix - This is a 2x2 matrix
 
-  float K_theta;  // Observer gain or Kalman gain for Theta
-  float K_phi;    // Observer gain or Kalman gain for Phi
-  //PID
-  float integralError = 0;
-  float previousError = 0;
   //Lowpass filter for altitude
   float alpha;
 
 public:
-  void applyKalmanFilter(float accelerometerInput[], float gyroInput[], int loopTime, float& theta, float& phi);
+  // The angle should be in degrees and the rate should be in degrees per second and the delta time in seconds
+  float getAngle(float newAngle, float newRate, float dt);
+
+  void setAngle(float angle);  // Used to set angle, this should be set as the starting angle
+  float getRate();             // Return the unbiased rate
+
+  /* These are used to tune the Kalman filter */
+  void setQangle(float Q_angle);
+  /**
+     * setQbias(float Q_bias)
+     * Default value (0.003f) is in Kalman.cpp. 
+     * Raise this to follow input more closely,
+     * lower this to smooth result of kalman filter.
+     */
+  void setQbias(float Q_bias);
+  void setRmeasure(float R_measure);
+
+  float getQangle();
+  float getQbias();
+  float getRmeasure();
+  
+  void Init();
   void normalizeVector(float vector[]);
   float degToRad(float input);
+  void applyOffsets(float& pitch, float& roll);
 };
 #endif
