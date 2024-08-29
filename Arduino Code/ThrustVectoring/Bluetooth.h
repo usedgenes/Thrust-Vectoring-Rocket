@@ -43,9 +43,10 @@ private:
   bool *sendBluetoothOrientation;
   bool *sendBluetoothAltimeter;
   bool *sendBluetoothPID;
+  bool *sendBluetoothServo;
 
 public:
-  void Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pitchPID, PID *_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut);
+  void Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pitchPID, PID *_rollPID, bool *_armed, bool *_bluetoothConnected, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut, bool *_sendBluetoothServo);
   void writeServo(String message);
   void writePID(String message);
   void writeIMU(String message);
@@ -85,10 +86,11 @@ private:
   bool *sendBluetoothOrientation;
   bool *sendBluetoothAltimeter;
   bool *sendBluetoothPID;
+  bool *sendBluetoothServo;
 
 public:
   void (*resetFunc)(void) = 0;
-  UtilitiesCallbacks(bool *_armed, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut) {
+  UtilitiesCallbacks(bool *_armed, bool *_sendLoopTime, bool *_sendBluetoothBMI088, bool *_sendBluetoothOrientation, bool *_sendBluetoothAltimeter, bool *_sendBluetoothPID, bool *_bluetoothBypassOnPad, bool *_bluetoothBypassTVCActive, bool *_bluetoothBypassCoasting, bool *_bluetoothBypassParachuteOut, bool *_sendBluetoothServo) {
     armed = _armed;
     sendLoopTime = _sendLoopTime;
     sendBluetoothBMI088 = _sendBluetoothBMI088;
@@ -99,6 +101,7 @@ public:
     bluetoothBypassTVCActive = _bluetoothBypassTVCActive;
     bluetoothBypassCoasting = _bluetoothBypassCoasting;
     bluetoothBypassParachuteOut = _bluetoothBypassParachuteOut;
+    sendBluetoothServo = _sendBluetoothServo;
   };
   void onWrite(BLECharacteristic *pCharacteristic) {
     String value = pCharacteristic->getValue();
@@ -136,6 +139,10 @@ public:
       *sendLoopTime = true;
     } else if (value == "Time Stop") {
       *sendLoopTime = false;
+    } else if (value == "Servo Get") {
+      *sendBluetoothServo = true;
+    } else if (value == "Servo Stop") {
+      *sendBluetoothServo = false;
     }
   };
 };
@@ -174,7 +181,7 @@ public:
       pCharacteristic->setValue("91" + servos->getMaxGimbalPosition());
       pCharacteristic->notify();
     } else if (value == "Circle Gimbal") {
-        servos->circleGimbalServos();
+      servos->circleGimbalServos();
     } else if (value == "Home") {
       servos->homeGimbalServos();
     }

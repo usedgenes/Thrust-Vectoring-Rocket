@@ -12,7 +12,7 @@ class Simulator():
         #ms
         time = 0
         deltaTime = 20
-        runtime = 100
+        runtime = 10000
         #initial angle and setpoint in degrees for easier visualization, but program converts it to radians for calculations with trigonometric functions
         initial_rocket_angle = -25
         setpoint = 0
@@ -28,10 +28,10 @@ class Simulator():
         rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.02, tvcLimit, 0.2, tvcRotationLimit)
         
         #if csv file has point (0,0), delete that point
-        thrust = MotorThrustCurve.ThrustCurve("F42.csv")
+        thrust = MotorThrustCurve.ThrustCurve("F15.csv")
         
         #kp, ki, kd, setpoint
-        pid = PID.PID(45, 0.5, 15, setpoint*pi/180, initial_rocket_angle * pi/180)
+        pid = PID.PID(45, 0.5, 15, setpoint*pi/180, -initial_rocket_angle * pi/180)
         
         graph = Grapher.Grapher()
         
@@ -50,7 +50,6 @@ class Simulator():
         
         graphs_dict = [orientationGraph, xPositionGraph, yPositionGraph, tvcAngleGraph, pidCommandGraph]
         graph.graphsHandler(5, graphs_dict)
-        print(pidCommandArray)
         while(time <= runtime):
 
             motorThrust = thrust.getThrust(time/1000)
@@ -74,7 +73,6 @@ class Simulator():
 
         graphs = [(timeArray, orientationArray), (timeArray, xPositionArray), (timeArray, yPositionArray), (timeArray, tvcAngleArray), (timeArray, pidCommandArray)]
         graph.showGraphs(graphs)
-        print(pidCommandArray)
  
     if __name__ == "__main__":
         run()

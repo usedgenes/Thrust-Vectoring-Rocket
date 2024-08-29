@@ -79,10 +79,11 @@ bool sendBluetoothBMI088 = false;
 bool sendBluetoothAltimeter = false;
 bool sendBluetoothPID = false;
 bool sendBluetoothOrientation = false;
+bool sendBluetoothServo = false;
 
 void setup() {
   Serial.begin(115200);
-  bluetooth.Init(&servos, &imu, &altimeter, &pitchPID, &rollPID, &armed, &bluetoothConnected, &sendLoopTime, &sendBluetoothBMI088, &sendBluetoothOrientation, &sendBluetoothAltimeter, &sendBluetoothPID, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut);
+  bluetooth.Init(&servos, &imu, &altimeter, &pitchPID, &rollPID, &armed, &bluetoothConnected, &sendLoopTime, &sendBluetoothBMI088, &sendBluetoothOrientation, &sendBluetoothAltimeter, &sendBluetoothPID, &bluetoothBypassOnPad, &bluetoothBypassTVCActive, &bluetoothBypassCoasting, &bluetoothBypassParachuteOut, &sendBluetoothServo);
   while (!bluetoothConnected) {
     delay(1000);
   }
@@ -277,6 +278,11 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
       Serial.println("Sending Bluetooth Loop Time");
       bluetooth.writeUtilities("90" + String(loopTime));
     }
+    if (sendBluetoothServo) {
+      Serial.println("Sending Bluetooth Servo");
+      bluetooth.writeServo("90" + String(servo0Position));
+      bluetooth.writeServo("91" + String(servo1Position));
+    }
     logger.logData("Data log\t" + String(currentTime) + "\t" + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]) + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]) + "\t" + String(currentAltitude));
     printToSerial();
   }
@@ -286,6 +292,6 @@ void printToSerial() {
   // Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   // Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
   // Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
-  Serial.println("KalY: " + String(kalAngleY) + "\tKalX: " + String(adjustedKalAngleX));
+  Serial.println("Pitch: " + String(kalAngleY) + "\tRoll: " + String(adjustedKalAngleX));
   // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }

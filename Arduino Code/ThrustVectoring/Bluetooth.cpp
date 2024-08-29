@@ -41,7 +41,7 @@ void Bluetooth::Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pi
   pPID->setCallbacks(new PIDCallbacks(pitchPID, rollPID));
 
   pUtilities = pService->createCharacteristic(UTILITIES_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_WRITE);
-  pUtilities->setCallbacks(new UtilitiesCallbacks(armed, sendLoopTime, sendBluetoothBMI088, sendBluetoothOrientation, sendBluetoothAltimeter, sendBluetoothPID, bluetoothBypassOnPad, bluetoothBypassTVCActive, bluetoothBypassCoasting, bluetoothBypassParachuteOut));
+  pUtilities->setCallbacks(new UtilitiesCallbacks(armed, sendLoopTime, sendBluetoothBMI088, sendBluetoothOrientation, sendBluetoothAltimeter, sendBluetoothPID, bluetoothBypassOnPad, bluetoothBypassTVCActive, bluetoothBypassCoasting, bluetoothBypassParachuteOut, sendBluetoothServo));
 
   pService->start();
 
@@ -60,6 +60,11 @@ void Bluetooth::Init(Servos *_servos, IMU *_imu, Altimeter *_altimeter, PID *_pi
 
 void Bluetooth::writeUtilitiesNotifications(String message) {
   pUtilities->setValue("1" + message);
+  pUtilities->notify();
+}
+
+void Bluetooth::writeServo(String message) {
+  pServo->setValue(message);
   pUtilities->notify();
 }
 

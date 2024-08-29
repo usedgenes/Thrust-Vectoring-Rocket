@@ -18,7 +18,7 @@ float PID::ComputeCorrection(float error, unsigned long loopTime) {
 
   previousError = error;
 
-  Serial.println(String(rocketOrientation) + "\t" + String(error) + "\t" + String(deltaTime) + "\t" + String(integrator) + "\t" + String(derivative) + "\t" + String(output));
+  // Serial.println(String(error) + "\t" + String(error) + "\t" + String(deltaTime) + "\t" + String(integrator) + "\t" + String(derivative) + "\t" + String(output));
   return output;
 }
 
