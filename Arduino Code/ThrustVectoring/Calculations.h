@@ -44,8 +44,6 @@ public:
   float getRmeasure();
   
   void Init();
-  void normalizeVector(float vector[]);
-  float degToRad(float input);
   void applyOffsets(float& pitch, float& roll);
 };
 #endif

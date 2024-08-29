@@ -13,7 +13,7 @@ bool Altimeter::Init(SPIClass * vspi) {
   for (int i = 0; i < 5; i++) {
     bmp.performReading();
     delay(10);
-    Serial.println("BMP Initial Readings: " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
+    // Serial.println("BMP Initial Readings: " + String(bmp.readAltitude(SEALEVELPRESSURE_HPA)));
   }
   previousAltitude = getAltitude();
   return true;

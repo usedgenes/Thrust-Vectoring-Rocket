@@ -8,7 +8,7 @@ void Calculations::Init() {
   angle = 0.0f;  // Reset the angle
   bias = 0.0f;   // Reset bias
 
-  P[0][0] = 0.0f;  // Since we assume that the bias is 0 and we know the starting angle (use setAngle), the error covariance matrix is set like so - see: http://en.wikipedia.org/wiki/Kalman_filter#Example_application.2C_technical
+  P[0][0] = 0.0f;  // Since we assume that the bias is 0 and we know the starting angle (use setAngle), the error covariance matrix is set like so 
   P[0][1] = 0.0f;
   P[1][0] = 0.0f;
   P[1][1] = 0.0f;
@@ -61,6 +61,7 @@ float Calculations::getAngle(float newAngle, float newRate, float dt) {
 void Calculations::setAngle(float angle) {
   this->angle = angle;
 };  // Used to set angle, this should be set as the starting angle
+
 float Calculations::getRate() {
   return this->rate;
 };  // Return the unbiased rate
@@ -89,34 +90,4 @@ float Calculations::getRmeasure() {
 void Calculations::applyOffsets(float& pitch, float& roll) {
   pitch = pitch - 180;
   roll = roll - 180;
-}
-
-void Calculations::normalizeVector(float vector[]) {
-  float sum = 0;
-  for (int i = 0; i < 3; i++) {
-    sum += vector[i] * vector[i];
-  }
-
-  sum = sqrt(sum);
-
-  if (sum > 0) {
-    for (int i = 0; i < 3; i++) {
-      vector[i] = vector[i] / sum;
-    }
-  }
-
-#ifdef PRINT_VECTOR_NORMALIZE
-  Serial.print("Magnitude: ");
-  Serial.println(sum);
-  Serial.print("Vectors: ");
-  Serial.print(vector[0]);
-  Serial.print("\t");
-  Serial.print(vector[1]);
-  Serial.print("\t");
-  Serial.println(vector[2]);
-#endif
-}
-
-float Calculations::degToRad(float input) {
-  return input / 57.29577;
 }

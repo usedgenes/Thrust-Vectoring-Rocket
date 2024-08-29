@@ -28,6 +28,9 @@
 #define PARACHUTE_OUT_DATA_FREQUENCY 1000
 #define ON_GROUND_DATA_FREQUENCY 1000
 
+#define RAD_TO_DEG 57.29577
+#define DEG_TO_RAD 0.01745
+
 SPIClass* vspi = NULL;
 SPIClass* hspi = NULL;
 
@@ -35,7 +38,7 @@ Bluetooth bluetooth;
 IMU imu;
 Servos servos;
 Altimeter altimeter;
-Calculations calculations;
+Calculations kalmanX, kalmanY;
 Logger logger;
 PID pitchPID, rollPID;
 Utilities utilities;
@@ -55,7 +58,12 @@ float previousAltitude = 0;
 
 float accelerometer[] = { 0, 0, 0 };
 float gyroscope[] = { 0, 0, 0 };
-float pitch = 0, roll = 0;
+
+double roll, pitch;
+double gyroXangle, gyroYangle;  // Angle calculate using the gyro only
+double compAngleX, compAngleY;  // Calculated angle using a complementary filter
+double kalAngleX, kalAngleY;    // Calculated angle using a Kalman filter
+
 float pitchCommand = 0, rollCommand = 0;
 float servo0Position = 0, servo1Position = 0;
 float apogee = 0;
@@ -84,7 +92,8 @@ void setup() {
   vspi->begin(SPI1_SCK, SPI1_MISO, SPI1_MOSI, SPI1_CS);
   hspi->begin(SPI2_SCK, SPI2_MISO, SPI2_MOSI, SPI2_CS);
   // utilities.Init();
-  calculations.Init();
+  kalmanX.Init();
+  kalmanY.Init();
   servos.Init();
   pitchPID.Init(1, 0.5, 0.2);
   rollPID.Init(1, 0.5, 0.2);
@@ -109,6 +118,16 @@ void setup() {
     dataLoop();
     logData(ON_PAD_DATA_FREQUENCY);
   }
+
+  roll = atan2(accelerometer[1], accelerometer[2]) * RAD_TO_DEG;
+  pitch = atan(-accelerometer[0] / sqrt(accelerometer[1] * accelerometer[1] + accelerometer[2] * accelerometer[2])) * RAD_TO_DEG;
+
+  kalmanX.setAngle(roll);  // Set starting angle
+  kalmanY.setAngle(pitch);
+  gyroXangle = roll;
+  gyroYangle = pitch;
+  compAngleX = roll;
+  compAngleY = pitch;
 
   previousTime = 0;
   launchAltitude = altimeter.getAltitude();
@@ -167,8 +186,8 @@ void onPad() {
 
 void thrustVectorActive() {
   dataLoop();
-  pitchCommand = pitchPID.ComputeCorrection(calculations.degToRad(pitch), loopTime);
-  rollCommand = rollPID.ComputeCorrection(calculations.degToRad(roll), loopTime);
+  pitchCommand = pitchPID.ComputeCorrection(pitch * DEG_TO_RAD, loopTime);
+  rollCommand = rollPID.ComputeCorrection(roll * DEG_TO_RAD, loopTime);
   servo0Position = servos.writeGimbalServoPosition(0, pitchCommand);
   servo1Position = servos.writeGimbalServoPosition(1, rollCommand);
   logger.logData("PID Log\t" + String(currentTime) + "\t" + String(pitchCommand) + "\t" + String(rollCommand));
@@ -201,17 +220,43 @@ void dataLoop() {
   currentTime = millis();
   loopTime = millis() - previousTime;
   previousTime = currentTime;
-  // Serial.println(String(currentTime) + "\t" + loopTime + "\t" + previousTime);
+  float dt = loopTime / 1000.0;
 
   imu.getIMUData(accelerometer, gyroscope);
-  // Serial.println(millis());
-  calculations.applyKalmanFilter(accelerometer, gyroscope, loopTime, pitch, roll);
-  // Serial.println(millis());
+
+  roll = atan2(accelerometer[1], accelerometer[2]) * RAD_TO_DEG;
+  pitch = atan(-accelerometer[0] / sqrt(accelerometer[1] * accelerometer[1] + accelerometer[2] * accelerometer[2])) * RAD_TO_DEG;
+  double gyroXrate = gyroscope[0] / 131.0;  // Convert to deg/s
+  double gyroYrate = gyroscope[1] / 131.0;  // Convert to deg/s
+  if ((roll < -90 && kalAngleX > 90) || (roll > 90 && kalAngleX < -90)) {
+    kalmanX.setAngle(roll);
+    compAngleX = roll;
+    kalAngleX = roll;
+    gyroXangle = roll;
+  } else {
+    kalAngleX = kalmanX.getAngle(roll, gyroXrate, dt);  // Calculate the angle using a Kalman filter
+  }
+  if (abs(kalAngleX) > 90) {
+    gyroYrate = -gyroYrate;  // Invert rate, so it fits the restriced accelerometer reading
+  }
+  kalAngleY = kalmanY.getAngle(pitch, gyroYrate, dt);
+
+  gyroXangle += gyroXrate * dt;  // Calculate gyro angle without any filter
+  gyroYangle += gyroYrate * dt;
+  //gyroXangle += kalmanX.getRate() * dt; // Calculate gyro angle using the unbiased rate
+  //gyroYangle += kalmanY.getRate() * dt;
+
+  compAngleX = 0.93 * (compAngleX + gyroXrate * dt) + 0.07 * roll;  // Calculate the angle using a Complimentary filter
+  compAngleY = 0.93 * (compAngleY + gyroYrate * dt) + 0.07 * pitch;
+
+  // Reset the gyro angle when it has drifted too much
+  if (gyroXangle < -180 || gyroXangle > 180)
+    gyroXangle = kalAngleX;
+  if (gyroYangle < -180 || gyroYangle > 180)
+    gyroYangle = kalAngleY;
+
   currentAltitude = altimeter.getAltitude();
-  // Serial.println(millis());
   altimeter.getTempAndPressure(currentTemperature, currentPressure);
-  // Serial.println(millis());
-  calculations.applyOffsets(pitch, roll);
 }
 
 void logData(int dataLoggingFrequencyInMilliseconds) {
@@ -255,5 +300,6 @@ void printToSerial() {
   // Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   // Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
   Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
+  Serial.println("KalY: " + String(kalAngleY) + "\tKalX: " + String(kalAngleX));
   // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }
