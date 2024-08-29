@@ -60,9 +60,8 @@ float accelerometer[] = { 0, 0, 0 };
 float gyroscope[] = { 0, 0, 0 };
 
 double roll, pitch;
-double gyroXangle, gyroYangle;  // Angle calculate using the gyro only
-double compAngleX, compAngleY;  // Calculated angle using a complementary filter
-double kalAngleX, kalAngleY;    // Calculated angle using a Kalman filter
+double kalAngleX, kalAngleY;
+double adjustedKalAngleX;
 
 float pitchCommand = 0, rollCommand = 0;
 float servo0Position = 0, servo1Position = 0;
@@ -95,8 +94,10 @@ void setup() {
   kalmanX.Init();
   kalmanY.Init();
   servos.Init();
-  pitchPID.Init(1, 0.5, 0.2);
-  rollPID.Init(1, 0.5, 0.2);
+  pitchPID.Init(45, 0.5, 15);
+  rollPID.Init(45, 0.5, 15);
+  pitchPID.setSetpoint(0);
+  rollPID.setSetpoint(0);
   if (!imu.Init(*hspi)) {
     bluetooth.writeUtilitiesNotifications("IMU Initialization Error");
     Serial.println("IMU Initialization Error");
@@ -121,13 +122,8 @@ void setup() {
 
   roll = atan2(accelerometer[1], accelerometer[2]) * RAD_TO_DEG;
   pitch = atan(-accelerometer[0] / sqrt(accelerometer[1] * accelerometer[1] + accelerometer[2] * accelerometer[2])) * RAD_TO_DEG;
-
   kalmanX.setAngle(roll);  // Set starting angle
   kalmanY.setAngle(pitch);
-  gyroXangle = roll;
-  gyroYangle = pitch;
-  compAngleX = roll;
-  compAngleY = pitch;
 
   previousTime = 0;
   launchAltitude = altimeter.getAltitude();
@@ -186,8 +182,8 @@ void onPad() {
 
 void thrustVectorActive() {
   dataLoop();
-  pitchCommand = pitchPID.ComputeCorrection(pitch * DEG_TO_RAD, loopTime);
-  rollCommand = rollPID.ComputeCorrection(roll * DEG_TO_RAD, loopTime);
+  pitchCommand = pitchPID.ComputeCorrection(kalAngleY * DEG_TO_RAD, loopTime);
+  rollCommand = rollPID.ComputeCorrection(adjustedKalAngleX * DEG_TO_RAD, loopTime);
   servo0Position = servos.writeGimbalServoPosition(0, pitchCommand);
   servo1Position = servos.writeGimbalServoPosition(1, rollCommand);
   logger.logData("PID Log\t" + String(currentTime) + "\t" + String(pitchCommand) + "\t" + String(rollCommand));
@@ -230,30 +226,20 @@ void dataLoop() {
   double gyroYrate = gyroscope[1] / 131.0;  // Convert to deg/s
   if ((roll < -90 && kalAngleX > 90) || (roll > 90 && kalAngleX < -90)) {
     kalmanX.setAngle(roll);
-    compAngleX = roll;
     kalAngleX = roll;
-    gyroXangle = roll;
   } else {
-    kalAngleX = kalmanX.getAngle(roll, gyroXrate, dt);  // Calculate the angle using a Kalman filter
+    kalAngleX = kalmanX.getAngle(roll, gyroXrate, dt);  
   }
   if (abs(kalAngleX) > 90) {
     gyroYrate = -gyroYrate;  // Invert rate, so it fits the restriced accelerometer reading
   }
   kalAngleY = kalmanY.getAngle(pitch, gyroYrate, dt);
+  if(kalAngleX < 0) {
+    adjustedKalAngleX = kalAngleX + 180;
+  } else {
+    adjustedKalAngleX = kalAngleX - 180;
+  }
 
-  gyroXangle += gyroXrate * dt;  // Calculate gyro angle without any filter
-  gyroYangle += gyroYrate * dt;
-  //gyroXangle += kalmanX.getRate() * dt; // Calculate gyro angle using the unbiased rate
-  //gyroYangle += kalmanY.getRate() * dt;
-
-  compAngleX = 0.93 * (compAngleX + gyroXrate * dt) + 0.07 * roll;  // Calculate the angle using a Complimentary filter
-  compAngleY = 0.93 * (compAngleY + gyroYrate * dt) + 0.07 * pitch;
-
-  // Reset the gyro angle when it has drifted too much
-  if (gyroXangle < -180 || gyroXangle > 180)
-    gyroXangle = kalAngleX;
-  if (gyroYangle < -180 || gyroYangle > 180)
-    gyroYangle = kalAngleY;
 
   currentAltitude = altimeter.getAltitude();
   altimeter.getTempAndPressure(currentTemperature, currentPressure);
@@ -273,8 +259,8 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
     }
     if (sendBluetoothOrientation) {
       Serial.println("Sending Bluetooth Orientation");
-      bluetooth.writeIMU("96" + String(pitch));
-      bluetooth.writeIMU("97" + String(roll));
+      bluetooth.writeIMU("96" + String(kalAngleY));
+      bluetooth.writeIMU("97" + String(kalAngleX));
     }
     if (sendBluetoothAltimeter) {
       Serial.println("Sending Bluetooth Altimeter");
@@ -299,7 +285,7 @@ void logData(int dataLoggingFrequencyInMilliseconds) {
 void printToSerial() {
   // Serial.println("Accelerometer: " + String(accelerometer[0]) + "\t" + String(accelerometer[1]) + "\t" + String(accelerometer[2]));
   // Serial.println("Gyroscope: " + String(gyroscope[0]) + "\t" + String(gyroscope[1]) + "\t" + String(gyroscope[2]));
-  Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
-  Serial.println("KalY: " + String(kalAngleY) + "\tKalX: " + String(kalAngleX));
+  // Serial.println("Pitch: " + String(pitch) + "\tRoll: " + String(roll));
+  Serial.println("KalY: " + String(kalAngleY) + "\tKalX: " + String(adjustedKalAngleX));
   // Serial.println("Altitude: " + String(currentAltitude) + "\tTemperature: " + String(currentTemperature) + "\tPressure: " + String(currentPressure));
 }

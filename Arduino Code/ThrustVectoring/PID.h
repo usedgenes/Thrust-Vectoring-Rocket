@@ -7,7 +7,7 @@ class PID {
 #define MAX_PID_OUTPUT 0
 #define MIN_PID_OUTPUT 0 
 private:
-  float setpoint = 0;
+  float setpoint;
   float error = 0;
   float previousError = 0;
   float integrator = 0;

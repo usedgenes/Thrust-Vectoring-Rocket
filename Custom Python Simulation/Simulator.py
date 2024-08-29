@@ -12,7 +12,7 @@ class Simulator():
         #ms
         time = 0
         deltaTime = 20
-        runtime = 10000
+        runtime = 100
         #initial angle and setpoint in degrees for easier visualization, but program converts it to radians for calculations with trigonometric functions
         initial_rocket_angle = -25
         setpoint = 0
@@ -28,10 +28,10 @@ class Simulator():
         rocket = Rocket.Rocket(initial_state_vector, 0.65, 0.02, tvcLimit, 0.2, tvcRotationLimit)
         
         #if csv file has point (0,0), delete that point
-        thrust = MotorThrustCurve.ThrustCurve("F67.csv")
+        thrust = MotorThrustCurve.ThrustCurve("F42.csv")
         
         #kp, ki, kd, setpoint
-        pid = PID.PID(45, 0.5, 15, setpoint*pi/180)
+        pid = PID.PID(45, 0.5, 15, setpoint*pi/180, initial_rocket_angle * pi/180)
         
         graph = Grapher.Grapher()
         
@@ -40,17 +40,19 @@ class Simulator():
         xPositionArray = []
         yPositionArray = []
         tvcAngleArray = []
+        pidCommandArray = []
         
         orientationGraph = {"x" : "time(s)", "y" : "Rocket angle (deg)", "title" : "Theta"}
         xPositionGraph = {"x" : "time(s)", "y" : "Pos X (m)", "title" : "Position X"}
         yPositionGraph = {"x" : "time(s)", "y" : "Pos Y (y)", "title" : "Position Y"}
         tvcAngleGraph = {"x" : "time(s)", "y" : "TVC angle (deg)", "title" : "TVC Angle"}
+        pidCommandGraph = {"x" : "time(s)", "y" : "PID Command", "title" : "PID Command"}
         
-        graphs_dict = [orientationGraph, xPositionGraph, yPositionGraph, tvcAngleGraph]
-        graph.graphsHandler(4, graphs_dict)
-        
-        
+        graphs_dict = [orientationGraph, xPositionGraph, yPositionGraph, tvcAngleGraph, pidCommandGraph]
+        graph.graphsHandler(5, graphs_dict)
+        print(pidCommandArray)
         while(time <= runtime):
+
             motorThrust = thrust.getThrust(time/1000)
             forces = rocket.rocketPhysics(motorThrust, deltaTime/1000)
             rocket.inputForces(forces, deltaTime/1000)
@@ -66,11 +68,13 @@ class Simulator():
             tvcAngleArray.append(rocket.state_vector["tvcAngle"])
             
             pidCommand = pid.compute(rocket.state_vector["theta"], deltaTime/1000)
+            pidCommandArray.append(pidCommand)
             rocket.tvcCalculations(pidCommand)
             time += deltaTime
 
-        graphs = [(timeArray, orientationArray), (timeArray, xPositionArray), (timeArray, yPositionArray), (timeArray, tvcAngleArray)]
+        graphs = [(timeArray, orientationArray), (timeArray, xPositionArray), (timeArray, yPositionArray), (timeArray, tvcAngleArray), (timeArray, pidCommandArray)]
         graph.showGraphs(graphs)
+        print(pidCommandArray)
  
     if __name__ == "__main__":
         run()
