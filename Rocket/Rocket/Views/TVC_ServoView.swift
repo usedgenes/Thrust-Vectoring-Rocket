@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ServoView : View {
+struct TVC_ServoView : View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
@@ -84,7 +84,6 @@ struct ServoView : View {
                 .padding(.vertical)
                 .background(Color("Light Gray"))
                 .cornerRadius(10)
-                .disabled(!setHomePosition)
                 Spacer()
             }
             Divider()
@@ -195,8 +194,8 @@ struct ServoView : View {
 
 
 
-struct ServoView_Previews: PreviewProvider {
+struct TVC_ServoView_Previews: PreviewProvider {
     static var previews: some View {
-        ServoView()
+        TVC_ServoView()
     }
 }

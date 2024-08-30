@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct OrientationView : View {
+struct TVC_OrientationView : View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
@@ -59,8 +59,8 @@ struct OrientationView : View {
     }
 }
 
-struct OrientationView_Previews: PreviewProvider {
+struct TVC_OrientationView_Previews: PreviewProvider {
     static var previews: some View {
-        OrientationView()
+        TVC_OrientationView()
     }
 }

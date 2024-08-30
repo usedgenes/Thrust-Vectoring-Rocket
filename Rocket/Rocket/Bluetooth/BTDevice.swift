@@ -29,10 +29,24 @@ class BTDevice: NSObject {
     
     private var utilitiesChar: CBCharacteristic?
     
+    private var bno08xChar: CBCharacteristic?
+    
+    var edf : EDF?
+    
     var rocket: Rocket?
     
     weak var delegate: BTDeviceDelegate?
     
+    var bno08xString: String {
+        get {
+            return "-1"
+        }
+        set {
+            if let char = bno08xChar {
+                peripheral.writeValue(Data(newValue.utf8), for: char, type: .withResponse)
+            }
+        }
+    }
     var utilitiesString: String {
         get {
             return "-1"
@@ -150,7 +164,7 @@ extension BTDevice: CBPeripheralDelegate {
         peripheral.services?.forEach {
             print("  \($0)")
             if $0.uuid == BTUUIDs.esp32Service {
-                peripheral.discoverCharacteristics([BTUUIDs.servoUUID, BTUUIDs.esp32Service, BTUUIDs.bmp390UUID, BTUUIDs.buzzerUUID, BTUUIDs.bmi088UUID, BTUUIDs.pidUUID, BTUUIDs.utilitiesUUID], for: $0)
+                peripheral.discoverCharacteristics([BTUUIDs.servoUUID, BTUUIDs.esp32Service, BTUUIDs.bmp390UUID, BTUUIDs.bno08xUUID, BTUUIDs.bmi088UUID, BTUUIDs.pidUUID, BTUUIDs.utilitiesUUID], for: $0)
             } else {
                 peripheral.discoverCharacteristics(nil, for: $0)
             }
@@ -168,10 +182,6 @@ extension BTDevice: CBPeripheralDelegate {
                 self.bmp390Char = $0
                 peripheral.readValue(for: $0)
                 peripheral.setNotifyValue(true, for: $0)
-            } else if $0.uuid == BTUUIDs.buzzerUUID {
-                self.buzzerChar = $0
-                peripheral.readValue(for: $0)
-                peripheral.setNotifyValue(true, for: $0)
             } else if $0.uuid == BTUUIDs.bmi088UUID {
                 self.bmi088Char = $0
                 peripheral.readValue(for: $0)
@@ -182,6 +192,10 @@ extension BTDevice: CBPeripheralDelegate {
                 peripheral.setNotifyValue(true, for: $0)
             } else if $0.uuid == BTUUIDs.utilitiesUUID {
                 self.utilitiesChar = $0
+                peripheral.readValue(for: $0)
+                peripheral.setNotifyValue(true, for: $0)
+            } else if $0.uuid == BTUUIDs.bno08xUUID {
+                self.bno08xChar = $0
                 peripheral.readValue(for: $0)
                 peripheral.setNotifyValue(true, for: $0)
             }
@@ -217,6 +231,41 @@ extension BTDevice: CBPeripheralDelegate {
                     rocket!.maxPosition = Double(value)!
                 }
             }
+            else if(value[...value.startIndex] == "5") {
+                value.remove(at: value.startIndex)
+                if(value[...value.startIndex] == "0") {
+                    value.remove(at: value.startIndex)
+                    
+                    let servo0pos = Float(value)!
+                    edf!.addServo0Pos(pos: servo0pos)
+                    
+                    return;
+                }
+                if(value[...value.startIndex] == "1") {
+                    value.remove(at: value.startIndex)
+                    
+                    let servo1pos = Float(value)!
+                    edf!.addServo1Pos(pos: servo1pos)
+                    
+                    return;
+                }
+                if(value[...value.startIndex] == "2") {
+                    value.remove(at: value.startIndex)
+                    
+                    let servo2pos = Float(value)!
+                    edf!.addServo2Pos(pos: servo2pos)
+                    
+                    return;
+                }
+                if(value[...value.startIndex] == "3") {
+                    value.remove(at: value.startIndex)
+                    
+                    let servo3pos = Float(value)!
+                    edf!.addServo3Pos(pos: servo3pos)
+                    
+                    return;
+                }
+            }
         }
         else if characteristic.uuid == pidChar?.uuid, let b = characteristic.value {
             var value = String(decoding: b, as: UTF8.self)
@@ -236,6 +285,33 @@ extension BTDevice: CBPeripheralDelegate {
                     else if(value[...value.startIndex] == "2") {
                         value.remove(at: value.startIndex)
                         rocket!.addYawCommand(cmd: Float(value)!)
+                        return;
+                    }
+                }
+                else if(value[...value.startIndex] == "5") {
+                    value.remove(at: value.startIndex)
+                    if(value[...value.startIndex] == "0") {
+                        value.remove(at: value.startIndex)
+                        
+                        let yawCmd = Float(value)!
+                        edf!.addYawCommand(cmd: yawCmd)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "1") {
+                        value.remove(at: value.startIndex)
+                        
+                        let pitchCmd = Float(value)!
+                        edf!.addPitchCommand(cmd: pitchCmd)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "2") {
+                        value.remove(at: value.startIndex)
+                        
+                        let rollCmd = Float(value)!
+                        edf!.addRollCommand(cmd: rollCmd)
+                        
                         return;
                     }
                 }
@@ -344,6 +420,86 @@ extension BTDevice: CBPeripheralDelegate {
                     if(value[...value.startIndex] == "0") {
                         value.remove(at: value.startIndex)
                         rocket!.deltaTime = value
+                    }
+                }
+            }
+        }
+        if characteristic.uuid == bno08xChar?.uuid, let b = characteristic.value {
+            var value = String(decoding: b, as: UTF8.self)
+            if(value != "") {
+                if(value[...value.startIndex] == "5") {
+                    value.remove(at: value.startIndex)
+                    if(value[...value.startIndex] == "0") {
+                        value.remove(at: value.startIndex)
+                        
+                        let yaw = Float(value)!
+                        edf!.addYaw(yaw: yaw)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "1") {
+                        value.remove(at: value.startIndex)
+                        
+                        let pitch = Float(value)!
+                        edf!.addPitch(pitch: pitch)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "2") {
+                        value.remove(at: value.startIndex)
+                        
+                        let roll = Float(value)!
+                        edf!.addRoll(roll: roll)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "3") {
+                        value.remove(at: value.startIndex)
+                        
+                        let yawVelocity = Float(value)!
+                        edf!.addYawVelocity(yawVelocity: yawVelocity)
+                        
+                        return;
+                    }
+                }
+            }
+        }
+        else if characteristic.uuid == bno08xChar?.uuid, let b = characteristic.value {
+            var value = String(decoding: b, as: UTF8.self)
+            if(value != "") {
+                if(value[...value.startIndex] == "5") {
+                    value.remove(at: value.startIndex)
+                    if(value[...value.startIndex] == "0") {
+                        value.remove(at: value.startIndex)
+                        
+                        let yaw = Float(value)!
+                        edf!.addYaw(yaw: yaw)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "1") {
+                        value.remove(at: value.startIndex)
+                        
+                        let pitch = Float(value)!
+                        edf!.addPitch(pitch: pitch)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "2") {
+                        value.remove(at: value.startIndex)
+                        
+                        let roll = Float(value)!
+                        edf!.addRoll(roll: roll)
+                        
+                        return;
+                    }
+                    if(value[...value.startIndex] == "3") {
+                        value.remove(at: value.startIndex)
+                        
+                        let yawVelocity = Float(value)!
+                        edf!.addYawVelocity(yawVelocity: yawVelocity)
+                        
+                        return;
                     }
                 }
             }

@@ -11,12 +11,14 @@ import SwiftUI
 struct RocketApp: App {
     @StateObject var bluetoothDevice = BluetoothDeviceHelper()
     @StateObject var rocket = Rocket()
-    
+    @StateObject var edf = EDF()
+
     var body: some Scene {
         WindowGroup {
             HomeScreenView()
                 .environmentObject(bluetoothDevice)
                 .environmentObject(rocket)
+                .environmentObject(edf)
         }
     }
 }

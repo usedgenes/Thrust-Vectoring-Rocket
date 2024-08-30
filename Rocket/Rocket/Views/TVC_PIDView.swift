@@ -1,7 +1,7 @@
 import SwiftUI
 
 
-struct PIDView : View {
+struct TVC_PIDView : View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @EnvironmentObject var rocket : Rocket
     @State var getData = false
@@ -225,8 +225,8 @@ struct PIDView : View {
     }
 }
 
-struct PIDView_Previews: PreviewProvider {
+struct TVC_PIDView_Previews: PreviewProvider {
     static var previews: some View {
-        PIDView()
+        TVC_PIDView()
     }
 }

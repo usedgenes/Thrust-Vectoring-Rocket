@@ -58,7 +58,7 @@ struct TVCView: View {
                 Button(action: {
                     bluetoothDevice.setUtilities(input: "Reset")
                     rocket.reset()
-                    let seconds = 1.0
+                    let seconds = 0.2
                     DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                         if(bluetoothDevice.isConnected) {
                             bluetoothDevice.disconnect()
@@ -97,7 +97,7 @@ struct TVCView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        OrientationView()
+                        TVC_OrientationView()
                     } label: {
                         Text("View Orientation")
                             .font(.title2)
@@ -113,7 +113,7 @@ struct TVCView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        AltimeterView()
+                        TVC_AltimeterView()
                     } label: {
                         Text("View Altimeter")
                             .font(.title2)
@@ -129,7 +129,7 @@ struct TVCView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        BMI088View()
+                        TVC_BMI088View()
                     } label: {
                         Text("View BMI088")
                             .font(.title2)
@@ -145,7 +145,7 @@ struct TVCView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        ServoView()
+                        TVC_ServoView()
                     } label: {
                         Text("View Servos")
                             .font(.title2)
@@ -161,7 +161,7 @@ struct TVCView: View {
                 HStack {
                     Spacer()
                     NavigationLink {
-                        PIDView()
+                        TVC_PIDView()
                     } label: {
                         Text("View PID")
                             .font(.title2)

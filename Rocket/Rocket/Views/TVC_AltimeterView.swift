@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AltimeterView: View {
+struct TVC_AltimeterView: View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
@@ -59,8 +59,8 @@ struct AltimeterView: View {
     }
 }
 
-struct AltimeterView_Previews: PreviewProvider {
+struct TVC_AltimeterView_Previews: PreviewProvider {
     static var previews: some View {
-        AltimeterView()
+        TVC_AltimeterView()
     }
 }

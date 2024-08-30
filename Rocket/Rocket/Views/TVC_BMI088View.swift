@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BMI088View: View {
+struct TVC_BMI088View: View {
     @EnvironmentObject var rocket : Rocket
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @State var getData = false
@@ -77,8 +77,8 @@ struct BMI088View: View {
     }
 }
 
-struct BMI088View_Previews: PreviewProvider {
+struct TVC_BMI088View_Previews: PreviewProvider {
     static var previews: some View {
-        BMI088View()
+        TVC_BMI088View()
     }
 }

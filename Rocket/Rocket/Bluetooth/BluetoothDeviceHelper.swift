@@ -27,6 +27,12 @@ class BluetoothDeviceHelper: ObservableObject {
         }
     }
     
+    @Published var edf: EDF? {
+        didSet {
+            device?.edf = edf
+        }
+    }
+    
     init() {
         device?.delegate = self
     }
@@ -60,12 +66,6 @@ class BluetoothDeviceHelper: ObservableObject {
         }
     }
     
-    func setBuzzer(input: String) {
-        if (device != nil) {
-            device!.buzzerString = input
-        }
-    }
-    
     func setBMI088(input: String) {
         if (device != nil) {
             device!.bmi088String = input
@@ -83,6 +83,11 @@ class BluetoothDeviceHelper: ObservableObject {
             device!.utilitiesString = input
         }
     }
+    
+    func setBNO08X(input: String) {
+        device!.bno08xString = input
+    }
+    
 }
 
 extension BluetoothDeviceHelper: BTDeviceDelegate {

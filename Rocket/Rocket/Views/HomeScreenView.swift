@@ -9,9 +9,13 @@ struct HomeScreenView: View {
                 Section(header: Text("Bluetooth")) {
                     NavigationLink("Connect to Bluetooth", destination: BluetoothConnectView())
                 }
-                Section(header: Text("Thrust Vectoring Rocket")) {
-                    NavigationLink("Control Panel", destination: TVCView())
-
+                Section(header: Text("Rocketry")) {
+                    NavigationLink("TVC Control Panel", destination: TVCView())
+                    NavigationLink("Altimeter Ejection Assistant", destination: AltimeterEjectionView())
+                    NavigationLink("Parachute Ejection Assistant", destination: ParachuteEjectionView())
+                }
+                Section(header: Text("Miscellaneous")) {
+                    NavigationLink("Thrust Vectoring EDF", destination: EDFView())
                 }
             }
             .navigationBarTitle("Rocketry Assistant")

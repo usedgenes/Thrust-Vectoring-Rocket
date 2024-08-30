@@ -15,6 +15,7 @@ struct BluetoothConnectView: View {
     @State var bluetoothManagerHelper = BluetoothManagerHelper()
     @State var LED_On = false
     @EnvironmentObject var rocket : Rocket
+    @EnvironmentObject var edf : EDF
     
     var body: some View {
         Text("Bluetooth")
@@ -91,6 +92,7 @@ struct BluetoothConnectView: View {
                             bluetoothDevice.device = device
                             bluetoothDevice.connect()
                             bluetoothDevice.rocket = rocket
+                            bluetoothDevice.edf = edf
                         }
                     }) {
                         Text("\(device.name)")
