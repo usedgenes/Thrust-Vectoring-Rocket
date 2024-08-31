@@ -4,3 +4,5 @@ This is a project for building a thrust vector controlled rocket. The system is 
 
 Link to static test fire:
 https://github.com/usedgenes/Thrust-Vectoring-Rocket/blob/main/Testing/gimbal%20test.MOV
+
+There is also an iOS app to control and get data from the flight computer, and is located in the "Rocket" folder. You can open it in XCode and then run it on your own device to test. 
