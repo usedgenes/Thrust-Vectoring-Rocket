@@ -33,6 +33,9 @@
 		44820ED22C82586B00922CC5 /* ParachuteEjectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44820ED12C82586B00922CC5 /* ParachuteEjectionView.swift */; };
 		44820ED42C8259A600922CC5 /* EDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44820ED32C8259A600922CC5 /* EDF.swift */; };
 		44820ED62C8259E200922CC5 /* EDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44820ED52C8259E200922CC5 /* EDFView.swift */; };
+		44EBEB692C82FCE700E7B2B3 /* EDF_OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EBEB682C82FCE700E7B2B3 /* EDF_OrientationView.swift */; };
+		44EBEB6B2C82FD1600E7B2B3 /* EDF_ServoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EBEB6A2C82FD1600E7B2B3 /* EDF_ServoView.swift */; };
+		44EBEB6D2C82FD3100E7B2B3 /* EDF_PIDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EBEB6C2C82FD3100E7B2B3 /* EDF_PIDView.swift */; };
 		44F30C6A2C8253AD00358B1D /* AltimeterEjectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F30C692C8253AD00358B1D /* AltimeterEjectionView.swift */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +86,9 @@
 		44820ED12C82586B00922CC5 /* ParachuteEjectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParachuteEjectionView.swift; sourceTree = "<group>"; };
 		44820ED32C8259A600922CC5 /* EDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDF.swift; sourceTree = "<group>"; };
 		44820ED52C8259E200922CC5 /* EDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDFView.swift; sourceTree = "<group>"; };
+		44EBEB682C82FCE700E7B2B3 /* EDF_OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDF_OrientationView.swift; sourceTree = "<group>"; };
+		44EBEB6A2C82FD1600E7B2B3 /* EDF_ServoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDF_ServoView.swift; sourceTree = "<group>"; };
+		44EBEB6C2C82FD3100E7B2B3 /* EDF_PIDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDF_PIDView.swift; sourceTree = "<group>"; };
 		44F30C692C8253AD00358B1D /* AltimeterEjectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltimeterEjectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +143,9 @@
 				44400A1B2C7A8C1000D29279 /* TVC_PIDView.swift */,
 				44400A1F2C7BCBE000D29279 /* TVC_BMI088View.swift */,
 				44820ED52C8259E200922CC5 /* EDFView.swift */,
+				44EBEB682C82FCE700E7B2B3 /* EDF_OrientationView.swift */,
+				44EBEB6A2C82FD1600E7B2B3 /* EDF_ServoView.swift */,
+				44EBEB6C2C82FD3100E7B2B3 /* EDF_PIDView.swift */,
 				44F30C692C8253AD00358B1D /* AltimeterEjectionView.swift */,
 				44820ED12C82586B00922CC5 /* ParachuteEjectionView.swift */,
 			);
@@ -343,6 +352,7 @@
 				44820ED22C82586B00922CC5 /* ParachuteEjectionView.swift in Sources */,
 				44400A1E2C7A952900D29279 /* TVC_AltimeterView.swift in Sources */,
 				44400A1A2C7A8BB800D29279 /* TVC_ServoView.swift in Sources */,
+				44EBEB692C82FCE700E7B2B3 /* EDF_OrientationView.swift in Sources */,
 				44400A222C7BF74900D29279 /* TVCView.swift in Sources */,
 				44F30C6A2C8253AD00358B1D /* AltimeterEjectionView.swift in Sources */,
 				44820ED62C8259E200922CC5 /* EDFView.swift in Sources */,
@@ -357,7 +367,9 @@
 				442324762C742C6B0029ED02 /* BluetoothDeviceHelper.swift in Sources */,
 				4423247C2C742CA70029ED02 /* HomeScreenView.swift in Sources */,
 				44400A1C2C7A8C1000D29279 /* TVC_PIDView.swift in Sources */,
+				44EBEB6D2C82FD3100E7B2B3 /* EDF_PIDView.swift in Sources */,
 				44400A202C7BCBE000D29279 /* TVC_BMI088View.swift in Sources */,
+				44EBEB6B2C82FD1600E7B2B3 /* EDF_ServoView.swift in Sources */,
 				4423246B2C742C540029ED02 /* ChartStyle.swift in Sources */,
 				442324772C742C6B0029ED02 /* BTDevice.swift in Sources */,
 				442324782C742C6B0029ED02 /* BTManager.swift in Sources */,

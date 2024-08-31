@@ -8,6 +8,9 @@ struct EDFView: View {
     
     var body: some View {
         ScrollView {
+            Text("EDF Control Panel")
+                .font(.largeTitle)
+                .fontWeight(.bold)
             Section {
                 Text("PID Values")
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -190,112 +193,7 @@ struct edfGraphView : View {
     }
 }
 
-struct edfServoPosView : View {
-    @EnvironmentObject var edf : EDF
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @State var getData = false
-    
-    var body: some View {
-        ScrollView {
-            Section {
-                Text("Servo Position Graphs")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                HStack {
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "11")
-                        getData.toggle()
-                    }) {
-                        Text("Get Data")
-                    }.disabled(getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Button(action: {
-                        bluetoothDevice.setServos(input: "10")
-                        getData.toggle()
-                    }) {
-                        Text("Stop")
-                    }.disabled(!getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Button(action: {
-                        edf.resetServoPos()
-                    }) {
-                        Text("Reset All")
-                    }.buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }.padding(.bottom)
-            }.onDisappear(perform: {
-                bluetoothDevice.setServos(input: "10")
-            })
-            
-            Text("Servo 0 Position")
-            ChartStyle().getGraph(datasets: edf.getServo0Pos(), colour: .red)
-            
-            Text("Servo 1 Position")
-            ChartStyle().getGraph(datasets: edf.getServo1Pos(), colour: .green)
-            
-            Text("Servo 2 Position")
-            ChartStyle().getGraph(datasets: edf.getServo2Pos(), colour: .blue)
-            
-            Text("Servo 3 Position")
-            ChartStyle().getGraph(datasets: edf.getServo3Pos(), colour: .yellow)
-        }
-    }
-}
 
-struct edfPidView : View {
-    @EnvironmentObject var edf : EDF
-    @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
-    @State var getData = false
-    
-    var body: some View {
-        ScrollView {
-            Section {
-                Text("PID Command Graphs")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                HStack {
-                    Button(action: {
-                        bluetoothDevice.setPID(input: "31")
-                        getData.toggle()
-                    }) {
-                        Text("Get Data")
-                    }.disabled(getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Button(action: {
-                        bluetoothDevice.setPID(input: "30")
-                        getData.toggle()
-                    }) {
-                        Text("Stop")
-                    }.disabled(!getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Button(action: {
-                        edf.resetPIDCommands()
-                    }) {
-                        Text("Reset All")
-                    }.buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }.padding(.bottom)
-            }.onDisappear(perform: {
-                bluetoothDevice.setPID(input: "30")
-            })
-            
-            Text("Yaw Command")
-            ChartStyle().getGraph(datasets: edf.getYawCommand(), colour: .red)
-            
-            Text("Pitch Command")
-            ChartStyle().getGraph(datasets: edf.getPitchCommand(), colour: .green)
-            
-            Text("Roll Command")
-            ChartStyle().getGraph(datasets: edf.getRollCommand(), colour: .blue)
-        }
-    }
-}
 
 struct edfServoControlView : View {
     @EnvironmentObject var edf : EDF

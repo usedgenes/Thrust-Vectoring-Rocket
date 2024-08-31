@@ -11,7 +11,11 @@ struct AltimeterEjectionView: View {
     @EnvironmentObject var bluetoothDevice : BluetoothDeviceHelper
     @EnvironmentObject var rocket : Rocket
     @State var getLoopTime = false
-    @State var servoPosition : Double = 90
+    @State var timeRemaining: Int = 5
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var timerOn = false
+    @State var timerFired = false
+    @State var servoPosition : Int = 90
     var body: some View {
         ScrollView {
             Text("Altimeter Ejection")
@@ -95,42 +99,102 @@ struct AltimeterEjectionView: View {
                 }
                 Divider()
                 HStack {
-                    Spacer()
-                    Button(action: {
-                        
-                    }) {
-                        Text("Lock Spring")
+                    VStack {
+                        Button(action: {
+                            
+                        }) {
+                            Text("Lock Spring")
+                                .font(.title2)
+                        }.frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color("Light Gray"))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                        Button(action: {
+                            
+                        }) {
+                            Text("Unlock Spring")
+                                .font(.title2)
+                        }.frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color("Light Gray"))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                        HStack {
+                            Text("Servo:")
+                                .font(.title2)
+                            TextField("\(servoPosition)", text: Binding<String>(
+                                get: { String(servoPosition) },
+                                set: {
+                                    if let value = NumberFormatter().number(from: $0) {
+                                        servoPosition = value.intValue
+                                    }
+                                }))
+                            .keyboardType(UIKeyboardType.numberPad)
                             .font(.title2)
-                    }.frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                        .background(Color("Light Gray"))
-                        .cornerRadius(10)
-                    Spacer()
-                    Button(action: {
-                        
-                    }) {
-                        Text("Unlock Spring")
-                            .font(.title2)
-                    }.frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                        .background(Color("Light Gray"))
-                        .cornerRadius(10)
-                    Spacer()
-                }
-                HStack {
-                    Text("Servo: " + String(Int(servoPosition)))
-                        .padding(.trailing)
-                        .font(.title3)
-                    Slider(value: Binding(get: {
-                        servoPosition
-                    }, set: { (newVal) in
-                        servoPosition = newVal
-                    }), in: (0...180), step: 1) { editing in
-                        if(!editing) {
-                            bluetoothDevice.setServos(input: "0" + String(Int(servoPosition)))
+                            Button(action: {
+                                bluetoothDevice.setServos(input: "2")
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                                                to: nil, from: nil, for: nil)
+                            }) {
+                                Image(systemName: "paperplane.fill")
+                            }.buttonStyle(BorderlessButtonStyle())
+                        }.padding(.horizontal)
+                            .padding(.top)
+                    }
+                    Divider()
+                    VStack {
+                        Text("Timer")
+                            .font(.title)
+                            .padding(.bottom)
+                        HStack {
+                            VStack {
+                                Button(action: {
+                                    if(timerOn) {
+                                        self.timer.upstream.connect().cancel()
+                                        timerOn = false
+                                    }
+                                    else {
+                                        timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                                        timerOn = true
+                                    }
+                                }) {
+                                    Text(timerOn ? "Stop" : "Start")
+                                        .font(.title2)
+                                }.frame(maxWidth: .infinity)
+                                    .padding(.vertical)
+                                    .background(Color("Light Gray"))
+                                    .cornerRadius(10)
+                                Button(action: {
+                                    self.timer.upstream.connect().cancel()
+                                    timerOn = false
+                                    timeRemaining = 5
+                                }) {
+                                    Text("Reset")
+                                        .font(.title2)
+                                }.frame(maxWidth: .infinity)
+                                    .padding(.vertical)
+                                    .background(Color("Light Gray"))
+                                    .cornerRadius(10)
+                            }
+                            Text(String(timeRemaining))
+                                .font(.largeTitle)
+                                .onAppear() {
+                                    timer.upstream.connect().cancel()
+                                }
+                                .onReceive(timer) { _ in
+                                    if(timeRemaining > 0) {
+                                        timeRemaining -= 1
+                                    }
+                                    else if(timeRemaining == 0 && !timerFired) {
+                                        bluetoothDevice.setServos(input: "hi")
+                                        timerFired = true
+                                    }
+                                }
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                }.padding()
+                }.hideKeyboardWhenTappedAround()
                 Divider()
                 HStack {
                     VStack {
@@ -157,7 +221,7 @@ struct AltimeterEjectionView: View {
                                     .frame(alignment: .leading)
                                     .foregroundColor(.black)
                                     .font(.title3)
-
+                                
                             }
                             .padding()
                             Spacer()
@@ -236,6 +300,7 @@ struct AltimeterEjectionView: View {
                 bluetoothDevice.setUtilities(input: "Time Stop")
             })
     }
+    
 }
 
 struct AltimeterEjectionView_Previews: PreviewProvider {
