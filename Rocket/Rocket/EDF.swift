@@ -2,6 +2,8 @@ import Foundation
 import SwiftUICharts
 
 class EDF : ObservableObject {
+    @Published var edfPower : Double = 50
+    
     @Published var rollKp : String = "2.0"
     @Published var rollKi : String = "0.0"
     @Published var rollKd : String = "0.0"
@@ -165,5 +167,12 @@ class EDF : ObservableObject {
         yawPIDCommand.removeAll()
         pitchPIDCommand.removeAll()
         rollPIDCommand.removeAll()
+    }
+    
+    func resetEDF() {
+        edfPower = 50
+        resetRotation()
+        resetServoPos()
+        resetPIDCommands()
     }
 }

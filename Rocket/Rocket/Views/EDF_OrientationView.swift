@@ -14,46 +14,75 @@ struct EDF_OrientationView : View {
     var body : some View {
         ScrollView {
             Section {
-                Text("BMI088 Data Graphs")
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
+                Text("Orientation Graphs")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                Divider()
                 HStack {
-                    Button(action: {
-                        bluetoothDevice.setBNO08X(input: "11")
-                        getData.toggle()
-                    }) {
-                        Text("Get Data")
-                    }.disabled(getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    Text("EDF Power: " + String(Int(edf.edfPower)))
+                        .padding(.trailing)
+                        .font(.title3)
+                    Slider(value: Binding(get: {
+                        edf.edfPower
+                    }, set: { (newVal) in
+                        edf.edfPower = newVal
+                    }), in: 50...180, step: 1) { editing in
+                        if(!editing) {
+                            bluetoothDevice.setServos(input: "4" + String(Int(edf.edfPower)))
+                        }
+                    }
+                }.padding()
+                Divider()
+                Section {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            if(!getData) {
+                                bluetoothDevice.setBNO08X(input: "11")
+                            }
+                            else {
+                                bluetoothDevice.setBNO08X(input: "10")
+                            }
+                            getData.toggle()
+                            
+                        }) {
+                            Text(!getData ? "Get Data" : "Stop")
+                                .font(.title2)
+                        }.frame(maxWidth: .infinity)
+                            .padding(.vertical)
+                            .background(Color("Light Gray"))
+                            .cornerRadius(10)
+                        Spacer()
+                        Button(action: {
+                            edf.resetRotation()
+                        }) {
+                            Text("Reset All")
+                                .font(.title2)
+                        }.buttonStyle(BorderlessButtonStyle())
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical)
+                            .background(Color("Light Gray"))
+                            .cornerRadius(10)
+                        Spacer()
+                    }
+                }.onDisappear(perform: {
+                    bluetoothDevice.setBNO08X(input: "10")
+                })
+                Section {
+                    Text("Yaw Velocity")
+                        .font(.title2)
+                        .padding(.top)
+                    ChartStyle().getGraph(datasets: edf.getYawVelocity(), colour: .red)
                     
-                    Button(action: {
-                        bluetoothDevice.setBNO08X(input: "10")
-                        getData.toggle()
-                    }) {
-                        Text("Stop")
-                    }.disabled(!getData)
-                        .buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Button(action: {
-                        edf.resetRotation()
-                    }) {
-                        Text("Reset All")
-                    }.buttonStyle(BorderlessButtonStyle())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }.padding(.bottom)
-            }.onDisappear(perform: {
-                bluetoothDevice.setBNO08X(input: "10")
-            })
-            
-            Text("Yaw Velocity")
-            ChartStyle().getGraph(datasets: edf.getYawVelocity(), colour: .red)
-            
-            Text("Pitch")
-            ChartStyle().getGraph(datasets: edf.getPitch(), colour: .green)
-            
-            Text("Roll")
-            ChartStyle().getGraph(datasets: edf.getRoll(), colour: .blue)
+                    Text("Pitch")
+                        .font(.title2)
+                    ChartStyle().getGraph(datasets: edf.getPitch(), colour: .green)
+                    
+                    Text("Roll")
+                        .font(.title2)
+                    ChartStyle().getGraph(datasets: edf.getRoll(), colour: .blue)
+                }
+            }
         }
     }
 }
