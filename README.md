@@ -6,3 +6,7 @@ Link to static test fire:
 https://github.com/usedgenes/Thrust-Vectoring-Rocket/blob/main/Testing/gimbal%20test.MOV
 
 There is also an iOS app to control and get data from the flight computer, and is located in the "Rocket" folder. You can open it in XCode and then run it on your own device to test. 
+
+Link to CAD files: https://cad.onshape.com/documents/2ca9fc9211faac09d786cfb3/w/8b61a603854f19ea49b1fde7/e/632ef75d5f14d64c56a16a13?renderMode=0&uiState=66dbf6684d180e111ac254e3
+
+![](https://github.com/usedgenes/Thrust-Vectoring-Rocket/blob/main/Testing/IMG_3164.jpg)
