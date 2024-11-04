@@ -1,0 +1,752 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		442324832C742D200029ED02 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 442324822C742D200029ED02 /* SwiftUICharts */; };
+		444C04252CD892D1002C67FD /* RocketAssistantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04022CD892D0002C67FD /* RocketAssistantTests.swift */; };
+		444C04262CD892D1002C67FD /* RocketAssistantUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04042CD892D0002C67FD /* RocketAssistantUITestsLaunchTests.swift */; };
+		444C04272CD892D1002C67FD /* RocketAssistantUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04052CD892D0002C67FD /* RocketAssistantUITests.swift */; };
+		444C04282CD892D1002C67FD /* RocketAssistantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04072CD892D0002C67FD /* RocketAssistantApp.swift */; };
+		444C04292CD892D1002C67FD /* Rocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04082CD892D0002C67FD /* Rocket.swift */; };
+		444C042A2CD892D1002C67FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444C04092CD892D0002C67FD /* Assets.xcassets */; };
+		444C042B2CD892D1002C67FD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 444C040B2CD892D0002C67FD /* Preview Assets.xcassets */; };
+		444C042C2CD892D1002C67FD /* BTUUIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C040D2CD892D0002C67FD /* BTUUIDs.swift */; };
+		444C042D2CD892D1002C67FD /* BTUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C040E2CD892D0002C67FD /* BTUtils.swift */; };
+		444C042E2CD892D1002C67FD /* BluetoothManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C040F2CD892D0002C67FD /* BluetoothManagerHelper.swift */; };
+		444C042F2CD892D1002C67FD /* BluetoothDeviceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04102CD892D0002C67FD /* BluetoothDeviceHelper.swift */; };
+		444C04302CD892D1002C67FD /* BTDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04112CD892D0002C67FD /* BTDevice.swift */; };
+		444C04312CD892D1002C67FD /* BTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04122CD892D0002C67FD /* BTManager.swift */; };
+		444C04322CD892D1002C67FD /* EDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04142CD892D1002C67FD /* EDF.swift */; };
+		444C04332CD892D1002C67FD /* ChartStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04152CD892D1002C67FD /* ChartStyle.swift */; };
+		444C04342CD892D1002C67FD /* EDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04172CD892D1002C67FD /* EDFView.swift */; };
+		444C04352CD892D1002C67FD /* ParachuteEjectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04182CD892D1002C67FD /* ParachuteEjectionView.swift */; };
+		444C04362CD892D1002C67FD /* EDF_ServoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04192CD892D1002C67FD /* EDF_ServoView.swift */; };
+		444C04372CD892D1002C67FD /* EDF_PIDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041A2CD892D1002C67FD /* EDF_PIDView.swift */; };
+		444C04382CD892D1002C67FD /* TVC_BMI088View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041B2CD892D1002C67FD /* TVC_BMI088View.swift */; };
+		444C04392CD892D1002C67FD /* TVC_ServoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041C2CD892D1002C67FD /* TVC_ServoView.swift */; };
+		444C043A2CD892D1002C67FD /* TVC_OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041D2CD892D1002C67FD /* TVC_OrientationView.swift */; };
+		444C043B2CD892D1002C67FD /* EDF_OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041E2CD892D1002C67FD /* EDF_OrientationView.swift */; };
+		444C043C2CD892D1002C67FD /* HomeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C041F2CD892D1002C67FD /* HomeScreenView.swift */; };
+		444C043D2CD892D1002C67FD /* TVC_AltimeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04202CD892D1002C67FD /* TVC_AltimeterView.swift */; };
+		444C043E2CD892D1002C67FD /* BluetoothConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04212CD892D1002C67FD /* BluetoothConnectView.swift */; };
+		444C043F2CD892D1002C67FD /* TVCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04222CD892D1002C67FD /* TVCView.swift */; };
+		444C04402CD892D1002C67FD /* AltimeterEjectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04232CD892D1002C67FD /* AltimeterEjectionView.swift */; };
+		444C04412CD892D1002C67FD /* TVC_PIDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444C04242CD892D1002C67FD /* TVC_PIDView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4479EE3B2C742BC30006BA07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4479EE212C742BC00006BA07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4479EE282C742BC00006BA07;
+			remoteInfo = Rocket;
+		};
+		4479EE452C742BC30006BA07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4479EE212C742BC00006BA07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4479EE282C742BC00006BA07;
+			remoteInfo = Rocket;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		444C04022CD892D0002C67FD /* RocketAssistantTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RocketAssistantTests.swift; sourceTree = "<group>"; };
+		444C04042CD892D0002C67FD /* RocketAssistantUITestsLaunchTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RocketAssistantUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		444C04052CD892D0002C67FD /* RocketAssistantUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RocketAssistantUITests.swift; sourceTree = "<group>"; };
+		444C04072CD892D0002C67FD /* RocketAssistantApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RocketAssistantApp.swift; sourceTree = "<group>"; };
+		444C04082CD892D0002C67FD /* Rocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rocket.swift; sourceTree = "<group>"; };
+		444C04092CD892D0002C67FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		444C040B2CD892D0002C67FD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		444C040D2CD892D0002C67FD /* BTUUIDs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTUUIDs.swift; sourceTree = "<group>"; };
+		444C040E2CD892D0002C67FD /* BTUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTUtils.swift; sourceTree = "<group>"; };
+		444C040F2CD892D0002C67FD /* BluetoothManagerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothManagerHelper.swift; sourceTree = "<group>"; };
+		444C04102CD892D0002C67FD /* BluetoothDeviceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothDeviceHelper.swift; sourceTree = "<group>"; };
+		444C04112CD892D0002C67FD /* BTDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDevice.swift; sourceTree = "<group>"; };
+		444C04122CD892D0002C67FD /* BTManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTManager.swift; sourceTree = "<group>"; };
+		444C04132CD892D0002C67FD /* RocketAssistant.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = RocketAssistant.entitlements; sourceTree = "<group>"; };
+		444C04142CD892D1002C67FD /* EDF.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EDF.swift; sourceTree = "<group>"; };
+		444C04152CD892D1002C67FD /* ChartStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartStyle.swift; sourceTree = "<group>"; };
+		444C04172CD892D1002C67FD /* EDFView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EDFView.swift; sourceTree = "<group>"; };
+		444C04182CD892D1002C67FD /* ParachuteEjectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParachuteEjectionView.swift; sourceTree = "<group>"; };
+		444C04192CD892D1002C67FD /* EDF_ServoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EDF_ServoView.swift; sourceTree = "<group>"; };
+		444C041A2CD892D1002C67FD /* EDF_PIDView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EDF_PIDView.swift; sourceTree = "<group>"; };
+		444C041B2CD892D1002C67FD /* TVC_BMI088View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVC_BMI088View.swift; sourceTree = "<group>"; };
+		444C041C2CD892D1002C67FD /* TVC_ServoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVC_ServoView.swift; sourceTree = "<group>"; };
+		444C041D2CD892D1002C67FD /* TVC_OrientationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVC_OrientationView.swift; sourceTree = "<group>"; };
+		444C041E2CD892D1002C67FD /* EDF_OrientationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EDF_OrientationView.swift; sourceTree = "<group>"; };
+		444C041F2CD892D1002C67FD /* HomeScreenView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeScreenView.swift; sourceTree = "<group>"; };
+		444C04202CD892D1002C67FD /* TVC_AltimeterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVC_AltimeterView.swift; sourceTree = "<group>"; };
+		444C04212CD892D1002C67FD /* BluetoothConnectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothConnectView.swift; sourceTree = "<group>"; };
+		444C04222CD892D1002C67FD /* TVCView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVCView.swift; sourceTree = "<group>"; };
+		444C04232CD892D1002C67FD /* AltimeterEjectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AltimeterEjectionView.swift; sourceTree = "<group>"; };
+		444C04242CD892D1002C67FD /* TVC_PIDView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVC_PIDView.swift; sourceTree = "<group>"; };
+		4479EE292C742BC00006BA07 /* RocketAssistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RocketAssistant.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4479EE3A2C742BC30006BA07 /* RocketAssistantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RocketAssistantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4479EE442C742BC30006BA07 /* RocketAssistantUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RocketAssistantUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4479EE262C742BC00006BA07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				442324832C742D200029ED02 /* SwiftUICharts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE372C742BC30006BA07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE412C742BC30006BA07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		444C04012CD892D0002C67FD /* RocketAssistantTests */ = {
+			isa = PBXGroup;
+			children = (
+				444C04022CD892D0002C67FD /* RocketAssistantTests.swift */,
+			);
+			path = RocketAssistantTests;
+			sourceTree = "<group>";
+		};
+		444C04032CD892D0002C67FD /* RocketAssistantUITests */ = {
+			isa = PBXGroup;
+			children = (
+				444C04042CD892D0002C67FD /* RocketAssistantUITestsLaunchTests.swift */,
+				444C04052CD892D0002C67FD /* RocketAssistantUITests.swift */,
+			);
+			path = RocketAssistantUITests;
+			sourceTree = "<group>";
+		};
+		444C04062CD892D0002C67FD /* RocketAssistant */ = {
+			isa = PBXGroup;
+			children = (
+				444C04072CD892D0002C67FD /* RocketAssistantApp.swift */,
+				444C04082CD892D0002C67FD /* Rocket.swift */,
+				444C04092CD892D0002C67FD /* Assets.xcassets */,
+				444C040A2CD892D0002C67FD /* Preview Content */,
+				444C040C2CD892D0002C67FD /* Bluetooth */,
+				444C04132CD892D0002C67FD /* RocketAssistant.entitlements */,
+				444C04142CD892D1002C67FD /* EDF.swift */,
+				444C04152CD892D1002C67FD /* ChartStyle.swift */,
+				444C04162CD892D1002C67FD /* Views */,
+			);
+			path = RocketAssistant;
+			sourceTree = "<group>";
+		};
+		444C040A2CD892D0002C67FD /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				444C040B2CD892D0002C67FD /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		444C040C2CD892D0002C67FD /* Bluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				444C040D2CD892D0002C67FD /* BTUUIDs.swift */,
+				444C040E2CD892D0002C67FD /* BTUtils.swift */,
+				444C040F2CD892D0002C67FD /* BluetoothManagerHelper.swift */,
+				444C04102CD892D0002C67FD /* BluetoothDeviceHelper.swift */,
+				444C04112CD892D0002C67FD /* BTDevice.swift */,
+				444C04122CD892D0002C67FD /* BTManager.swift */,
+			);
+			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		444C04162CD892D1002C67FD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				444C04172CD892D1002C67FD /* EDFView.swift */,
+				444C04182CD892D1002C67FD /* ParachuteEjectionView.swift */,
+				444C04192CD892D1002C67FD /* EDF_ServoView.swift */,
+				444C041A2CD892D1002C67FD /* EDF_PIDView.swift */,
+				444C041B2CD892D1002C67FD /* TVC_BMI088View.swift */,
+				444C041C2CD892D1002C67FD /* TVC_ServoView.swift */,
+				444C041D2CD892D1002C67FD /* TVC_OrientationView.swift */,
+				444C041E2CD892D1002C67FD /* EDF_OrientationView.swift */,
+				444C041F2CD892D1002C67FD /* HomeScreenView.swift */,
+				444C04202CD892D1002C67FD /* TVC_AltimeterView.swift */,
+				444C04212CD892D1002C67FD /* BluetoothConnectView.swift */,
+				444C04222CD892D1002C67FD /* TVCView.swift */,
+				444C04232CD892D1002C67FD /* AltimeterEjectionView.swift */,
+				444C04242CD892D1002C67FD /* TVC_PIDView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4479EE202C742BC00006BA07 = {
+			isa = PBXGroup;
+			children = (
+				444C04062CD892D0002C67FD /* RocketAssistant */,
+				444C04012CD892D0002C67FD /* RocketAssistantTests */,
+				444C04032CD892D0002C67FD /* RocketAssistantUITests */,
+				4479EE2A2C742BC00006BA07 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4479EE2A2C742BC00006BA07 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4479EE292C742BC00006BA07 /* RocketAssistant.app */,
+				4479EE3A2C742BC30006BA07 /* RocketAssistantTests.xctest */,
+				4479EE442C742BC30006BA07 /* RocketAssistantUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4479EE282C742BC00006BA07 /* RocketAssistant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4479EE4E2C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistant" */;
+			buildPhases = (
+				4479EE252C742BC00006BA07 /* Sources */,
+				4479EE262C742BC00006BA07 /* Frameworks */,
+				4479EE272C742BC00006BA07 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RocketAssistant;
+			packageProductDependencies = (
+				442324822C742D200029ED02 /* SwiftUICharts */,
+			);
+			productName = Rocket;
+			productReference = 4479EE292C742BC00006BA07 /* RocketAssistant.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4479EE392C742BC30006BA07 /* RocketAssistantTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4479EE512C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistantTests" */;
+			buildPhases = (
+				4479EE362C742BC30006BA07 /* Sources */,
+				4479EE372C742BC30006BA07 /* Frameworks */,
+				4479EE382C742BC30006BA07 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4479EE3C2C742BC30006BA07 /* PBXTargetDependency */,
+			);
+			name = RocketAssistantTests;
+			productName = RocketTests;
+			productReference = 4479EE3A2C742BC30006BA07 /* RocketAssistantTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4479EE432C742BC30006BA07 /* RocketAssistantUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4479EE542C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistantUITests" */;
+			buildPhases = (
+				4479EE402C742BC30006BA07 /* Sources */,
+				4479EE412C742BC30006BA07 /* Frameworks */,
+				4479EE422C742BC30006BA07 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4479EE462C742BC30006BA07 /* PBXTargetDependency */,
+			);
+			name = RocketAssistantUITests;
+			productName = RocketUITests;
+			productReference = 4479EE442C742BC30006BA07 /* RocketAssistantUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4479EE212C742BC00006BA07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					4479EE282C742BC00006BA07 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					4479EE392C742BC30006BA07 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 4479EE282C742BC00006BA07;
+					};
+					4479EE432C742BC30006BA07 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 4479EE282C742BC00006BA07;
+					};
+				};
+			};
+			buildConfigurationList = 4479EE242C742BC00006BA07 /* Build configuration list for PBXProject "RocketAssistant" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4479EE202C742BC00006BA07;
+			packageReferences = (
+				442324812C742D200029ED02 /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
+			);
+			productRefGroup = 4479EE2A2C742BC00006BA07 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4479EE282C742BC00006BA07 /* RocketAssistant */,
+				4479EE392C742BC30006BA07 /* RocketAssistantTests */,
+				4479EE432C742BC30006BA07 /* RocketAssistantUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4479EE272C742BC00006BA07 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				444C042B2CD892D1002C67FD /* Preview Assets.xcassets in Resources */,
+				444C042A2CD892D1002C67FD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE382C742BC30006BA07 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE422C742BC30006BA07 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4479EE252C742BC00006BA07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				444C04412CD892D1002C67FD /* TVC_PIDView.swift in Sources */,
+				444C042D2CD892D1002C67FD /* BTUtils.swift in Sources */,
+				444C04302CD892D1002C67FD /* BTDevice.swift in Sources */,
+				444C04382CD892D1002C67FD /* TVC_BMI088View.swift in Sources */,
+				444C04262CD892D1002C67FD /* RocketAssistantUITestsLaunchTests.swift in Sources */,
+				444C043D2CD892D1002C67FD /* TVC_AltimeterView.swift in Sources */,
+				444C04352CD892D1002C67FD /* ParachuteEjectionView.swift in Sources */,
+				444C042E2CD892D1002C67FD /* BluetoothManagerHelper.swift in Sources */,
+				444C04252CD892D1002C67FD /* RocketAssistantTests.swift in Sources */,
+				444C043E2CD892D1002C67FD /* BluetoothConnectView.swift in Sources */,
+				444C043C2CD892D1002C67FD /* HomeScreenView.swift in Sources */,
+				444C04272CD892D1002C67FD /* RocketAssistantUITests.swift in Sources */,
+				444C04342CD892D1002C67FD /* EDFView.swift in Sources */,
+				444C043B2CD892D1002C67FD /* EDF_OrientationView.swift in Sources */,
+				444C04282CD892D1002C67FD /* RocketAssistantApp.swift in Sources */,
+				444C04322CD892D1002C67FD /* EDF.swift in Sources */,
+				444C04362CD892D1002C67FD /* EDF_ServoView.swift in Sources */,
+				444C042F2CD892D1002C67FD /* BluetoothDeviceHelper.swift in Sources */,
+				444C04392CD892D1002C67FD /* TVC_ServoView.swift in Sources */,
+				444C043F2CD892D1002C67FD /* TVCView.swift in Sources */,
+				444C043A2CD892D1002C67FD /* TVC_OrientationView.swift in Sources */,
+				444C04312CD892D1002C67FD /* BTManager.swift in Sources */,
+				444C04332CD892D1002C67FD /* ChartStyle.swift in Sources */,
+				444C042C2CD892D1002C67FD /* BTUUIDs.swift in Sources */,
+				444C04372CD892D1002C67FD /* EDF_PIDView.swift in Sources */,
+				444C04402CD892D1002C67FD /* AltimeterEjectionView.swift in Sources */,
+				444C04292CD892D1002C67FD /* Rocket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE362C742BC30006BA07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4479EE402C742BC30006BA07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4479EE3C2C742BC30006BA07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4479EE282C742BC00006BA07 /* RocketAssistant */;
+			targetProxy = 4479EE3B2C742BC30006BA07 /* PBXContainerItemProxy */;
+		};
+		4479EE462C742BC30006BA07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4479EE282C742BC00006BA07 /* RocketAssistant */;
+			targetProxy = 4479EE452C742BC30006BA07 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4479EE4C2C742BC30006BA07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4479EE4D2C742BC30006BA07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		4479EE4F2C742BC30006BA07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RocketAssistant/RocketAssistant.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RocketAssistant/Preview Content\"";
+				DEVELOPMENT_TEAM = S2Y8NAFF7S;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Connect to ESP32";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Connect to ESP32";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = usedgenes.ThrustVectoring.RocketAssistant;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4479EE502C742BC30006BA07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RocketAssistant/RocketAssistant.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"RocketAssistant/Preview Content\"";
+				DEVELOPMENT_TEAM = S2Y8NAFF7S;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Connect to ESP32";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Connect to ESP32";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = usedgenes.ThrustVectoring.RocketAssistant;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4479EE522C742BC30006BA07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q9SL3JA643;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Chestnut.ThrustVectoring.RocketAssistantTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RocketAssistant.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RocketAssistant";
+			};
+			name = Debug;
+		};
+		4479EE532C742BC30006BA07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q9SL3JA643;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Chestnut.ThrustVectoring.RocketAssistantTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RocketAssistant.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RocketAssistant";
+			};
+			name = Release;
+		};
+		4479EE552C742BC30006BA07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q9SL3JA643;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Chestnut.ThrustVectoring.RocketAssistantUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RocketAssistant;
+			};
+			name = Debug;
+		};
+		4479EE562C742BC30006BA07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q9SL3JA643;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MACOSX_DEPLOYMENT_TARGET = 12.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Chestnut.ThrustVectoring.RocketAssistantUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RocketAssistant;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4479EE242C742BC00006BA07 /* Build configuration list for PBXProject "RocketAssistant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4479EE4C2C742BC30006BA07 /* Debug */,
+				4479EE4D2C742BC30006BA07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4479EE4E2C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4479EE4F2C742BC30006BA07 /* Debug */,
+				4479EE502C742BC30006BA07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4479EE512C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistantTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4479EE522C742BC30006BA07 /* Debug */,
+				4479EE532C742BC30006BA07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4479EE542C742BC30006BA07 /* Build configuration list for PBXNativeTarget "RocketAssistantUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4479EE552C742BC30006BA07 /* Debug */,
+				4479EE562C742BC30006BA07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		442324812C742D200029ED02 /* XCRemoteSwiftPackageReference "SwiftUICharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/willdale/SwiftUICharts";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		442324822C742D200029ED02 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 442324812C742D200029ED02 /* XCRemoteSwiftPackageReference "SwiftUICharts" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4479EE212C742BC00006BA07 /* Project object */;
+}
